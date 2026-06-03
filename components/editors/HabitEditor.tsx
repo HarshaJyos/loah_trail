@@ -34,7 +34,7 @@ export const HabitEditor: React.FC = () => {
       setDescription(existingHabit.description || '');
       setColor(existingHabit.color || 'var(--cat-learning)');
       if (existingHabit.type) setHabitType(existingHabit.type);
-      if (existingHabit.frequency) setFreqType(existingHabit.frequency.type);
+      if (existingHabit.frequency) setFreqType(existingHabit.frequency.type as any);
       if (existingHabit.goal) {
         setGoalTarget(existingHabit.goal.target.toString());
         setGoalUnit(existingHabit.goal.unit);
@@ -70,7 +70,7 @@ export const HabitEditor: React.FC = () => {
       description,
       color,
       type: habitType,
-      frequency: { type: freqType },
+      frequency: { type: freqType as any },
       goal: { type: 'check', target: parseFloat(goalTarget) || 1, unit: goalUnit || 'times' },
       elasticConfig,
       history: existingHabit ? existingHabit.history : {},

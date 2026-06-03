@@ -274,7 +274,7 @@ const DumpCard: React.FC<{
             ].map((btn) => (
               <Link
                 key={btn.label}
-                href={`${btn.route}?title=${encodeURIComponent(dump.title)}&desc=${encodeURIComponent(dump.description || '')}&deleteDumpId=${dump.id}`}
+                href={`${btn.route}?title=${encodeURIComponent(dump.title)}&desc=${encodeURIComponent(dump.description || '')}&deleteDumpId=${dump.id}` as any}
                 className="loah-quick-btn"
                 style={{
                   display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
