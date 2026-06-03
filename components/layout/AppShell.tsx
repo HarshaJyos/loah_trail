@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import useTimerWorker from '../../hooks/useTimerWorker';
 import useReminderSystem from '../../hooks/useReminderSystem';
+import { playSound } from '../../utils/sounds';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -139,6 +140,17 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   // ── Page type helpers ─────────────────────────────────────
   const isRoutinePlayer = pathname.startsWith('/routine-player');
 
+  const handlePlayClick = () => {
+    playSound('TIMER_START');
+    setPlayerState({ isPlaying: !isPlaying });
+  };
+
+  const handleStepCompleteInternal = () => {
+    if (currentStepIndex >= playerSteps.length - 1) playSound('ROUTINE_COMPLETE');
+    else playSound('TIMER_START');
+    handleStepComplete();
+  };
+
   // Quill editor pages — replace nav with quill toolbar area (toolbar is rendered by Quill itself)
   const isEditorPage =
     pathname.includes('/notes/new') ||
@@ -229,7 +241,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
                     -1m
                   </button>
                   <button
-                    onClick={() => setPlayerState({ isPlaying: !isPlaying })}
+                    onClick={handlePlayClick}
                     className="p-2 bg-white text-[#1E1E1E] rounded-full hover:scale-105 active:scale-95 transition-all"
                   >
                     {isPlaying ? <Pause size={13} fill="currentColor" /> : <Play size={13} fill="currentColor" />}
@@ -241,7 +253,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
                     +1m
                   </button>
                   <button
-                    onClick={handleStepComplete}
+                    onClick={handleStepCompleteInternal}
                     className="p-2 bg-white/10 rounded-full hover:bg-white/20 active:scale-95 transition-all ml-1"
                     title="Skip step"
                   >
