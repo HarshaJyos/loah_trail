@@ -297,9 +297,15 @@ export const createPlayerSlice: StateCreator<
   },
   handleTimeAdjustment: (seconds) => {
     set((state) => {
-      let newElapsed = state.timeElapsedInStep - seconds;
-      if (newElapsed < 0) newElapsed = 0;
-      return { timeElapsedInStep: newElapsed };
+      const newSteps = [...state.playerSteps];
+      if (newSteps[state.currentStepIndex]) {
+        const step = { ...newSteps[state.currentStepIndex] };
+        step.durationSeconds += seconds;
+        if (step.durationSeconds < 0) step.durationSeconds = 0;
+        newSteps[state.currentStepIndex] = step;
+        return { playerSteps: newSteps };
+      }
+      return state;
     });
   },
   handleRemoveStep: (index) => {

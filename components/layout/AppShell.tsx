@@ -176,7 +176,14 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
     >
       {/* ── Routine Player Dynamic Island (top center) ──────── */}
       {!isRoutinePlayer && activeRoutine && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[200] transition-all duration-500">
+        <>
+          {isIslandExpanded && (
+            <div 
+              className="fixed inset-0 z-[190]" 
+              onClick={() => setIsIslandExpanded(false)}
+            />
+          )}
+          <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[200] transition-all duration-500">
           <div
             className={`bg-[var(--bg-surface-elevated)] text-[var(--text-primary)] rounded-[28px] border border-[var(--border-subtle)] transition-all duration-500 overflow-hidden flex flex-col justify-center
               ${isIslandExpanded ? 'w-[300px] p-5 shadow-2xl' : 'w-[220px] px-4 py-2.5 h-[44px] shadow-lg'}`}
@@ -259,7 +266,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
               </div>
             )}
           </div>
-        </div>
+        </>
       )}
 
       {/* ── Main Content ──────────────────────────────────────── */}
