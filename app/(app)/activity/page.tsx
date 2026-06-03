@@ -3,12 +3,12 @@ import dynamic from 'next/dynamic';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Activity History | LOAH',
-  description: 'Track and audit completed tasks, routine player focus sessions, and logged moods.',
+  title: 'Activity Feed | LOAH',
+  description: 'View your complete timeline of tasks, habits, and journals.',
 };
 
 const ActivityModule = dynamic(
-  () => import('../../../components/modules/ActivityModule'),
+  () => import('../../../components/modules/ActivityModule').then(m => m.ActivityModule),
   {
     ssr: false,
   }

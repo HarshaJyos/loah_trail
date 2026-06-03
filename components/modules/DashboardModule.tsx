@@ -344,7 +344,7 @@ export const DashboardModule: React.FC = () => {
                 </span>
               </div>
               <button
-                onClick={() => setCurrentView('activity')}
+                onClick={() => router.push('/activity')}
                 style={{
                   fontSize: 11, fontWeight: 700, color: '#8979FF',
                   background: 'none', border: 'none', cursor: 'pointer',
