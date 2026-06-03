@@ -7,16 +7,15 @@ import { Note, NoteItem } from '../../types';
 import { ArrowLeft, Pin, X, Plus, Trash2, CheckSquare } from 'lucide-react';
 import QuillEditor from '../ui/QuillEditor';
 
-// Note background colors from Frame132
 const NOTE_BG_COLORS = [
-  { label: 'Default', bg: '#FFFFFF', border: 'var(--border-subtle)' },
-  { label: 'Yellow',  bg: '#FFFAC3', border: '#FEF08A' },
-  { label: 'Red',     bg: '#FECACA', border: '#FCA5A5' },
-  { label: 'Orange',  bg: '#FED7AA', border: '#FDBA74' },
-  { label: 'Green',   bg: '#BBF7D0', border: '#6EE7B7' },
-  { label: 'Blue',    bg: '#C3E5FF', border: '#93C5FD' },
-  { label: 'Purple',  bg: '#DDD6FE', border: '#C4B5FD' },
-  { label: 'Pink',    bg: '#FBD1AB', border: '#FCA5A5' },
+  { label: 'Default', bg: 'var(--bg-app)', border: 'var(--border-subtle)' },
+  { label: 'Yellow',  bg: 'rgba(254, 240, 138, 0.15)', border: 'rgba(254, 240, 138, 0.3)' },
+  { label: 'Red',     bg: 'rgba(254, 202, 202, 0.15)', border: 'rgba(254, 202, 202, 0.3)' },
+  { label: 'Orange',  bg: 'rgba(253, 186, 116, 0.15)', border: 'rgba(253, 186, 116, 0.3)' },
+  { label: 'Green',   bg: 'rgba(187, 247, 208, 0.15)', border: 'rgba(187, 247, 208, 0.3)' },
+  { label: 'Blue',    bg: 'rgba(195, 229, 255, 0.15)', border: 'rgba(195, 229, 255, 0.3)' },
+  { label: 'Purple',  bg: 'rgba(221, 214, 254, 0.15)', border: 'rgba(221, 214, 254, 0.3)' },
+  { label: 'Pink',    bg: 'rgba(251, 207, 232, 0.15)', border: 'rgba(251, 207, 232, 0.3)' },
 ];
 
 interface NoteEditorProps {

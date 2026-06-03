@@ -89,7 +89,7 @@ const JournalCard: React.FC<{
           <span style={{ fontSize: 10, color: '#9CA3AF', fontWeight: 600 }}>
             {new Date(entry.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
           </span>
-          <div style={{ display: 'flex', gap: 4, opacity: 0 }} className="group-hover:opacity-100 transition-opacity">
+          <div style={{ display: 'flex', gap: 4 }} className="transition-opacity">
             {onArchive && (
               <button
                 onClick={(e) => { e.stopPropagation(); onArchive(entry.id); }}

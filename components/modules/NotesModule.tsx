@@ -56,11 +56,11 @@ export const NoteCard: React.FC<{
       onClick={onClick}
       className="loah-card cursor-pointer group"
       style={{
-        background: note.color && note.color !== 'transparent'
-          ? note.color.replace('0.12', '0.06')
-          : '#FFFFFF',
-        borderColor: note.color && note.color !== 'transparent'
-          ? note.color.replace('0.12', '0.30')
+        background: note.color && note.color !== 'transparent' && !note.color.includes('var') && note.color !== '#FFFFFF'
+          ? note.color.replace('0.15', '0.08')
+          : 'var(--bg-surface)',
+        borderColor: note.color && note.color !== 'transparent' && !note.color.includes('var') && note.color !== '#FFFFFF'
+          ? note.color.replace('0.15', '0.25')
           : 'var(--border-subtle)',
       }}
     >
@@ -186,7 +186,7 @@ export const NoteCard: React.FC<{
             Open Note
           </button>
 
-          <div style={{ display: 'flex', gap: 4, opacity: 0 }} className="group-hover:opacity-100 transition-opacity">
+          <div style={{ display: 'flex', gap: 4 }} className="transition-opacity">
             {onArchive ? (
               <button
                 onClick={(e) => { e.stopPropagation(); onArchive(note.id); }}
