@@ -60,7 +60,7 @@ export const QuillEditor: React.FC<QuillEditorProps> = ({
   ];
 
   return (
-    <div className={`quill-editor-container w-full bg-white rounded-2xl border border-slate-200 overflow-hidden flex flex-col focus-within:border-[#8979FF] focus-within:shadow-[var(--glow-purple)] transition-all duration-200 ${className}`}>
+    <div className={`quill-editor-container w-full bg-[var(--bg-surface)] rounded-2xl border border-[var(--border-subtle)] overflow-hidden flex flex-col focus-within:border-[#8979FF] focus-within:shadow-[var(--glow-purple)] transition-all duration-200 ${className}`}>
       <ReactQuill
         theme="snow"
         value={value}
@@ -81,10 +81,10 @@ export const QuillEditor: React.FC<QuillEditorProps> = ({
           z-index: 100 !important;
           width: 90% !important;
           max-width: 600px !important;
-          background: rgba(255, 255, 255, 0.9) !important;
+          background: var(--bg-surface) !important;
           backdrop-filter: blur(20px) !important;
           -webkit-backdrop-filter: blur(20px) !important;
-          border: 1px solid rgba(226, 232, 240, 0.8) !important;
+          border: 1px solid var(--border-subtle) !important;
           border-radius: 24px !important;
           box-shadow: 0 10px 25px -5px rgba(137, 121, 255, 0.25) !important;
           display: flex !important;
@@ -94,6 +94,32 @@ export const QuillEditor: React.FC<QuillEditorProps> = ({
           gap: 6px !important;
           padding: 10px 20px !important;
         }
+        
+        .quill-editor-container .ql-toolbar.ql-snow button {
+          color: var(--text-secondary) !important;
+        }
+        .quill-editor-container .ql-toolbar.ql-snow button:hover,
+        .quill-editor-container .ql-toolbar.ql-snow button.ql-active {
+          color: var(--text-primary) !important;
+        }
+        .quill-editor-container .ql-toolbar.ql-snow .ql-stroke {
+          stroke: var(--text-secondary) !important;
+        }
+        .quill-editor-container .ql-toolbar.ql-snow .ql-fill {
+          fill: var(--text-secondary) !important;
+        }
+        .quill-editor-container .ql-toolbar.ql-snow button:hover .ql-stroke,
+        .quill-editor-container .ql-toolbar.ql-snow button.ql-active .ql-stroke {
+          stroke: var(--text-primary) !important;
+        }
+        .quill-editor-container .ql-toolbar.ql-snow button:hover .ql-fill,
+        .quill-editor-container .ql-toolbar.ql-snow button.ql-active .ql-fill {
+          fill: var(--text-primary) !important;
+        }
+        .quill-editor-container .ql-toolbar.ql-snow .ql-picker {
+          color: var(--text-secondary) !important;
+        }
+
         .quill-editor-container .ql-container.ql-snow {
           border: none !important;
           font-family: inherit !important;
@@ -109,10 +135,10 @@ export const QuillEditor: React.FC<QuillEditorProps> = ({
           min-height: 200px;
           padding: 16px !important;
           padding-bottom: 96px !important;
-          color: #1e1e1e !important;
+          color: var(--text-primary) !important;
         }
         .quill-editor-container .ql-editor.ql-blank::before {
-          color: #9ca3af !important;
+          color: var(--text-tertiary) !important;
           font-style: normal !important;
           left: 16px !important;
           right: 16px !important;

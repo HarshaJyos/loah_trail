@@ -332,7 +332,7 @@ export const NotesModule: React.FC = () => {
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
               padding: '60px 20px', textAlign: 'center',
               border: '1px dashed var(--border-subtle)', borderRadius: 20,
-              background: '#FAFBFC', marginTop: 8,
+              background: 'var(--bg-surface)', marginTop: 8,
             }}
           >
             <StickyNote size={40} color="#D4D4D4" />
