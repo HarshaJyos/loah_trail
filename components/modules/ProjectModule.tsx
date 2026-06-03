@@ -206,7 +206,7 @@ export const ProjectModule: React.FC = () => {
     <div className="flex flex-col h-full relative overflow-hidden" style={{ background: 'var(--bg-app)' }}>
       {/* ── Header ──────── */}
       <div
-        className="loah-module-header"
+        className="flex flex-col w-full px-6 pt-6"
         style={{ paddingBottom: 12, borderBottom: '1px solid var(--border-subtle)', marginBottom: 16 }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', width: '100%' }}>

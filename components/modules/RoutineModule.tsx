@@ -259,7 +259,7 @@ export const RoutineModule: React.FC = () => {
     <div className="w-full h-full flex flex-col overflow-hidden">
       {/* ── Header ──────── */}
       <div
-        className="loah-module-header"
+        className="flex flex-col w-full px-6 pt-6"
         style={{ paddingBottom: 12, borderBottom: '1px solid var(--border-subtle)', marginBottom: 16 }}
       >
         <div>

@@ -128,7 +128,15 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
     pathname.includes('/journal/new') ||
     pathname.includes('/journal/edit') ||
     pathname.includes('/dump/new') ||
-    pathname.includes('/dump/edit');
+    pathname.includes('/dump/edit') ||
+    pathname.includes('/tasks/new') ||
+    pathname.includes('/tasks/edit') ||
+    pathname.includes('/projects/new') ||
+    pathname.includes('/projects/edit') ||
+    pathname.includes('/habits/new') ||
+    pathname.includes('/habits/edit') ||
+    pathname.includes('/routines/new') ||
+    pathname.includes('/routines/edit');
 
   const isFullWidthView =
     pathname.startsWith('/calendar') ||

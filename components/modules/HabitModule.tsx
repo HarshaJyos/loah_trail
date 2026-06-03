@@ -604,7 +604,7 @@ export const HabitModule: React.FC = () => {
         <div className="space-y-8 animate-fade-in">
           {/* ── Header ──────── */}
           <div
-            className="loah-module-header"
+            className="flex flex-col w-full px-6 pt-6"
             style={{ paddingBottom: 12, borderBottom: '1px solid var(--border-subtle)', marginBottom: 16 }}
           >
             <div>
