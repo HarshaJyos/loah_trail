@@ -85,9 +85,9 @@ function DroppableDayCol({ dateStr, children, className }: { dateStr: string, ch
 function TrashZone() {
   const { setNodeRef, isOver } = useDroppable({ id: 'trash-zone' });
   return (
-    <div ref={setNodeRef} className={`fixed bottom-8 left-1/2 -translate-x-1/2 p-4 px-6 rounded-2xl shadow-2xl border-2 flex items-center justify-center transition-all z-[200] ${isOver ? 'bg-rose-500/20 border-rose-500 text-rose-500 scale-110' : 'bg-[var(--bg-surface-elevated)] border-rose-500/50 text-rose-500/80 backdrop-blur-md'}`}>
+    <div ref={setNodeRef} className={`fixed bottom-6 right-6 p-4 px-6 rounded-2xl shadow-2xl border-2 flex items-center justify-center transition-all z-[200] ${isOver ? 'bg-rose-500/20 border-rose-500 text-rose-500 scale-110' : 'bg-[var(--bg-surface-elevated)] border-rose-500/50 text-rose-500/80 backdrop-blur-md'}`}>
       <Trash2 size={24} />
-      <span className="ml-2 font-bold text-sm">Drop to Unschedule</span>
+      <span className="ml-2 font-bold text-sm hidden md:inline">Drop to Unschedule</span>
     </div>
   );
 }
@@ -114,13 +114,13 @@ export const CalendarModule: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
 
   const [hourHeight, setHourHeight] = React.useState(80);
-  const [selectedBlock, setSelectedBlock] = React.useState<{ id: string; type: 'task' | 'routine', timeInput: string } | null>(null);
   
   const [activeDragId, setActiveDragId] = React.useState<string | null>(null);
   const [activeDragData, setActiveDragData] = React.useState<any>(null);
 
   // Resizing State
   const [resizingTaskId, setResizingTaskId] = React.useState<string | null>(null);
+  const [liveDuration, setLiveDuration] = React.useState<number | null>(null);
   const resizeRef = React.useRef<{ startY: number; startDuration: number; taskId: string } | null>(null);
 
   const [now, setNow] = React.useState(new Date());
@@ -215,18 +215,19 @@ export const CalendarModule: React.FC = () => {
       const deltaMinutes = deltaY / pxPerMin;
       const snappedDelta = Math.round(deltaMinutes / 15) * 15; // 15 min snapping
       const newDuration = Math.max(15, startDuration + snappedDelta);
-
-      const task = tasks.find((t) => t.id === taskId);
-      if (task && task.duration !== newDuration) {
-        onUpdateTask({ ...task, duration: newDuration });
-      }
+      setLiveDuration(newDuration);
     };
 
     const handleMouseUp = () => {
-      if (resizingTaskId) {
-        setResizingTaskId(null);
-        resizeRef.current = null;
+      if (resizingTaskId && resizeRef.current) {
+         const task = tasks.find(t => t.id === resizingTaskId);
+         if (task && liveDuration && task.duration !== liveDuration) {
+             onUpdateTask({ ...task, duration: liveDuration });
+         }
       }
+      setResizingTaskId(null);
+      setLiveDuration(null);
+      resizeRef.current = null;
     };
 
     if (resizingTaskId) {
@@ -248,6 +249,7 @@ export const CalendarModule: React.FC = () => {
       startY: e.clientY,
       startDuration: task.duration || 30,
     };
+    setLiveDuration(task.duration || 30);
   };
 
   // --- DndKit Handlers ---
@@ -331,35 +333,13 @@ export const CalendarModule: React.FC = () => {
     }
   };
 
-  const openBlockModal = (item: any, type: 'task' | 'routine') => {
-    if (resizingTaskId) return;
-    const d = new Date(item.startTime);
-    const hrs = d.getHours().toString().padStart(2, '0');
-    const mins = d.getMinutes().toString().padStart(2, '0');
-    setSelectedBlock({ id: item.id, type, timeInput: `${hrs}:${mins}` });
-  };
-
-  const handleModalSave = () => {
-    if (!selectedBlock) return;
-    const [hrs, mins] = selectedBlock.timeInput.split(':').map(Number);
-    if (isNaN(hrs) || isNaN(mins)) return;
-
-    if (selectedBlock.type === 'task') {
-      const task = tasks.find(t => t.id === selectedBlock.id);
-      if (task && task.startTime) {
-        const d = new Date(task.startTime);
-        d.setHours(hrs, mins, 0, 0);
-        onUpdateTask({ ...task, startTime: d.getTime() });
-      }
-    } else {
-      const routine = routines.find(r => r.id === selectedBlock.id);
-      if (routine && routine.startTime) {
-        const d = new Date(routine.startTime);
-        d.setHours(hrs, mins, 0, 0);
-        onUpdateRoutine({ ...routine, startTime: d.getTime() });
-      }
-    }
-    setSelectedBlock(null);
+  const getDragTitle = () => {
+    if (!activeDragId || !activeDragData) return '';
+    const { id, type } = activeDragData;
+    if (type === 'task') return tasks.find(t => t.id === id)?.title || '';
+    if (type === 'routine') return routines.find(r => r.id === id)?.title || '';
+    if (type === 'habit') return habits.find(h => h.id === id)?.title || '';
+    return '';
   };
 
   // --- Rendering ---
@@ -508,8 +488,9 @@ export const CalendarModule: React.FC = () => {
                       {tasks.filter(t => t.startTime && isSameDay(new Date(t.startTime!), day) && (showCompleted || !t.isCompleted)).map(task => {
                         const date = new Date(task.startTime!);
                         const top = (date.getHours() * 60 + date.getMinutes()) * pxPerMin;
-                        const height = (task.duration || 30) * pxPerMin;
                         const isResizing = resizingTaskId === task.id;
+                        const durationToUse = isResizing ? (liveDuration || task.duration || 30) : (task.duration || 30);
+                        const height = durationToUse * pxPerMin;
 
                         return (
                           <DraggableGridBlock
@@ -523,7 +504,7 @@ export const CalendarModule: React.FC = () => {
                               backgroundColor: task.color || '#3b82f6', color: '#ffffff',
                             }}
                           >
-                            <div className="flex flex-col h-full relative" onClick={() => !isResizing && openBlockModal(task, 'task')}>
+                            <div className="flex flex-col h-full relative cursor-grab">
                               <div className="flex items-center gap-1.5 min-w-0 mb-0.5">
                                 <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${getPriorityColor(task.priority)} shadow-sm`} />
                                 <div className="font-bold truncate leading-tight text-[10px] md:text-[11px] drop-shadow-md">
@@ -566,7 +547,7 @@ export const CalendarModule: React.FC = () => {
                               backgroundColor: isHabit ? routine.color : '#7c3aed', color: '#ffffff',
                             }}
                           >
-                            <div className="flex flex-col h-full relative" onClick={() => openBlockModal(routine, 'routine')}>
+                            <div className="flex flex-col h-full relative cursor-grab">
                               <div className="flex items-start justify-between mb-0.5 opacity-90 text-[10px]">
                                 <div className="font-bold truncate leading-tight text-[10px] md:text-[11px] flex-1 text-white">
                                   {routine.title}
@@ -703,51 +684,13 @@ export const CalendarModule: React.FC = () => {
         </div>
       </div>
 
-      {/* Mini Modal for Adjustments */}
-      {selectedBlock && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/20 backdrop-blur-sm" onClick={() => setSelectedBlock(null)}>
-          <div className="bg-[var(--bg-surface)] p-5 rounded-2xl shadow-2xl border border-[var(--border-subtle)] w-[320px] animate-slide-up" onClick={e => e.stopPropagation()}>
-            <div className="flex justify-between items-center mb-4">
-               <h3 className="font-extrabold text-[var(--text-primary)] text-sm truncate pr-4">
-                 {selectedBlock.type === 'task' ? tasks.find(t => t.id === selectedBlock.id)?.title : routines.find(r => r.id === selectedBlock.id)?.title}
-               </h3>
-               <button onClick={() => setSelectedBlock(null)} className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors"><X size={16} /></button>
-            </div>
-            
-            <div className="space-y-5">
-              <div>
-                <label className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-wider mb-1.5 block">Time</label>
-                <input 
-                  type="time" 
-                  value={selectedBlock.timeInput} 
-                  onChange={e => setSelectedBlock({ ...selectedBlock, timeInput: e.target.value })} 
-                  className="w-full bg-[var(--bg-canvas)] border border-[var(--border-subtle)] text-[var(--text-primary)] rounded-xl px-4 py-2.5 font-mono font-bold outline-none focus:border-violet-500" 
-                />
-              </div>
-              
-              <div className="flex gap-2">
-                 <button onClick={handleModalSave} className="flex-1 bg-[var(--text-primary)] text-[var(--bg-app)] py-2.5 rounded-xl font-bold text-sm shadow-md hover:opacity-90 transition-opacity">
-                   Save Changes
-                 </button>
-                 <button 
-                   onClick={() => { onUnschedule(selectedBlock.id, selectedBlock.type); setSelectedBlock(null); }} 
-                   className="bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 px-4 rounded-xl font-bold flex items-center gap-2 transition-colors border border-rose-500/20"
-                 >
-                   <Trash2 size={16} />
-                 </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Drag Overlay for smooth dragging visual */}
       <DragOverlay>
         {activeDragId && activeDragData ? (
           <div className="bg-[var(--bg-surface)] border-2 border-violet-500 p-3 rounded-xl text-xs shadow-2xl opacity-90 cursor-grabbing w-48">
             <div className="font-bold text-[var(--text-primary)] flex items-center gap-2">
                <GripVertical size={14} className="text-violet-400" />
-               Moving Item...
+               <span className="truncate">{getDragTitle()}</span>
             </div>
           </div>
         ) : null}
