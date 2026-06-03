@@ -196,7 +196,7 @@ export const RoutineEditor: React.FC = () => {
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
             <select
-              style={{ flex: 1, background: 'var(--bg-surface-elevated)', border: '1px solid var(--border-subtle)', padding: '10px 12px', borderRadius: '8px', fontSize: 13, color: 'var(--text-primary)', outline: 'none' }}
+              style={{ flex: 1, minWidth: 0, background: 'var(--bg-surface-elevated)', border: '1px solid var(--border-subtle)', padding: '10px 12px', borderRadius: '8px', fontSize: 13, color: 'var(--text-primary)', outline: 'none' }}
             >
               <option value="15">15 minutes before</option>
               <option value="30">30 minutes before</option>
@@ -213,43 +213,53 @@ export const RoutineEditor: React.FC = () => {
           <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-secondary)' }}>TOTAL: {totalMinutes}m</span>
         </div>
 
-        <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: '8px', padding: '12px', display: 'flex', gap: 12, alignItems: 'center', marginBottom: 16 }}>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-4 p-3 rounded-lg border" style={{ background: 'var(--bg-surface)', borderColor: 'var(--border-subtle)' }}>
           <input
             value={newStepTitle}
+            maxLength={20}
             onChange={(e) => setNewStepTitle(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleAddNewStep()}
             placeholder="Add New Step"
-            style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', fontSize: 14, color: 'var(--text-primary)' }}
+            style={{ flex: 1, minWidth: 0, background: 'transparent', border: 'none', outline: 'none', fontSize: 14, color: 'var(--text-primary)' }}
           />
-          <button style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 12px', borderRadius: '6px', background: 'var(--bg-canvas)', border: '1px solid var(--border-subtle)', fontSize: 12, color: 'var(--text-secondary)' }}>
-            Link <Link2 size={12} />
-          </button>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-            <input
-              type="number"
-              value={newStepDuration}
-              onChange={(e) => setNewStepDuration(e.target.value)}
-              style={{ width: 40, background: 'transparent', border: 'none', outline: 'none', fontSize: 14, color: 'var(--text-primary)', textAlign: 'center' }}
-            />
-            <span style={{ fontSize: 14, color: 'var(--text-secondary)' }}>m</span>
+          <div className="flex items-center gap-3 justify-between sm:justify-start">
+            <button style={{ flexShrink: 0, display: 'flex', alignItems: 'center', gap: 4, padding: '6px 12px', borderRadius: '6px', background: 'var(--bg-canvas)', border: '1px solid var(--border-subtle)', fontSize: 12, color: 'var(--text-secondary)' }}>
+              Link <Link2 size={12} />
+            </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
+              <input
+                type="number"
+                value={newStepDuration}
+                onChange={(e) => setNewStepDuration(e.target.value)}
+                style={{ width: 40, background: 'transparent', border: 'none', outline: 'none', fontSize: 14, color: 'var(--text-primary)', textAlign: 'center' }}
+              />
+              <span style={{ fontSize: 14, color: 'var(--text-secondary)' }}>m</span>
+            </div>
+            <button onClick={handleAddNewStep} style={{ flexShrink: 0, width: 32, height: 32, background: '#DBEAFE', color: '#1E40AF', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none' }}>
+              <Plus size={18} />
+            </button>
           </div>
-          <button onClick={handleAddNewStep} style={{ width: 32, height: 32, background: '#DBEAFE', color: '#1E40AF', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none' }}>
-            <Plus size={18} />
-          </button>
         </div>
 
         <div className="flex flex-col gap-3">
           {steps.map((step, idx) => (
             <div key={step.id} style={{ background: 'var(--bg-surface-elevated)', border: '1px solid var(--border-subtle)', borderRadius: '8px', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
-              <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: 'var(--text-secondary)' }}>
+              <div style={{ flexShrink: 0, width: 24, height: 24, borderRadius: '50%', background: 'var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: 'var(--text-secondary)' }}>
                 {idx + 1}
               </div>
-              <span style={{ flex: 1, fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>
+              <span className="truncate" style={{ flex: 1, fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>
                 {step.title}
               </span>
-              <div style={{ padding: '4px 8px', borderRadius: '12px', background: 'var(--border-subtle)', fontSize: 10, fontWeight: 700, color: 'var(--text-secondary)' }}>
+              <div style={{ flexShrink: 0, padding: '4px 8px', borderRadius: '12px', background: 'var(--border-subtle)', fontSize: 10, fontWeight: 700, color: 'var(--text-secondary)' }}>
                 {step.durationSeconds / 60}m
               </div>
+              <button 
+                onClick={() => setSteps(steps.filter(s => s.id !== step.id))}
+                style={{ flexShrink: 0, width: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--danger-default)', opacity: 0.6, background: 'transparent', border: 'none' }}
+                className="hover:opacity-100 hover:bg-[var(--danger-surface)] rounded transition-all"
+              >
+                <Trash2 size={14} />
+              </button>
             </div>
           ))}
         </div>
