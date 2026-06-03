@@ -22,7 +22,6 @@ import {
   SortableContext,
   useSortable,
   verticalListSortingStrategy,
-  arrayMove,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import {
@@ -41,9 +40,6 @@ import {
   ChevronDown,
   Trash2,
   List,
-  Layers,
-  PlusCircle,
-  Music,
   Library,
 } from 'lucide-react';
 import { playSound } from '../../utils/sounds';
@@ -54,11 +50,13 @@ function SortableStepItem({
   index,
   isActive,
   isPast,
+  onRemove,
 }: {
   step: RoutineStep;
   index: number;
   isActive: boolean;
   isPast: boolean;
+  onRemove?: () => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: `step-${step.id}`,
@@ -88,11 +86,18 @@ function SortableStepItem({
           <h4 className="font-bold text-[var(--text-primary)] text-base leading-tight mb-1">
             {step.title}
           </h4>
-          <div className="text-[10px] font-mono text-[var(--text-secondary)] flex items-center gap-2">
-            <span {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing p-1 -ml-1 text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]">
-              <GripVertical size={14} />
-            </span>
-            {Math.round(step.durationSeconds / 60)} min
+          <div className="text-[10px] font-mono text-[var(--text-secondary)] flex items-center justify-between mt-2">
+            <div className="flex items-center gap-2">
+              <span {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing p-1 -ml-1 text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]">
+                <GripVertical size={14} />
+              </span>
+              {Math.round(step.durationSeconds / 60)} min
+            </div>
+            {onRemove && (
+              <button onClick={(e) => { e.stopPropagation(); onRemove(); }} className="text-[var(--text-tertiary)] hover:text-rose-500 transition-colors p-1 pointer-events-auto" title="Remove step">
+                 <Trash2 size={14} />
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -126,27 +131,20 @@ function SortableStepItem({
           {Math.round(step.durationSeconds / 60)} min
         </div>
       </div>
+      {!isPast && onRemove && (
+        <button onClick={(e) => { e.stopPropagation(); onRemove(); }} className="shrink-0 p-1 text-[var(--text-tertiary)] hover:text-rose-500 transition-colors pointer-events-auto" title="Remove step">
+          <Trash2 size={16} />
+        </button>
+      )}
       {isPast && <CheckCircle2 size={18} className="shrink-0" />}
     </div>
   );
 }
 
-// --- Draggable Library Item ---
-function DraggableLibraryItem({ id, title, duration, type, color }: { id: string; title: string; duration: number; type: 'task' | 'habit'; color?: string }) {
-  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
-    id: `lib-${id}`,
-    data: { type: 'library', id, libType: type },
-  });
-
+// --- Library Item ---
+function LibraryItem({ id, title, duration, type, color, onAdd }: { id: string; title: string; duration: number; type: 'task' | 'habit'; color?: string; onAdd: () => void; }) {
   return (
-    <div
-      ref={setNodeRef}
-      {...attributes}
-      {...listeners}
-      className={`bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] p-3 rounded-xl text-xs flex items-center gap-2 cursor-grab active:cursor-grabbing touch-none shadow-sm ${
-        isDragging ? 'opacity-50' : 'opacity-100 hover:border-violet-500/40'
-      }`}
-    >
+    <div className="bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] p-3 rounded-xl text-xs flex items-center gap-2 shadow-sm hover:border-violet-500/40 transition-colors">
       {type === 'habit' && color ? (
         <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: color }} />
       ) : (
@@ -154,6 +152,9 @@ function DraggableLibraryItem({ id, title, duration, type, color }: { id: string
       )}
       <div className="truncate font-bold text-[var(--text-primary)] flex-1">{title}</div>
       <div className="text-[10px] text-[var(--text-tertiary)] font-mono">{duration}m</div>
+      <button onClick={onAdd} className="shrink-0 p-1.5 ml-1 bg-[var(--text-secondary)] text-[var(--bg-app)] hover:bg-violet-500 hover:text-white rounded-md transition-all shadow-sm">
+        <Plus size={14} />
+      </button>
     </div>
   );
 }
@@ -226,7 +227,7 @@ export const RoutinePlayer: React.FC = () => {
     useSensor(TouchSensor, { activationConstraint: { delay: 100, tolerance: 8 } })
   );
 
-  const { setNodeRef: setTrashRef, isOver: isTrashOver } = useDroppable({ id: 'trash-zone' });
+
   const { setNodeRef: setQueueRef } = useDroppable({ id: 'queue-zone' });
 
   if (!activeRoutine) return null;
@@ -289,6 +290,24 @@ export const RoutinePlayer: React.FC = () => {
     
     if (over.id === 'trash-zone' && active.data.current?.type === 'step') {
       handleRemoveStep(active.data.current.index);
+    }
+  };
+
+  const handleAddFromLibrary = (libType: 'task' | 'habit', libId: string) => {
+    let newStep: RoutineStep | null = null;
+    if (libType === 'task') {
+      const task = tasks.find((t) => t.id === libId);
+      if (task) {
+        newStep = { id: `inserted-${Date.now()}`, title: task.title, durationSeconds: (task.duration || 30) * 60, linkedTaskId: task.id };
+      }
+    } else if (libType === 'habit') {
+      const habit = habits.find((h) => h.id === libId);
+      if (habit) {
+        newStep = { id: `inserted-${Date.now()}`, title: habit.title, durationSeconds: habit.goal.type === 'duration' ? habit.goal.target * 60 : 300, linkedHabitId: habit.id };
+      }
+    }
+    if (newStep) {
+      handleInsertStep(newStep, steps.length);
     }
   };
 
@@ -379,7 +398,7 @@ export const RoutinePlayer: React.FC = () => {
                 <div ref={setQueueRef} className="space-y-1 pb-20">
                    <SortableContext items={steps.map(s => `step-${s.id}`)} strategy={verticalListSortingStrategy}>
                      {steps.map((step, idx) => (
-                       <SortableStepItem key={step.id} step={step} index={idx} isActive={idx === currentStepIndex} isPast={idx < currentStepIndex} />
+                       <SortableStepItem key={step.id} step={step} index={idx} isActive={idx === currentStepIndex} isPast={idx < currentStepIndex} onRemove={() => handleRemoveStep(idx)} />
                      ))}
                    </SortableContext>
                 </div>
@@ -389,7 +408,7 @@ export const RoutinePlayer: React.FC = () => {
                     <h4 className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase mb-3 font-mono tracking-wider ml-1">Unscheduled Tasks</h4>
                     <div className="space-y-2">
                       {tasks.filter((t) => !t.isCompleted && !t.deletedAt).map((task) => (
-                        <DraggableLibraryItem key={task.id} id={task.id} title={task.title} duration={task.duration || 30} type="task" />
+                        <LibraryItem key={task.id} id={task.id} title={task.title} duration={task.duration || 30} type="task" onAdd={() => handleAddFromLibrary('task', task.id)} />
                       ))}
                     </div>
                   </div>
@@ -397,7 +416,7 @@ export const RoutinePlayer: React.FC = () => {
                     <h4 className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase mb-3 font-mono tracking-wider ml-1">Habits</h4>
                     <div className="space-y-2">
                       {habits.filter((h) => !h.deletedAt).map((habit) => (
-                        <DraggableLibraryItem key={habit.id} id={habit.id} title={habit.title} duration={habit.goal.type === 'duration' ? habit.goal.target : 5} type="habit" color={habit.color} />
+                        <LibraryItem key={habit.id} id={habit.id} title={habit.title} duration={habit.goal.type === 'duration' ? habit.goal.target : 5} type="habit" color={habit.color} onAdd={() => handleAddFromLibrary('habit', habit.id)} />
                       ))}
                     </div>
                   </div>
@@ -434,7 +453,7 @@ export const RoutinePlayer: React.FC = () => {
             {mobileSheetView === 'queue' ? (
               <SortableContext items={steps.map(s => `step-${s.id}`)} strategy={verticalListSortingStrategy}>
                  {steps.map((step, idx) => (
-                   <SortableStepItem key={step.id} step={step} index={idx} isActive={idx === currentStepIndex} isPast={idx < currentStepIndex} />
+                   <SortableStepItem key={step.id} step={step} index={idx} isActive={idx === currentStepIndex} isPast={idx < currentStepIndex} onRemove={() => handleRemoveStep(idx)} />
                  ))}
               </SortableContext>
             ) : (
@@ -443,7 +462,7 @@ export const RoutinePlayer: React.FC = () => {
                   <h4 className="text-xs font-bold text-[var(--text-tertiary)] uppercase mb-4 font-mono tracking-wider ml-1">Tasks</h4>
                   <div className="space-y-3">
                     {tasks.filter((t) => !t.isCompleted && !t.deletedAt).map((task) => (
-                      <DraggableLibraryItem key={task.id} id={task.id} title={task.title} duration={task.duration || 30} type="task" />
+                      <LibraryItem key={task.id} id={task.id} title={task.title} duration={task.duration || 30} type="task" onAdd={() => handleAddFromLibrary('task', task.id)} />
                     ))}
                   </div>
                 </div>
@@ -451,7 +470,7 @@ export const RoutinePlayer: React.FC = () => {
                   <h4 className="text-xs font-bold text-[var(--text-tertiary)] uppercase mb-4 font-mono tracking-wider ml-1">Habits</h4>
                   <div className="space-y-3">
                     {habits.filter((h) => !h.deletedAt).map((habit) => (
-                      <DraggableLibraryItem key={habit.id} id={habit.id} title={habit.title} duration={habit.goal.type === 'duration' ? habit.goal.target : 5} type="habit" color={habit.color} />
+                      <LibraryItem key={habit.id} id={habit.id} title={habit.title} duration={habit.goal.type === 'duration' ? habit.goal.target : 5} type="habit" color={habit.color} onAdd={() => handleAddFromLibrary('habit', habit.id)} />
                     ))}
                   </div>
                 </div>
@@ -460,14 +479,6 @@ export const RoutinePlayer: React.FC = () => {
           </div>
         </div>
 
-        {/* Trash Zone */}
-        {activeDragItem?.type === 'step' && (
-          <div ref={setTrashRef} className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-[110] px-8 py-4 rounded-2xl flex items-center gap-3 transition-all duration-300 backdrop-blur-xl border shadow-2xl ${isTrashOver ? 'bg-rose-500/90 border-rose-400 text-white scale-110' : 'bg-[var(--bg-surface)]/80 border-[var(--border-strong)] text-[var(--text-secondary)]'}`}>
-             <Trash2 size={24} className={isTrashOver ? 'animate-bounce' : ''} />
-             <span className="font-bold text-sm tracking-wide">Drag here to remove</span>
-          </div>
-        )}
-
         {/* Drag Overlay */}
         <DragOverlay>
           {activeDragItem?.type === 'step' ? (
@@ -475,10 +486,6 @@ export const RoutinePlayer: React.FC = () => {
               <GripVertical size={16} className="text-[var(--text-tertiary)]" />
               <div className="font-bold text-sm text-[var(--text-primary)]">{activeDragItem.step.title}</div>
             </div>
-          ) : activeDragItem?.type === 'library' ? (
-             <div className="p-3 rounded-xl bg-[var(--bg-surface-elevated)] border-2 border-violet-500 shadow-2xl flex items-center gap-2 opacity-90 scale-105 rotate-3">
-               <div className="font-bold text-xs text-[var(--text-primary)]">{activeDragItem.id}</div>
-             </div>
           ) : null}
         </DragOverlay>
 
