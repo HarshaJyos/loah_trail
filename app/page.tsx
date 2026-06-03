@@ -29,7 +29,7 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="w-full min-h-screen bg-[var(--bg-app)] text-[var(--text-primary)] font-sans selection:bg-[var(--brand-primary-muted)] overflow-y-auto overflow-x-hidden relative">
+    <div className="w-full h-full bg-[var(--bg-app)] text-[var(--text-primary)] font-sans selection:bg-[var(--brand-primary-muted)] overflow-y-auto overflow-x-hidden relative">
       {/* Background Glow Effects */}
       <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-[var(--brand-primary)] rounded-full blur-[120px] opacity-[0.15] pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-[var(--cat-learning)] rounded-full blur-[120px] opacity-[0.1] pointer-events-none" />
