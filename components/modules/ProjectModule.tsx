@@ -614,10 +614,8 @@ const ProjectDetailView: React.FC<{
             <div className="flex items-center gap-6 mt-6 text-xs font-bold text-[var(--text-secondary)] font-mono uppercase tracking-wider">
               <div className="flex items-center gap-2">
                 <Calendar size={16} className="text-violet-400" />
-                <span>
-                  {new Date(project.startDate).toLocaleDateString()} -{' '}
-                  {new Date(project.dueDate).toLocaleDateString()}
-                </span>
+                  {project.startDate ? new Date(project.startDate).toLocaleDateString() : 'Ongoing'} 
+                  {project.dueDate ? ` - ${new Date(project.dueDate).toLocaleDateString()}` : ''}
               </div>
               <div className="flex items-center gap-2">
                 <Clock size={16} className="text-violet-400" />

@@ -74,12 +74,10 @@ const JournalCard: React.FC<{
         >
           {entry.title}
         </h4>
-        <p
-          style={{ fontSize: 11, color: '#64748B', lineHeight: 1.5 }}
-          className="line-clamp-3 whitespace-pre-wrap"
-        >
-          {entry.content}
-        </p>
+        <div
+            style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 8, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
+            dangerouslySetInnerHTML={{ __html: entry.content }}
+          />
 
         {/* Footer */}
         <div

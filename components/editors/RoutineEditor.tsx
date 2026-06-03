@@ -10,13 +10,32 @@ export const RoutineEditor: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const onAddRoutine = useAppStore((s) => s.handleAddRoutine);
+  const onUpdateRoutine = useAppStore((s) => s.handleUpdateRoutine);
+  const routines = useAppStore((s) => s.routines);
   const onDeleteDump = useAppStore((s) => s.handleDeleteDump);
+
+  const routineId = searchParams?.get('id');
+  const existingRoutine = React.useMemo(() => routines.find(r => r.id === routineId), [routines, routineId]);
 
   const [title, setTitle] = React.useState(searchParams?.get('title') || '');
   const [color, setColor] = React.useState('var(--cat-meditation)');
-  const deleteDumpId = searchParams?.get('deleteDumpId');
-
   const [steps, setSteps] = React.useState([{ id: '1', title: 'Step 1', duration: 300 }]);
+
+  React.useEffect(() => {
+    if (existingRoutine) {
+      setTitle(existingRoutine.title);
+      setColor(existingRoutine.color || 'var(--cat-meditation)');
+      if (existingRoutine.steps && existingRoutine.steps.length > 0) {
+        setSteps(existingRoutine.steps.map(s => ({
+          id: s.id,
+          title: s.title,
+          duration: s.durationSeconds
+        })));
+      }
+    }
+  }, [existingRoutine]);
+
+  const deleteDumpId = searchParams?.get('deleteDumpId');
 
   const handleSave = () => {
     if (!title.trim()) {
@@ -24,13 +43,17 @@ export const RoutineEditor: React.FC = () => {
       return;
     }
     const newRoutine: Routine = {
-      id: Date.now().toString(),
+      id: existingRoutine ? existingRoutine.id : Date.now().toString(),
       title: title.trim(),
       color,
-      type: 'repeatable',
+      type: existingRoutine ? existingRoutine.type : 'repeatable',
       steps: steps.map(s => ({ id: s.id, title: s.title, durationSeconds: s.duration })),
     };
-    onAddRoutine(newRoutine);
+    if (existingRoutine) {
+      onUpdateRoutine(newRoutine);
+    } else {
+      onAddRoutine(newRoutine);
+    }
     if (deleteDumpId) {
       onDeleteDump(deleteDumpId);
     }
@@ -63,7 +86,9 @@ export const RoutineEditor: React.FC = () => {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <Route size={18} color={color} />
-          <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>New Routine</span>
+          <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>
+            {existingRoutine ? 'Edit Routine' : 'New Routine'}
+          </span>
         </div>
 
         <div style={{ display: 'flex', gap: 12 }}>

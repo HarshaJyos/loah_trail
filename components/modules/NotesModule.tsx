@@ -159,12 +159,10 @@ export const NoteCard: React.FC<{
               )}
             </div>
           ) : (
-            <p
-              style={{ fontSize: 12, color: '#64748B', lineHeight: 1.5 }}
-              className="line-clamp-4 whitespace-pre-wrap"
-            >
-              {note.content}
-            </p>
+            <div
+              style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 8, flex: 1, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
+              dangerouslySetInnerHTML={{ __html: note.content }}
+            />
           )}
         </div>
 

@@ -471,6 +471,33 @@ export const TaskModule: React.FC = () => {
                 </p>
               )}
 
+              {task.subtasks && task.subtasks.length > 0 && (
+                <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  {task.subtasks.map((sub, idx) => (
+                    <div key={sub.id || idx} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const updatedSubtasks = [...task.subtasks!];
+                          updatedSubtasks[idx] = { ...updatedSubtasks[idx], isCompleted: !updatedSubtasks[idx].isCompleted };
+                          onUpdateTask({ ...task, subtasks: updatedSubtasks });
+                        }}
+                        style={{
+                          width: 14, height: 14, borderRadius: 3, border: `1px solid ${sub.isCompleted ? 'var(--brand-primary)' : 'var(--text-tertiary)'}`,
+                          background: sub.isCompleted ? 'var(--brand-primary)' : 'transparent',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'
+                        }}
+                      >
+                        {sub.isCompleted && <span style={{ color: 'var(--bg-app)', fontSize: 8, fontWeight: 900 }}>✓</span>}
+                      </button>
+                      <span style={{ fontSize: 11, color: sub.isCompleted ? 'var(--text-tertiary)' : 'var(--text-secondary)', textDecoration: sub.isCompleted ? 'line-through' : 'none' }}>
+                        {sub.title}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
               {/* Footer badges */}
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, marginTop: 8, alignItems: 'center' }}>
                 {task.startTime && (

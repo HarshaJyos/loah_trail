@@ -10,11 +10,33 @@ export const HabitEditor: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const onAddHabit = useAppStore((s) => s.handleAddHabit);
+  const onUpdateHabit = useAppStore((s) => s.handleUpdateHabit);
+  const habits = useAppStore((s) => s.habits);
   const onDeleteDump = useAppStore((s) => s.handleDeleteDump);
+
+  const habitId = searchParams?.get('id');
+  const existingHabit = React.useMemo(() => habits.find(h => h.id === habitId), [habits, habitId]);
 
   const [title, setTitle] = React.useState(searchParams?.get('title') || '');
   const [description, setDescription] = React.useState(searchParams?.get('desc') || '');
   const [color, setColor] = React.useState('var(--cat-learning)');
+  const [freqType, setFreqType] = React.useState<'daily' | 'weekly' | 'monthly'>('daily');
+  const [goalTarget, setGoalTarget] = React.useState('1');
+  const [goalUnit, setGoalUnit] = React.useState('times');
+
+  React.useEffect(() => {
+    if (existingHabit) {
+      setTitle(existingHabit.title);
+      setDescription(existingHabit.description || '');
+      setColor(existingHabit.color || 'var(--cat-learning)');
+      if (existingHabit.frequency) setFreqType(existingHabit.frequency.type);
+      if (existingHabit.goal) {
+        setGoalTarget(existingHabit.goal.target.toString());
+        setGoalUnit(existingHabit.goal.unit);
+      }
+    }
+  }, [existingHabit]);
+
   const deleteDumpId = searchParams?.get('deleteDumpId');
 
   const handleSave = () => {
@@ -23,18 +45,22 @@ export const HabitEditor: React.FC = () => {
       return;
     }
     const newHabit: Habit = {
-      id: Date.now().toString(),
+      id: existingHabit ? existingHabit.id : Date.now().toString(),
       title: title.trim(),
       description,
       color,
-      type: 'simple',
-      frequency: { type: 'daily' },
-      goal: { type: 'check', target: 1, unit: 'times' },
-      history: {},
-      streak: 0,
-      createdAt: Date.now(),
+      type: existingHabit ? existingHabit.type : 'simple',
+      frequency: { type: freqType },
+      goal: { type: 'check', target: parseFloat(goalTarget) || 1, unit: goalUnit || 'times' },
+      history: existingHabit ? existingHabit.history : {},
+      streak: existingHabit ? existingHabit.streak : 0,
+      createdAt: existingHabit ? existingHabit.createdAt : Date.now(),
     };
-    onAddHabit(newHabit);
+    if (existingHabit) {
+      onUpdateHabit(newHabit);
+    } else {
+      onAddHabit(newHabit);
+    }
     if (deleteDumpId) {
       onDeleteDump(deleteDumpId);
     }
@@ -63,7 +89,9 @@ export const HabitEditor: React.FC = () => {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <Repeat size={18} color={color} />
-          <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>New Habit</span>
+          <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>
+            {existingHabit ? 'Edit Habit' : 'New Habit'}
+          </span>
         </div>
 
         <div style={{ display: 'flex', gap: 12 }}>
@@ -99,24 +127,78 @@ export const HabitEditor: React.FC = () => {
           />
         </div>
 
-        <div className="loah-card" style={{ padding: '24px' }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 16 }}>
-            Habit Color
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div className="loah-card" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 12 }}>
+                Frequency
+              </div>
+              <div className="flex gap-2">
+                {(['daily', 'weekly', 'monthly'] as const).map((f) => (
+                  <button
+                    key={f}
+                    onClick={() => setFreqType(f)}
+                    style={{
+                      flex: 1, padding: '10px', borderRadius: '12px',
+                      border: `1px solid ${freqType === f ? 'var(--brand-primary)' : 'var(--border-subtle)'}`,
+                      background: freqType === f ? 'var(--brand-primary-muted)' : 'var(--bg-surface-elevated)',
+                      color: freqType === f ? 'var(--brand-primary)' : 'var(--text-secondary)',
+                      fontWeight: 600, fontSize: '13px', textTransform: 'capitalize',
+                      transition: 'all 0.2s',
+                    }}
+                  >
+                    {f}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 12, marginTop: 16 }}>
+                  Target Goal
+                </div>
+                <input
+                  type="number"
+                  value={goalTarget}
+                  onChange={(e) => setGoalTarget(e.target.value)}
+                  className="loah-input"
+                  placeholder="e.g. 1"
+                />
+              </div>
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 12, marginTop: 16 }}>
+                  Unit
+                </div>
+                <input
+                  value={goalUnit}
+                  onChange={(e) => setGoalUnit(e.target.value)}
+                  className="loah-input"
+                  placeholder="e.g. times, mins"
+                />
+              </div>
+            </div>
           </div>
-          <div className="flex gap-4">
-            {colors.map((c) => (
-              <button
-                key={c}
-                onClick={() => setColor(c)}
-                style={{
-                  width: '40px', height: '40px', borderRadius: '12px',
-                  background: c,
-                  border: color === c ? '3px solid var(--text-primary)' : '3px solid transparent',
-                  transition: 'all 0.2s ease',
-                  opacity: color === c ? 1 : 0.6,
-                }}
-              />
-            ))}
+
+          <div className="loah-card" style={{ padding: '24px' }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 16 }}>
+              Habit Color
+            </div>
+            <div className="flex gap-4 flex-wrap">
+              {colors.map((c) => (
+                <button
+                  key={c}
+                  onClick={() => setColor(c)}
+                  style={{
+                    width: '40px', height: '40px', borderRadius: '12px',
+                    background: c,
+                    border: color === c ? '3px solid var(--text-primary)' : '3px solid transparent',
+                    transition: 'all 0.2s ease',
+                    opacity: color === c ? 1 : 0.6,
+                  }}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>
