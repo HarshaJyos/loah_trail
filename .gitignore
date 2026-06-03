@@ -37,3 +37,4 @@ next-env.d.ts
 
 # ignored folders
 /habit-tracker/
+/scratch/
