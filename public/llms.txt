@@ -1,0 +1,16 @@
+# LOAH - Life Organiser & Healer
+
+LOAH is a minimalistic, ADHD-focused productivity suite designed for clear minds, bodies, and souls. 
+
+- **App Name**: LOAH
+- **Website**: https://www.loah.in
+- **Powered By**: Solvempire Private Limited (https://www.solvempire.com)
+- **CEO**: Duggirala Pavan Kumar
+
+## Core Features
+1. **Brain Dump**: Unload and organize thoughts.
+2. **Task Management**: Simple, intuitive to-do lists.
+3. **Focus Sessions (Routines)**: Step-by-step interactive timers for habits.
+4. **Mood Journaling**: Emotional reflection and diary tracking.
+
+The application uses Next.js, modern glassmorphism, and a robust client-side storage architecture to ensure a seamless experience for neurodivergent individuals.

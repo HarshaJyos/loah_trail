@@ -15,8 +15,29 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "LOAH | Life Organiser & Healer",
+  metadataBase: new URL("https://www.loah.in"),
+  title: {
+    default: "LOAH | Life Organiser & Healer",
+    template: "%s | LOAH",
+  },
   description: "An ADHD-focused productivity suite and healing sanctuary. Develop routines, manage tasks, log mood, and grow in harmony.",
+  authors: [{ name: "Duggirala Pavan Kumar" }, { name: "Solvempire Private Limited", url: "https://www.solvempire.com" }],
+  creator: "Duggirala Pavan Kumar",
+  publisher: "Solvempire Private Limited",
+  keywords: ["ADHD", "Productivity", "To-do", "Routine", "Habit Tracker", "Journaling", "Mental Health", "LOAH", "Life Organiser"],
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://www.loah.in",
+    siteName: "LOAH",
+    title: "LOAH | Life Organiser & Healer",
+    description: "An ADHD-focused productivity suite and healing sanctuary.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "LOAH | Life Organiser & Healer",
+    description: "An ADHD-focused productivity suite and healing sanctuary.",
+  },
 };
 
 export default function RootLayout({
