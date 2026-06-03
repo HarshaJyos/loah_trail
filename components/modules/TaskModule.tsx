@@ -32,6 +32,8 @@ import Input from '../ui/Input';
 import Textarea from '../ui/Textarea';
 import Modal from '../ui/Modal';
 
+import { useRouter } from 'next/navigation';
+
 type GroupingMode = 'date' | 'priority' | 'project';
 type SortMode = 'time' | 'priority' | 'alpha';
 type ViewMode = 'list' | 'board';
@@ -50,6 +52,7 @@ const TASK_COLORS = [
 ];
 
 export const TaskModule: React.FC = () => {
+  const router = useRouter();
   const tasks = useAppStore((state) => state.tasks);
   const projects = useAppStore((state) => state.projects);
   const convertingDump = useAppStore((state) => state.convertingDump);
@@ -66,7 +69,7 @@ export const TaskModule: React.FC = () => {
   const onConvertComplete = useAppStore((state) => state.handleConvertComplete);
   const onAutoTriggerHandled = () => useAppStore.getState().setTriggerTaskModal(false);
 
-  // Modal State
+  // Modal State (kept legacy definitions to avoid compile/type breaks, but unused now)
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [editingTaskId, setEditingTaskId] = React.useState<string | null>(null);
 
@@ -122,68 +125,27 @@ export const TaskModule: React.FC = () => {
 
   React.useEffect(() => {
     if (convertingDump) {
-      setTitle(convertingDump.title);
-      setDescription(convertingDump.description);
-      setEditingTaskId(null);
-      setPriority('Medium');
-      setCategory('Personal');
-      setDuration('30');
-      setProjectId('');
-      setSubtasks([]);
-      setSelectedColor(TASK_COLORS[0]);
-      setScheduledDate('');
-      setScheduledTime('');
-      setIsModalOpen(true);
+      router.push('/tasks/new' as any);
     }
   }, [convertingDump]);
 
   React.useEffect(() => {
     if (autoTrigger) {
-      openModal();
+      router.push('/tasks/new' as any);
       onAutoTriggerHandled();
     }
   }, [autoTrigger]);
 
   const openModal = (task?: Task, defaultDate?: string) => {
     if (task) {
-      setEditingTaskId(task.id);
-      setTitle(task.title);
-      setDescription(task.description || '');
-      setPriority(task.priority);
-      setCategory(task.category);
-      setDuration(task.duration?.toString() || '30');
-      setProjectId(task.projectId || '');
-      setSubtasks(task.subtasks || []);
-      setSelectedColor(task.color || TASK_COLORS[0]);
-      if (task.startTime) {
-        const d = new Date(task.startTime);
-        setScheduledDate(d.toISOString().split('T')[0]);
-        setScheduledTime(
-          d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
-        );
-      } else {
-        setScheduledDate('');
-        setScheduledTime('');
-      }
-      if (task.recurrence) {
-        setIsRecurring(true);
-        setRecurrenceType(task.recurrence.type);
-        setRecurrenceInterval(task.recurrence.interval);
-        setRecurrenceInstances(task.recurrence.instancesToGenerate || 5);
-        setRecurrenceDays(task.recurrence.daysOfWeek || []);
-      } else {
-        setIsRecurring(false);
-      }
-      setReminders(task.reminders || []);
+      router.push(`/tasks/edit?id=${task.id}` as any);
     } else {
-      setEditingTaskId(null);
-      resetForm();
-      if (defaultDate) setScheduledDate(defaultDate);
-      setSelectedColor(
-        TASK_COLORS[Math.floor(Math.random() * TASK_COLORS.length)]
-      );
+      if (defaultDate) {
+        router.push(`/tasks/new?date=${defaultDate}` as any);
+      } else {
+        router.push(`/tasks/new` as any);
+      }
     }
-    setIsModalOpen(true);
   };
 
   const closeModal = () => {

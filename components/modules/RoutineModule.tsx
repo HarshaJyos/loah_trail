@@ -30,7 +30,10 @@ import Badge from '../ui/Badge';
 import Input from '../ui/Input';
 import Modal from '../ui/Modal';
 
+import { useRouter } from 'next/navigation';
+
 export const RoutineModule: React.FC = () => {
+  const router = useRouter();
   const routines = useAppStore((state) => state.routines);
   const habits = useAppStore((state) => state.habits);
   const pausedRoutines = useAppStore((state) => state.pausedRoutines);
@@ -46,6 +49,7 @@ export const RoutineModule: React.FC = () => {
   const onUnarchiveRoutine = (id: string) => useAppStore.getState().handleUnarchive(id, 'routine');
   const onReorder = useAppStore((state) => state.handleReorderRoutines);
 
+  // Legacy modal states kept to avoid breakages but unused now
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [editingId, setEditingId] = React.useState<string | null>(null);
 
@@ -79,19 +83,10 @@ export const RoutineModule: React.FC = () => {
 
   const openEditor = (routine?: Routine) => {
     if (routine) {
-      setEditingId(routine.id);
-      setNewRoutineTitle(routine.title);
-      setNewSteps([...routine.steps]);
-      setRoutineType(routine.type);
-      setReminders(routine.reminders || []);
+      router.push(`/routines/edit?id=${routine.id}` as any);
     } else {
-      setEditingId(null);
-      setNewRoutineTitle('');
-      setNewSteps([]);
-      setRoutineType('repeatable');
-      setReminders([]);
+      router.push(`/routines/new` as any);
     }
-    setIsModalOpen(true);
   };
 
   const closeModal = () => {

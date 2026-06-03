@@ -27,6 +27,7 @@ import Card from '../ui/Card';
 import Button from '../ui/Button';
 import Badge from '../ui/Badge';
 import Modal from '../ui/Modal';
+import { useRouter } from 'next/navigation';
 
 const PROJECT_COLORS = [
   '#3b82f6',
@@ -63,21 +64,14 @@ export const ProjectModule: React.FC = () => {
   const onStartTask = useAppStore((state) => state.startTaskFocus);
   const onToggleTask = useAppStore((state) => state.toggleTask);
 
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const router = useRouter();
   const [viewingProjectId, setViewingProjectId] = React.useState<string | null>(null);
   const [editingProjectId, setEditingProjectId] = React.useState<string | null>(null);
   const [showArchived, setShowArchived] = React.useState(false);
   const [statusFilter, setStatusFilter] = React.useState<'all' | 'active' | 'on-hold' | 'completed'>('active');
   const [draggedProjectId, setDraggedProjectId] = React.useState<string | null>(null);
 
-  // Form State
-  const [title, setTitle] = React.useState('');
-  const [description, setDescription] = React.useState('');
-  const [startDate, setStartDate] = React.useState('');
-  const [dueDate, setDueDate] = React.useState('');
-  const [color, setColor] = React.useState(PROJECT_COLORS[0]);
-  const [status, setStatus] = React.useState<'active' | 'completed' | 'on-hold'>('active');
-  const [priority, setPriority] = React.useState<Priority>('Medium');
+  // Form State Removed
 
   const activeProjects = projects.filter((p) => !p.deletedAt && !p.archivedAt);
   const archivedProjects = projects.filter((p) => !p.deletedAt && p.archivedAt);
@@ -96,90 +90,21 @@ export const ProjectModule: React.FC = () => {
 
   React.useEffect(() => {
     if (convertingDump) {
-      setTitle(convertingDump.title);
-      setDescription(convertingDump.description);
-      setStartDate(new Date().toISOString().split('T')[0]);
-      setDueDate('');
-      setEditingProjectId(null);
-      setColor(PROJECT_COLORS[0]);
-      setStatus('active');
-      setPriority('Medium');
-      setIsModalOpen(true);
+      router.push('/projects/new' as any);
     }
-  }, [convertingDump]);
+  }, [convertingDump, router]);
 
-  const resetForm = () => {
-    setTitle('');
-    setDescription('');
-    setStartDate('');
-    setDueDate('');
-    setColor(PROJECT_COLORS[0]);
-    setStatus('active');
-    setPriority('Medium');
-    setEditingProjectId(null);
-  };
+  // resetForm removed
 
   const openModal = (project?: Project) => {
     if (project) {
-      setEditingProjectId(project.id);
-      setTitle(project.title);
-      setDescription(project.description);
-      setStartDate(new Date(project.startDate).toISOString().split('T')[0]);
-      setDueDate(new Date(project.dueDate).toISOString().split('T')[0]);
-      setColor(project.color);
-      setStatus(project.status);
-      setPriority(project.priority || 'Medium');
+      router.push(`/projects/edit?id=${project.id}` as any);
     } else {
-      resetForm();
-      setStartDate(new Date().toISOString().split('T')[0]);
+      router.push('/projects/new' as any);
     }
-    setIsModalOpen(true);
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-    resetForm();
-    onClearConvertingDump();
-  };
-
-  const handleSave = () => {
-    if (!title.trim() || !startDate || !dueDate) return;
-
-    const projectData = {
-      title,
-      description,
-      startDate: new Date(startDate).getTime(),
-      dueDate: new Date(dueDate).getTime(),
-      color,
-      status,
-      priority,
-    };
-
-    if (editingProjectId) {
-      const existing = projects.find((p) => p.id === editingProjectId);
-      if (existing) onUpdateProject({ ...existing, ...projectData });
-    } else {
-      const newProject: Project = {
-        id: Date.now().toString(),
-        createdAt: Date.now(),
-        notes: [],
-        title,
-        description,
-        startDate: new Date(startDate).getTime(),
-        dueDate: new Date(dueDate).getTime(),
-        color,
-        status,
-        priority,
-      };
-      onAddProject(newProject);
-    }
-
-    if (convertingDump) {
-      onConvertComplete();
-    }
-
-    closeModal();
-  };
+  // handleSave removed
 
   const handleTogglePin = (e: React.MouseEvent, project: Project) => {
     e.stopPropagation();
@@ -511,121 +436,7 @@ export const ProjectModule: React.FC = () => {
         )}
       </div>
 
-      {isModalOpen && (
-        <Modal
-          isOpen={isModalOpen}
-          onClose={closeModal}
-          title={editingProjectId ? 'Edit Project' : 'New Project'}
-          className="max-w-lg"
-        >
-          <div className="space-y-4">
-            <div>
-              <label className="block text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1.5 font-mono">
-                Project Title
-              </label>
-              <input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="w-full bg-[#12121a] border border-white/5 rounded-xl px-4 py-2.5 text-white placeholder-zinc-700 focus:border-violet-500/50 outline-none transition-all text-sm font-semibold"
-                placeholder="e.g. Website Redesign"
-              />
-            </div>
-            <div>
-              <label className="block text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1.5 font-mono">
-                Description
-              </label>
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="w-full bg-[#12121a] border border-white/5 rounded-xl px-4 py-2.5 text-white placeholder-zinc-700 focus:border-violet-500/50 outline-none transition-all text-sm font-semibold min-h-[80px] resize-none"
-                placeholder="Project goals, scope, etc..."
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1.5 font-mono">
-                  Priority
-                </label>
-                <select
-                  value={priority}
-                  onChange={(e) => setPriority(e.target.value as Priority)}
-                  className="w-full bg-[#12121a] border border-white/5 rounded-xl px-4 py-2.5 text-white focus:border-violet-500/50 outline-none transition-all text-sm font-semibold"
-                >
-                  <option value="High" className="bg-[#12121a]">High</option>
-                  <option value="Medium" className="bg-[#12121a]">Medium</option>
-                  <option value="Low" className="bg-[#12121a]">Low</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1.5 font-mono">
-                  Status
-                </label>
-                <select
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value as any)}
-                  className="w-full bg-[#12121a] border border-white/5 rounded-xl px-4 py-2.5 text-white focus:border-violet-500/50 outline-none transition-all text-sm font-semibold"
-                >
-                  <option value="active" className="bg-[#12121a]">Active</option>
-                  <option value="on-hold" className="bg-[#12121a]">On Hold</option>
-                  <option value="completed" className="bg-[#12121a]">Completed</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1.5 font-mono">
-                  Start Date
-                </label>
-                <input
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  className="w-full bg-[#12121a] border border-white/5 rounded-xl px-4 py-2.5 text-white focus:border-violet-500/50 outline-none transition-all text-sm font-semibold font-mono"
-                />
-              </div>
-              <div>
-                <label className="block text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1.5 font-mono">
-                  Due Date
-                </label>
-                <input
-                  type="date"
-                  value={dueDate}
-                  onChange={(e) => setDueDate(e.target.value)}
-                  className="w-full bg-[#12121a] border border-white/5 rounded-xl px-4 py-2.5 text-white focus:border-violet-500/50 outline-none transition-all text-sm font-semibold font-mono"
-                />
-              </div>
-            </div>
-            <div>
-              <label className="block text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-2 font-mono">
-                Color Theme
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {PROJECT_COLORS.map((c) => (
-                  <button
-                    key={c}
-                    onClick={() => setColor(c)}
-                    className={`w-7 h-7 rounded-full transition-transform hover:scale-110 relative ${
-                      color === c ? 'ring-2 ring-violet-500 ring-offset-2 ring-offset-[#0a0a0f]' : ''
-                    }`}
-                    style={{ backgroundColor: c }}
-                  />
-                ))}
-              </div>
-            </div>
-
-            <div className="pt-4 border-t border-white/5 flex justify-end gap-2">
-              <Button onClick={closeModal} variant="ghost">
-                Cancel
-              </Button>
-              <Button onClick={handleSave} variant="primary">
-                Save Project
-              </Button>
-            </div>
-          </div>
-        </Modal>
-      )}
+      {/* Project Create / Edit Modal Removed */}
     </div>
   );
 };

@@ -20,6 +20,7 @@ import {
 import Card from '../ui/Card';
 import Button from '../ui/Button';
 import Badge from '../ui/Badge';
+import { useRouter } from 'next/navigation';
 
 export const COLORS = [
   'transparent',
@@ -471,8 +472,7 @@ export const NotesModule: React.FC = () => {
   const onClearConvertingDump = () => useAppStore.getState().setConvertingDump(null);
   const onConvertComplete = useAppStore((state) => state.handleConvertComplete);
 
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [editingNoteId, setEditingNoteId] = React.useState<string | null>(null);
+  const router = useRouter();
   const [showArchived, setShowArchived] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState('');
 
@@ -500,45 +500,11 @@ export const NotesModule: React.FC = () => {
 
   React.useEffect(() => {
     if (convertingDump) {
-      setIsModalOpen(true);
-      setEditingNoteId(null);
+      router.push('/notes/new' as any);
     }
-  }, [convertingDump]);
+  }, [convertingDump, router]);
 
-  const handleSaveNote = (noteData: Partial<Note>) => {
-    if (editingNoteId) {
-      const existing = notes.find((n) => n.id === editingNoteId);
-      if (existing)
-        onUpdateNote({ ...existing, ...noteData, updatedAt: Date.now() });
-    } else {
-      const newNote: Note = {
-        id: Date.now().toString(),
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-        items: [],
-        images: [],
-        type: 'text',
-        isPinned: false,
-        color: 'transparent',
-        title: '',
-        content: '',
-        ...noteData,
-      };
-      onAddNote(newNote);
-    }
-
-    if (convertingDump) {
-      onConvertComplete();
-    }
-
-    closeModal();
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setEditingNoteId(null);
-    onClearConvertingDump();
-  };
+  // Save note & close modal handlers removed because editing is now handled by full page editor route
 
   const handleToggleItem = (noteId: string, itemId: string) => {
     const note = notes.find((n) => n.id === noteId);
@@ -560,18 +526,7 @@ export const NotesModule: React.FC = () => {
     onDeleteNote(id);
   };
 
-  const initialNoteForModal = React.useMemo(() => {
-    if (convertingDump) {
-      return {
-        title: convertingDump.title,
-        content: convertingDump.description,
-      };
-    }
-    if (editingNoteId) {
-      return notes.find((n) => n.id === editingNoteId);
-    }
-    return undefined;
-  }, [convertingDump, editingNoteId, notes]);
+  // initialNoteForModal removed
 
   return (
     <div className="w-full h-full p-4 md:p-8 overflow-y-auto no-scrollbar pb-32 max-w-7xl mx-auto flex flex-col">
@@ -613,8 +568,7 @@ export const NotesModule: React.FC = () => {
           </button>
           <Button
             onClick={() => {
-              setEditingNoteId(null);
-              setIsModalOpen(true);
+              router.push('/notes/new' as any);
             }}
             variant="primary"
             className="flex items-center gap-2 active:scale-95 whitespace-nowrap"
@@ -631,8 +585,7 @@ export const NotesModule: React.FC = () => {
             <NoteCard
               note={note}
               onClick={() => {
-                setEditingNoteId(note.id);
-                setIsModalOpen(true);
+                router.push(`/notes/edit?id=${note.id}` as any);
               }}
               onPin={handlePin}
               onDelete={(e) => handleDelete(e, note.id)}
@@ -651,13 +604,7 @@ export const NotesModule: React.FC = () => {
         </div>
       )}
 
-      {isModalOpen && (
-        <NoteEditorModal
-          initialNote={initialNoteForModal}
-          onSave={handleSaveNote}
-          onClose={closeModal}
-        />
-      )}
+      {/* NoteEditorModal Removed */}
     </div>
   );
 };

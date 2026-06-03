@@ -26,6 +26,7 @@ import {
 import Card from '../ui/Card';
 import Button from '../ui/Button';
 import Modal from '../ui/Modal';
+import { useRouter } from 'next/navigation';
 
 const MOODS: { id: Mood; icon: any; color: string; val: number }[] = [
   { id: 'awesome', icon: Laugh, color: 'text-emerald-500 border-emerald-500/20 bg-emerald-500/10', val: 5 },
@@ -55,13 +56,11 @@ export const JournalModule: React.FC = () => {
   const setTriggerJournalModal = useAppStore((state) => state.setTriggerJournalModal);
   const onAutoTriggerHandled = () => setTriggerJournalModal(false);
 
+  const router = useRouter();
   const [viewingEntryId, setViewingEntryId] = React.useState<string | null>(null);
   const [activeFilter, setActiveFilter] = React.useState<'all' | Mood>('all');
   const [showArchived, setShowArchived] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState('');
-
-  // Modal State
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   // Helper to get local date string YYYY-MM-DD
   const getLocalDateStr = () => {
@@ -72,15 +71,7 @@ export const JournalModule: React.FC = () => {
     return `${year}-${month}-${day}`;
   };
 
-  // Form State
-  const [title, setTitle] = React.useState('');
-  const [content, setContent] = React.useState('');
-  const [selectedMood, setSelectedMood] = React.useState<Mood>('good');
-  const [selectedImages, setSelectedImages] = React.useState<string[]>([]);
-  const [entryDate, setEntryDate] = React.useState(getLocalDateStr);
-
-  const [extractedColor, setExtractedColor] = React.useState<string>('transparent');
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  // Form State Removed
 
   // Filter entries based on deletion and archive status
   const activeEntries = entries.filter((e) => !e.deletedAt && !e.archivedAt);
@@ -88,50 +79,20 @@ export const JournalModule: React.FC = () => {
 
   const currentViewEntries = showArchived ? archivedEntries : activeEntries;
 
-  const extractColorFromImage = (imageSrc: string) => {
-    const img = new Image();
-    img.src = imageSrc;
-    img.crossOrigin = 'Anonymous';
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
-      canvas.width = 50;
-      canvas.height = 50;
-      ctx.drawImage(img, 0, 0, 50, 50);
-      const imageData = ctx.getImageData(0, 0, 50, 50).data;
-      let r = 0, g = 0, b = 0, count = 0;
-      for (let i = 0; i < imageData.length; i += 4) {
-        r += imageData[i];
-        g += imageData[i + 1];
-        b += imageData[i + 2];
-        count++;
-      }
-      r = Math.floor(r / count);
-      g = Math.floor(g / count);
-      b = Math.floor(b / count);
-      setExtractedColor(`rgba(${r}, ${g}, ${b}, 0.15)`);
-    };
-  };
+  // extractColorFromImage Removed
 
   // Handle Journal Prompt or Initial Data
   React.useEffect(() => {
     if (journalPrompt) {
-      setContent(journalPrompt);
-      setEntryDate(getLocalDateStr());
-      setIsModalOpen(true);
+      router.push(`/journal/new?prompt=${encodeURIComponent(journalPrompt)}` as any);
+      clearPrompt();
     }
   }, [journalPrompt]);
 
   // Handle Brain Dump Conversion
   React.useEffect(() => {
     if (convertingDump) {
-      setTitle(convertingDump.title);
-      setContent(convertingDump.description);
-      setEntryDate(getLocalDateStr());
-      setSelectedMood('neutral');
-      setSelectedImages([]);
-      setIsModalOpen(true);
+      router.push('/journal/new' as any);
     }
   }, [convertingDump]);
 
@@ -144,95 +105,10 @@ export const JournalModule: React.FC = () => {
   }, [autoTrigger]);
 
   const handleOpenNewEntry = () => {
-    resetForm();
-    setEntryDate(getLocalDateStr());
-    setIsModalOpen(true);
+    router.push('/journal/new' as any);
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      const newImages: string[] = [];
-      let processedCount = 0;
-
-      Array.from(files).forEach((file: File) => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          const result = reader.result as string;
-          newImages.push(result);
-          processedCount++;
-
-          if (processedCount === files.length) {
-            const updatedList = [...selectedImages, ...newImages];
-            setSelectedImages(updatedList);
-            if (updatedList.length > 0) {
-              extractColorFromImage(updatedList[0]);
-            }
-          }
-        };
-        reader.readAsDataURL(file);
-      });
-    }
-  };
-
-  const saveNewEntry = () => {
-    if (!content.trim() && !title.trim() && selectedImages.length === 0) return;
-
-    const [y, m, d] = entryDate.split('-').map(Number);
-    const selectedDateObj = new Date(y, m - 1, d);
-    const now = new Date();
-    selectedDateObj.setHours(
-      now.getHours(),
-      now.getMinutes(),
-      now.getSeconds()
-    );
-
-    const newEntry: JournalEntry = {
-      id: Date.now().toString(),
-      title: title.trim() || 'Untitled Log',
-      content,
-      mood: selectedMood,
-      tags: ['Log'],
-      images: selectedImages,
-      cardColor: selectedImages.length > 0 ? extractedColor : 'transparent',
-      textColor: '#f1f0ff',
-      createdAt: selectedDateObj.getTime(),
-    };
-
-    onAddEntry(newEntry);
-
-    if (convertingDump) {
-      onConvertComplete();
-    }
-
-    resetForm();
-    setIsModalOpen(false);
-  };
-
-  const resetForm = () => {
-    setTitle('');
-    setContent('');
-    setSelectedImages([]);
-    setExtractedColor('transparent');
-    clearPrompt();
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    resetForm();
-    onClearConvertingDump();
-  };
-
-  const removeImage = (index: number) => {
-    const newList = selectedImages.filter((_, i) => i !== index);
-    setSelectedImages(newList);
-    if (newList.length === 0) {
-      setExtractedColor('transparent');
-      if (fileInputRef.current) fileInputRef.current.value = '';
-    } else if (index === 0) {
-      extractColorFromImage(newList[0]);
-    }
-  };
+  // Modal handlers removed
 
   const filteredEntries = React.useMemo(() => {
     return currentViewEntries.filter((e) => {
@@ -480,119 +356,7 @@ export const JournalModule: React.FC = () => {
         )}
       </div>
 
-      {/* Creation Modal */}
-      {isModalOpen && (
-        <Modal
-          isOpen={isModalOpen}
-          onClose={closeModal}
-          title={convertingDump ? 'Convert Dump to Journal' : 'New Journal Log'}
-          className="max-w-2xl"
-        >
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 text-zinc-500 text-xs font-mono font-bold uppercase tracking-wider">
-              <Calendar size={14} className="text-violet-400" />
-              <input
-                type="date"
-                value={entryDate}
-                onChange={(e) => setEntryDate(e.target.value)}
-                className="bg-transparent focus:outline-none hover:text-white cursor-pointer font-bold"
-              />
-            </div>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Reflective Title..."
-              className="w-full bg-transparent text-xl font-bold text-white placeholder-zinc-700 focus:outline-none"
-            />
-
-            {selectedImages.length > 0 && (
-              <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar">
-                {selectedImages.map((img, idx) => (
-                  <div key={idx} className="relative inline-block shrink-0 group">
-                    <img
-                      src={img}
-                      alt="Preview"
-                      className="h-28 w-28 rounded-xl border border-white/5 object-cover"
-                    />
-                    <button
-                      onClick={() => removeImage(idx)}
-                      className="absolute top-1.5 right-1.5 bg-black/70 hover:bg-rose-600 text-white p-1 rounded-full backdrop-blur-sm transition-colors"
-                    >
-                      <X size={12} />
-                    </button>
-                    {idx === 0 && (
-                      <span className="absolute bottom-1.5 left-1.5 bg-violet-600/90 text-white text-[8px] px-1.5 py-0.5 rounded font-mono font-black uppercase tracking-wider">
-                        Cover
-                      </span>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-
-            <textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder="Deep dive into your thoughts, feelings, and details..."
-              className="w-full min-h-[180px] bg-transparent text-sm text-zinc-300 placeholder-zinc-700 focus:outline-none resize-none leading-relaxed"
-            />
-
-            {/* Footer Row */}
-            <div className="pt-4 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4">
-              <div className="flex gap-1.5 items-center">
-                {MOODS.map((mood) => {
-                  const isSel = selectedMood === mood.id;
-                  return (
-                    <button
-                      key={mood.id}
-                      onClick={() => setSelectedMood(mood.id)}
-                      className={`p-2 rounded-xl transition-all border ${
-                        isSel
-                          ? 'bg-violet-600 border-violet-500 text-white shadow-lg shadow-violet-500/25'
-                          : 'border-white/5 bg-white/5 text-zinc-500 hover:text-white'
-                      }`}
-                      title={mood.id}
-                    >
-                      <mood.icon size={18} />
-                    </button>
-                  );
-                })}
-                <div className="w-px h-6 bg-white/5 mx-2" />
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  ref={fileInputRef}
-                  className="hidden"
-                  onChange={handleImageUpload}
-                />
-                <button
-                  onClick={() => fileInputRef.current?.click()}
-                  className="text-zinc-400 hover:text-white bg-white/5 border border-white/5 p-2 rounded-xl transition-colors"
-                  title="Attach Photos"
-                >
-                  <ImageIcon size={18} />
-                </button>
-              </div>
-
-              <div className="flex gap-2 w-full sm:w-auto justify-end">
-                <Button onClick={closeModal} variant="ghost">
-                  Cancel
-                </Button>
-                <Button
-                  onClick={saveNewEntry}
-                  disabled={!content.trim() && !title.trim() && selectedImages.length === 0}
-                  variant="primary"
-                  className="flex items-center gap-1.5"
-                >
-                  <Save size={16} /> Save Reflection
-                </Button>
-              </div>
-            </div>
-          </div>
-        </Modal>
-      )}
+      {/* Creation Modal Removed */}
     </div>
   );
 };
@@ -605,6 +369,7 @@ const JournalDetailView: React.FC<{
   onArchive?: (id: string) => void;
   onUnarchive?: (id: string) => void;
 }> = ({ entry, onBack, onUpdate, onDelete, onArchive, onUnarchive }) => {
+  const router = useRouter();
   const [isEditing, setIsEditing] = React.useState(false);
 
   // Edit State
@@ -715,7 +480,7 @@ const JournalDetailView: React.FC<{
                 <Trash2 size={16} />
               </button>
               <button
-                onClick={() => setIsEditing(true)}
+                onClick={() => router.push(`/journal/edit?id=${entry.id}` as any)}
                 className="bg-white/5 hover:bg-white/10 border border-white/5 text-white px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-1.5"
               >
                 <Edit2 size={14} /> Edit

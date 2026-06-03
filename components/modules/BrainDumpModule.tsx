@@ -22,6 +22,7 @@ import {
 import Card from '../ui/Card';
 import Button from '../ui/Button';
 import Modal from '../ui/Modal';
+import { useRouter } from 'next/navigation';
 
 export const BrainDumpModule: React.FC = () => {
   const dumps = useAppStore((state) => state.dumps);
@@ -34,13 +35,11 @@ export const BrainDumpModule: React.FC = () => {
   const onArchiveDump = (id: string) => useAppStore.getState().handleArchive(id, 'dump');
   const onUnarchiveDump = (id: string) => useAppStore.getState().handleUnarchive(id, 'dump');
 
+  const router = useRouter();
   const autoTrigger = useAppStore((state) => state.triggerDumpModal);
   const setTriggerDumpModal = useAppStore((state) => state.setTriggerDumpModal);
   const onAutoTriggerHandled = () => setTriggerDumpModal(false);
 
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [title, setTitle] = React.useState('');
-  const [description, setDescription] = React.useState('');
   const [showArchived, setShowArchived] = React.useState(false);
 
   const activeDumps = React.useMemo(() => {
@@ -65,30 +64,8 @@ export const BrainDumpModule: React.FC = () => {
     }
   }, [autoTrigger]);
 
-  const handleSave = () => {
-    if (!title.trim() && !description.trim()) return;
-
-    const newDump: Dump = {
-      id: Date.now().toString(),
-      title: title.trim() || 'Untitled Idea',
-      description: description,
-      createdAt: Date.now(),
-    };
-
-    onAddDump(newDump);
-    setTitle('');
-    setDescription('');
-    setIsModalOpen(false);
-  };
-
   const openModal = () => {
-    setTitle('');
-    setDescription('');
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
+    router.push('/dump/new' as any);
   };
 
   return (
@@ -260,56 +237,6 @@ export const BrainDumpModule: React.FC = () => {
             </>
           )}
         </div>
-      )}
-
-      {/* Input Modal */}
-      {isModalOpen && (
-        <Modal
-          isOpen={isModalOpen}
-          onClose={closeModal}
-          title="Capture Idea"
-          className="max-w-lg"
-        >
-          <div className="space-y-4">
-            <div>
-              <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block mb-1.5 font-mono">
-                Idea Title
-              </label>
-              <input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="What's the big idea?"
-                className="w-full bg-[#12121a] border border-white/5 rounded-xl px-4 py-2.5 text-white placeholder-zinc-700 focus:border-violet-500/50 outline-none transition-all text-sm font-semibold"
-                autoFocus
-              />
-            </div>
-
-            <div>
-              <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block mb-1.5 font-mono">
-                Flesh it out
-              </label>
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Flesh out details... (optional)"
-                className="w-full bg-[#12121a] border border-white/5 rounded-xl px-4 py-2.5 text-white placeholder-zinc-700 focus:border-violet-500/50 outline-none transition-all text-sm font-semibold min-h-[160px] resize-none"
-              />
-            </div>
-
-            <div className="pt-4 border-t border-white/5 flex justify-end gap-2 shrink-0">
-              <Button onClick={closeModal} variant="ghost">
-                Discard
-              </Button>
-              <Button
-                onClick={handleSave}
-                variant="primary"
-                className="flex items-center gap-1.5"
-              >
-                Save Idea <ArrowRight size={14} />
-              </Button>
-            </div>
-          </div>
-        </Modal>
       )}
     </div>
   );

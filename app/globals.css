@@ -4,40 +4,40 @@
 
 :root {
   /* Core */
-  --bg-primary: #0a0a0f;
-  --bg-secondary: #12121a;
-  --bg-surface: #1a1a26;
-  --bg-elevated: #22223a;
-  --bg-glass: rgba(255, 255, 255, 0.04);
+  --bg-primary: #F5F7FA;
+  --bg-secondary: #FFFFFF;
+  --bg-surface: #FFFFFF;
+  --bg-elevated: #F8FAFC;
+  --bg-glass: rgba(255, 255, 255, 0.7);
 
   /* Brand Gradient */
-  --grad-primary: linear-gradient(135deg, #7c3aed, #ec4899, #7c3aed);
-  --grad-accent: linear-gradient(135deg, #06b6d4, #7c3aed);
-  --grad-warm: linear-gradient(135deg, #f97316, #ec4899);
-  --grad-success: linear-gradient(135deg, #10b981, #06b6d4);
+  --grad-primary: linear-gradient(135deg, #8979FF, #f43f5e, #8979FF);
+  --grad-accent: linear-gradient(135deg, #3b82f6, #8979FF);
+  --grad-warm: linear-gradient(135deg, #D97706, #f43f5e);
+  --grad-success: linear-gradient(135deg, #02C98B, #3b82f6);
 
   /* Accent Colors */
-  --purple: #7c3aed;
-  --purple-light: #a78bfa;
-  --pink: #ec4899;
-  --cyan: #06b6d4;
-  --emerald: #10b981;
-  --amber: #f59e0b;
-  --rose: #f43f5e;
+  --purple: #8979FF;
+  --purple-light: #B5ACFF;
+  --pink: #f43f5e;
+  --cyan: #3b82f6;
+  --emerald: #02C98B;
+  --amber: #D97706;
+  --rose: #EF4444;
 
   /* Text */
-  --text-primary: #f1f0ff;
-  --text-secondary: #9ca3af;
-  --text-muted: #4b5563;
+  --text-primary: #1E1E1E;
+  --text-secondary: #5E6E82;
+  --text-muted: #9CA3AF;
 
   /* Borders */
-  --border: rgba(255, 255, 255, 0.08);
-  --border-active: rgba(124, 58, 237, 0.5);
+  --border: #E2E8F0;
+  --border-active: #8979FF;
 
   /* Glow effects */
-  --glow-purple: 0 0 40px rgba(124, 58, 237, 0.3);
-  --glow-pink: 0 0 40px rgba(236, 72, 153, 0.3);
-  --glow-cyan: 0 0 40px rgba(6, 182, 212, 0.25);
+  --glow-purple: 0 8px 30px rgba(137, 121, 255, 0.12);
+  --glow-pink: 0 8px 30px rgba(244, 63, 94, 0.12);
+  --glow-cyan: 0 8px 30px rgba(59, 130, 246, 0.1);
 }
 
 * {
@@ -62,11 +62,11 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(137, 121, 255, 0.2);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(124, 58, 237, 0.3);
+  background: rgba(137, 121, 255, 0.5);
 }
 
 body {

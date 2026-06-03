@@ -34,6 +34,7 @@ import Card from '../ui/Card';
 import Button from '../ui/Button';
 import Badge from '../ui/Badge';
 import Modal from '../ui/Modal';
+import { useRouter } from 'next/navigation';
 
 const COLORS = [
   '#ef4444',
@@ -229,6 +230,7 @@ const YearlyHeatmap: React.FC<{ habit: Habit }> = ({ habit }) => {
 };
 
 export const HabitModule: React.FC = () => {
+  const router = useRouter();
   const habits = useAppStore((state) => state.habits);
   const onAddHabit = useAppStore((state) => state.handleAddHabit);
   const onUpdateHabit = useAppStore((state) => state.handleUpdateHabit);
@@ -240,8 +242,6 @@ export const HabitModule: React.FC = () => {
   const onReorder = useAppStore((state) => state.handleReorderHabits);
 
   const [viewingHabitId, setViewingHabitId] = React.useState<string | null>(null);
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [editingHabit, setEditingHabit] = React.useState<Habit | undefined>(undefined);
   const [showArchived, setShowArchived] = React.useState(false);
   const [popupData, setPopupData] = React.useState<{ habitId: string; date: string } | null>(null);
   const [draggedHabitId, setDraggedHabitId] = React.useState<string | null>(null);
@@ -274,13 +274,7 @@ export const HabitModule: React.FC = () => {
 
   const handleEditHabit = (e: React.MouseEvent, habit: Habit) => {
     e.stopPropagation();
-    setEditingHabit(habit);
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setEditingHabit(undefined);
+    router.push(`/habits/edit?id=${habit.id}` as any);
   };
 
   const handleTogglePin = (e: React.MouseEvent, habit: Habit) => {
@@ -634,7 +628,7 @@ export const HabitModule: React.FC = () => {
                 <Archive size={20} />
               </button>
               <Button
-                onClick={() => setIsModalOpen(true)}
+                onClick={() => router.push('/habits/new' as any)}
                 variant="primary"
                 className="flex items-center gap-2 active:scale-95"
               >
@@ -837,7 +831,7 @@ export const HabitModule: React.FC = () => {
                 <p className="text-zinc-500 text-sm">No habits in this view.</p>
                 {!showArchived && (
                   <button
-                    onClick={() => setIsModalOpen(true)}
+                    onClick={() => router.push('/habits/new' as any)}
                     className="mt-4 text-violet-400 font-bold hover:underline text-xs uppercase tracking-wider font-mono"
                   >
                     Create your first habit
@@ -849,105 +843,7 @@ export const HabitModule: React.FC = () => {
         </div>
       )}
 
-      {/* Habit Create / Edit Modal */}
-      <Modal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        title={editingHabit ? 'Edit Habit' : 'New Habit'}
-        className="max-w-xl"
-      >
-        <div className="space-y-6">
-          <div className="space-y-4">
-            <div>
-              <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block mb-1.5 font-mono">
-                Habit Title
-              </label>
-              <input
-                className="w-full bg-[#12121a] border border-white/5 rounded-xl px-4 py-2.5 text-white placeholder-zinc-700 focus:border-violet-500/50 outline-none transition-all text-sm font-semibold"
-                value={editingHabit ? editingHabit.title : undefined}
-                defaultValue={editingHabit ? undefined : ''}
-                placeholder="e.g. Meditate, Water, Read..."
-                id="habit-title-input"
-              />
-            </div>
-            <div>
-              <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block mb-1.5 font-mono">
-                Motivation / Description
-              </label>
-              <input
-                className="w-full bg-[#12121a] border border-white/5 rounded-xl px-4 py-2.5 text-white placeholder-zinc-700 focus:border-violet-500/50 outline-none transition-all text-sm font-semibold"
-                id="habit-desc-input"
-                placeholder="Why is this habit important?"
-              />
-            </div>
-            <div>
-              <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block mb-2 font-mono">
-                Theme Color
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {COLORS.map((c) => {
-                  const isSelected = editingHabit ? editingHabit.color === c : c === COLORS[0];
-                  return (
-                    <button
-                      key={c}
-                      onClick={() => {
-                        if (editingHabit) onUpdateHabit({ ...editingHabit, color: c });
-                      }}
-                      className={`w-7 h-7 rounded-full transition-transform hover:scale-110 relative ${
-                        isSelected ? 'ring-2 ring-violet-500 ring-offset-2 ring-offset-[#0a0a0f]' : ''
-                      }`}
-                      style={{ backgroundColor: c }}
-                    />
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-
-          <div className="pt-4 border-t border-white/5 flex justify-end gap-2">
-            <Button onClick={handleCloseModal} variant="ghost">
-              Cancel
-            </Button>
-            <Button
-              onClick={() => {
-                const titleInput = document.getElementById('habit-title-input') as HTMLInputElement;
-                const descInput = document.getElementById('habit-desc-input') as HTMLInputElement;
-                const title = titleInput?.value || '';
-                const description = descInput?.value || '';
-
-                if (!title) return;
-
-                if (editingHabit) {
-                  onUpdateHabit({
-                    ...editingHabit,
-                    title,
-                    description,
-                  });
-                } else {
-                  const newHabit: Habit = {
-                    id: Date.now().toString(),
-                    title,
-                    description,
-                    color: COLORS[Math.floor(Math.random() * COLORS.length)],
-                    type: 'simple',
-                    frequency: { type: 'daily' },
-                    goal: { type: 'check', target: 1, unit: 'checks' },
-                    history: {},
-                    streak: 0,
-                    createdAt: Date.now(),
-                    reminders: [],
-                  };
-                  onAddHabit(newHabit);
-                }
-                handleCloseModal();
-              }}
-              variant="primary"
-            >
-              Save Habit
-            </Button>
-          </div>
-        </div>
-      </Modal>
+      {/* Habit Create / Edit Modal Removed */}
 
       {/* Progress checkin modal popup */}
       {popupData && (
