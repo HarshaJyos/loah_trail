@@ -313,19 +313,17 @@ export const DashboardModule: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {/* Activity Chart - 2/3 */}
           <div className="lg:col-span-2">
-            <div className="loah-card p-5">
-              <ActivityChart
-                tasks={activeTasks}
-                focusSessions={focusSessions}
-                habits={habits}
-                range={range}
-                rangeStart={rangeStart}
-              />
-            </div>
+            <ActivityChart
+              tasks={activeTasks}
+              focusSessions={focusSessions}
+              habits={habits}
+              range={range}
+              rangeStart={rangeStart}
+            />
           </div>
 
           {/* Focus Breakdown - 1/3 */}
-          <div className="loah-card p-5">
+          <div className="lg:col-span-1">
             <FocusBreakdown
               focusSessions={focusSessions}
               tasks={activeTasks}
@@ -337,13 +335,11 @@ export const DashboardModule: React.FC = () => {
 
           {/* Mood Trends - 2/3 */}
           <div className="lg:col-span-2">
-            <div className="loah-card p-5">
-              <MoodChart
-                journalEntries={journalEntries}
-                range={range}
-                rangeStart={rangeStart}
-              />
-            </div>
+            <MoodChart
+              journalEntries={journalEntries}
+              range={range}
+              rangeStart={rangeStart}
+            />
           </div>
 
           {/* Activity Feed - 1/3 */}

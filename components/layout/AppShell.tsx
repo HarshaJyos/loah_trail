@@ -89,6 +89,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   const setPlayerState = useAppStore((s) => s.setPlayerState);
   const exitPlayer = useAppStore((s) => s.exitPlayer);
   const handleStepComplete = useAppStore((s) => s.handleStepComplete);
+  const handleTimeAdjustment = useAppStore((s) => s.handleTimeAdjustment);
 
   const [isIslandExpanded, setIsIslandExpanded] = React.useState(false);
 
@@ -213,14 +214,27 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
                 </div>
                 <div className="flex items-center justify-center gap-3">
                   <button
+                    onClick={() => handleTimeAdjustment(-60)}
+                    className="p-2 text-zinc-400 hover:text-white font-mono text-[10px] font-bold active:scale-95 transition-all"
+                  >
+                    -1m
+                  </button>
+                  <button
                     onClick={() => setPlayerState({ isPlaying: !isPlaying })}
                     className="p-2 bg-white text-[#1E1E1E] rounded-full hover:scale-105 active:scale-95 transition-all"
                   >
                     {isPlaying ? <Pause size={13} fill="currentColor" /> : <Play size={13} fill="currentColor" />}
                   </button>
                   <button
+                    onClick={() => handleTimeAdjustment(60)}
+                    className="p-2 text-zinc-400 hover:text-white font-mono text-[10px] font-bold active:scale-95 transition-all"
+                  >
+                    +1m
+                  </button>
+                  <button
                     onClick={handleStepComplete}
-                    className="p-2 bg-white/10 rounded-full hover:bg-white/20 active:scale-95 transition-all"
+                    className="p-2 bg-white/10 rounded-full hover:bg-white/20 active:scale-95 transition-all ml-1"
+                    title="Skip step"
                   >
                     <SkipForward size={13} />
                   </button>

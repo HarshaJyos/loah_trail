@@ -364,16 +364,20 @@ export const RoutinePlayer: React.FC = () => {
               </div>
 
               {/* Media Controls */}
-              <div className="flex items-center justify-center gap-6 md:gap-10 w-full max-w-sm">
-                <button onClick={() => handleTimeAdjustment(60)} className="w-12 h-12 rounded-full flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)] transition-all">
-                  <Minus size={24} />
+              <div className="flex items-center justify-center gap-4 md:gap-6 w-full max-w-sm">
+                <button onClick={() => handleTimeAdjustment(-60)} className="w-12 h-12 rounded-full flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)] transition-all font-mono text-sm font-bold shadow-sm" title="-1 minute">
+                  -1m
                 </button>
 
                 <button onClick={handlePlayClick} className="w-20 h-20 rounded-full flex items-center justify-center text-[var(--bg-app)] bg-[var(--text-primary)] hover:scale-105 active:scale-95 transition-all shadow-[0_10px_30px_rgba(255,255,255,0.15)]">
                   {isPlaying ? <Pause size={32} fill="currentColor" /> : <Play size={32} fill="currentColor" className="ml-2" />}
                 </button>
 
-                <button onClick={handleStepCompleteInternal} className="w-12 h-12 rounded-full flex items-center justify-center text-[var(--text-secondary)] hover:text-violet-400 hover:bg-[var(--bg-surface-elevated)] transition-all">
+                <button onClick={() => handleTimeAdjustment(60)} className="w-12 h-12 rounded-full flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)] transition-all font-mono text-sm font-bold shadow-sm" title="+1 minute">
+                  +1m
+                </button>
+
+                <button onClick={handleStepCompleteInternal} className="w-12 h-12 rounded-full flex items-center justify-center text-[var(--text-secondary)] hover:text-violet-400 hover:bg-[var(--bg-surface-elevated)] transition-all ml-2" title="Skip step">
                   <SkipForward size={24} fill="currentColor" />
                 </button>
               </div>
