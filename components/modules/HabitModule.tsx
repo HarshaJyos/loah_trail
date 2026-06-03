@@ -664,7 +664,7 @@ export const HabitModule: React.FC = () => {
                   onDragOver={handleDragOver}
                   onDrop={(e) => handleDrop(e, habit.id)}
                   onClick={() => setViewingHabitId(habit.id)}
-                  className="loah-card group cursor-pointer relative flex flex-col justify-between h-[300px]"
+                  className="loah-card group cursor-pointer relative flex flex-col justify-between h-[300px] p-6"
                   style={{
                     border: habit.isPinned ? '1px solid var(--brand-primary)' : '1px solid var(--border-default)',
                     boxShadow: habit.isPinned ? '0 8px 30px rgba(137,121,255,0.1)' : undefined,
@@ -739,6 +739,42 @@ export const HabitModule: React.FC = () => {
                           title="Edit"
                         >
                           <Edit2 size={14} />
+                        </button>
+                        {showArchived ? (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onUnarchiveHabit(habit.id);
+                            }}
+                            style={{ width: 28, height: 28, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                            className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)] transition-colors"
+                            title="Restore"
+                          >
+                            <RefreshCcw size={14} />
+                          </button>
+                        ) : (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onArchiveHabit(habit.id);
+                            }}
+                            style={{ width: 28, height: 28, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                            className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)] transition-colors"
+                            title="Archive"
+                          >
+                            <Archive size={14} />
+                          </button>
+                        )}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onDeleteHabit(habit.id);
+                          }}
+                          style={{ width: 28, height: 28, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                          className="text-[var(--text-tertiary)] hover:text-[var(--danger-default)] hover:bg-[var(--danger-surface)] transition-colors"
+                          title="Delete"
+                        >
+                          <Trash2 size={14} />
                         </button>
                       </div>
                     </div>
