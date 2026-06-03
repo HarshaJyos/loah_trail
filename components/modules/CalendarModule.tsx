@@ -121,7 +121,7 @@ export const CalendarModule: React.FC = () => {
   // Resizing State
   const [resizingTaskId, setResizingTaskId] = React.useState<string | null>(null);
   const [liveDuration, setLiveDuration] = React.useState<number | null>(null);
-  const resizeRef = React.useRef<{ startY: number; startDuration: number; taskId: string } | null>(null);
+  const resizeRef = React.useRef<{ startY: number; startDuration: number; taskId: string; currentDuration: number } | null>(null);
 
   const [now, setNow] = React.useState(new Date());
 
@@ -207,22 +207,25 @@ export const CalendarModule: React.FC = () => {
 
   // --- Resizing Logic ---
   React.useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
+    const handlePointerMove = (e: PointerEvent) => {
       if (!resizeRef.current) return;
-      const { startY, startDuration, taskId } = resizeRef.current;
+      const { startY, startDuration } = resizeRef.current;
       const deltaY = e.clientY - startY;
       const pxPerMin = hourHeight / 60;
       const deltaMinutes = deltaY / pxPerMin;
       const snappedDelta = Math.round(deltaMinutes / 15) * 15; // 15 min snapping
       const newDuration = Math.max(15, startDuration + snappedDelta);
+      
+      resizeRef.current.currentDuration = newDuration;
       setLiveDuration(newDuration);
     };
 
-    const handleMouseUp = () => {
+    const handlePointerUp = () => {
       if (resizingTaskId && resizeRef.current) {
          const task = tasks.find(t => t.id === resizingTaskId);
-         if (task && liveDuration && task.duration !== liveDuration) {
-             onUpdateTask({ ...task, duration: liveDuration });
+         const finalDuration = resizeRef.current.currentDuration;
+         if (task && finalDuration && task.duration !== finalDuration) {
+             onUpdateTask({ ...task, duration: finalDuration });
          }
       }
       setResizingTaskId(null);
@@ -231,12 +234,12 @@ export const CalendarModule: React.FC = () => {
     };
 
     if (resizingTaskId) {
-      window.addEventListener('mousemove', handleMouseMove);
-      window.addEventListener('mouseup', handleMouseUp);
+      window.addEventListener('pointermove', handlePointerMove);
+      window.addEventListener('pointerup', handlePointerUp);
     }
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('pointerup', handlePointerUp);
     };
   }, [resizingTaskId, hourHeight, tasks, onUpdateTask]);
 
@@ -248,6 +251,7 @@ export const CalendarModule: React.FC = () => {
       taskId: task.id,
       startY: e.clientY,
       startDuration: task.duration || 30,
+      currentDuration: task.duration || 30,
     };
     setLiveDuration(task.duration || 30);
   };
@@ -438,7 +442,7 @@ export const CalendarModule: React.FC = () => {
         </div>
 
         <div ref={scrollContainerRef} onScroll={handleBodyScroll} className="flex-1 overflow-y-auto overflow-x-auto no-scrollbar relative">
-          <div className="flex" style={{ height: `${24 * hourHeight}px` }}>
+          <div className="flex relative" style={{ height: `${24 * hourHeight + 120}px` }}>
             {/* Time labels column */}
             <div className="w-[50px] md:w-[60px] border-r border-[var(--border-subtle)] bg-[var(--bg-canvas)] shrink-0 sticky left-0 z-50">
               {hours.map((hour) => (
