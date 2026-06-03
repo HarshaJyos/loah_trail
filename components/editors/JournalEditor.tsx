@@ -16,7 +16,7 @@ const MOODS: { type: Mood; emoji: string; label: string; color: string; bg: stri
 ];
 
 interface JournalEditorProps {
-  mode: 'new' | 'edit';
+  mode?: 'new' | 'edit';
 }
 
 export const JournalEditor: React.FC<JournalEditorProps> = ({ mode }) => {

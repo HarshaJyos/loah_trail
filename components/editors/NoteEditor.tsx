@@ -20,7 +20,7 @@ const NOTE_BG_COLORS = [
 ];
 
 interface NoteEditorProps {
-  mode: 'new' | 'edit';
+  mode?: 'new' | 'edit';
 }
 
 export const NoteEditor: React.FC<NoteEditorProps> = ({ mode }) => {
