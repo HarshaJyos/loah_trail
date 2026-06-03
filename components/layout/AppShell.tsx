@@ -123,11 +123,13 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   // ── Timer display ─────────────────────────────────────────
   const currentStep = playerSteps[currentStepIndex];
   const duration = currentStep?.durationSeconds ?? 0;
-  const remaining = Math.max(0, duration - timeElapsedInStep);
-  const mins = Math.floor(remaining / 60);
-  const secs = remaining % 60;
-  const timeString = `${mins}:${secs.toString().padStart(2, '0')}`;
-  const progressPercent = duration > 0 ? (timeElapsedInStep / duration) * 100 : 0;
+  const remaining = duration - timeElapsedInStep;
+  const isOvertime = remaining < 0;
+  const absRemaining = Math.abs(remaining);
+  const mins = Math.floor(absRemaining / 60);
+  const secs = absRemaining % 60;
+  const timeString = `${isOvertime ? '-' : ''}${mins}:${secs.toString().padStart(2, '0')}`;
+  const progressPercent = duration > 0 ? Math.min(100, Math.max(0, (timeElapsedInStep / duration) * 100)) : 0;
 
   const handleZoom = (dir: 'in' | 'out') => {
     const next = dir === 'in' ? uiScale + 0.1 : uiScale - 0.1;
@@ -199,7 +201,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
                 </span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="text-xs font-mono font-bold text-[#ABA2FD] tabular-nums">
+                <span className={`text-xs font-mono font-bold tabular-nums ${isOvertime ? 'text-rose-500 animate-pulse' : 'text-[#ABA2FD]'}`}>
                   {timeString}
                 </span>
                 <button
