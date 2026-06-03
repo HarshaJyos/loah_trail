@@ -38,6 +38,8 @@ export interface PlayerSlice {
   startHabitFocus: (habit: Habit) => void;
   handleTimeAdjustment: (seconds: number) => void;
   handleRemoveStep: (index: number) => void;
+  handleReorderSteps: (oldIndex: number, newIndex: number) => void;
+  handleInsertStep: (step: RoutineStep, index: number) => void;
 }
 
 export const createPlayerSlice: StateCreator<
@@ -328,6 +330,43 @@ export const createPlayerSlice: StateCreator<
         playerSteps: newSteps,
         currentStepIndex: newIndex,
         timeElapsedInStep: newElapsed,
+      };
+    });
+  },
+  handleReorderSteps: (oldIndex, newIndex) => {
+    set((state) => {
+      const newSteps = [...state.playerSteps];
+      const [removed] = newSteps.splice(oldIndex, 1);
+      newSteps.splice(newIndex, 0, removed);
+
+      let newCurrentIndex = state.currentStepIndex;
+      if (oldIndex === state.currentStepIndex) {
+        newCurrentIndex = newIndex;
+      } else if (oldIndex < state.currentStepIndex && newIndex >= state.currentStepIndex) {
+        newCurrentIndex = state.currentStepIndex - 1;
+      } else if (oldIndex > state.currentStepIndex && newIndex <= state.currentStepIndex) {
+        newCurrentIndex = state.currentStepIndex + 1;
+      }
+
+      return {
+        playerSteps: newSteps,
+        currentStepIndex: newCurrentIndex,
+      };
+    });
+  },
+  handleInsertStep: (step, index) => {
+    set((state) => {
+      const newSteps = [...state.playerSteps];
+      newSteps.splice(index, 0, step);
+      
+      let newCurrentIndex = state.currentStepIndex;
+      if (index <= state.currentStepIndex) {
+        newCurrentIndex = state.currentStepIndex + 1;
+      }
+
+      return {
+        playerSteps: newSteps,
+        currentStepIndex: newCurrentIndex,
       };
     });
   },
