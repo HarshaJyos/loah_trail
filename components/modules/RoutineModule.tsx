@@ -256,43 +256,53 @@ export const RoutineModule: React.FC = () => {
   }, [sortedRoutines]);
 
   return (
-    <div className="w-full h-full p-4 md:p-8 overflow-y-auto no-scrollbar pb-32 max-w-7xl mx-auto">
-      <div className="space-y-8">
-        {/* Header */}
-        <div className="flex justify-between items-center border-b border-slate-200/60 pb-4">
-          <div>
-            <h2 className="text-3xl font-black text-slate-900 tracking-tight leading-none">
-              Routines
-            </h2>
-            {showArchived && (
-              <span className="text-xs font-bold text-orange-400 bg-orange-500/10 px-2 py-0.5 rounded-full uppercase tracking-wider mt-2 inline-block border border-orange-500/20">
-                Archived View
-              </span>
-            )}
+    <div className="w-full h-full flex flex-col overflow-hidden">
+      {/* ── Header matching Frame132 header-notes style ──────── */}
+      <div
+        style={{
+          padding: '16px 20px 12px',
+          borderBottom: '1px solid #E2E8F0',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+          flexShrink: 0,
+          background: '#F5F7FA',
+        }}
+      >
+        <div>
+          <div style={{ fontSize: 26, fontWeight: 700, color: '#1E1E1E', letterSpacing: '-0.03em' }}>
+            {showArchived ? 'Archive' : 'Routines'}
           </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setShowArchived(!showArchived)}
-              className={`p-2.5 rounded-xl border transition-all ${
-                showArchived
-                  ? 'bg-amber-500/15 border-amber-500/20 text-amber-400'
-                  : 'border-slate-200/60 text-slate-400 hover:text-slate-900 hover:bg-slate-100/50'
-              }`}
-              title={showArchived ? 'View Active' : 'View Archive'}
-            >
-              <Archive size={20} />
-            </button>
-            <Button
-              onClick={() => openEditor()}
-              variant="primary"
-              className="flex items-center gap-2 active:scale-95"
-            >
-              <Plus size={18} />
-              <span className="hidden md:inline">New Flow</span>
-            </Button>
+          <div style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>
+            {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
           </div>
         </div>
+        <div style={{ display: 'flex', gap: 8, paddingTop: 4 }}>
+          <button
+            onClick={() => setShowArchived(!showArchived)}
+            className="loah-icon-btn"
+            title={showArchived ? 'View Active' : 'View Archive'}
+            style={{
+              background: showArchived ? 'rgba(137,121,255,0.10)' : '#FFFFFF',
+              borderColor: showArchived ? '#8979FF' : '#E2E8F0',
+              color: showArchived ? '#8979FF' : '#64748B',
+            }}
+          >
+            <Archive size={17} />
+          </button>
+          <button
+            onClick={() => openEditor()}
+            className="loah-icon-btn"
+            style={{ background: '#8979FF', borderColor: '#8979FF', color: '#fff' }}
+            title="New Routine"
+          >
+            <Plus size={17} />
+          </button>
+        </div>
+      </div>
+
+      <div className="flex-1 overflow-y-auto no-scrollbar" style={{ padding: '16px 16px 100px' }}>
+      <div className="space-y-8">
 
         {/* Paused Routines Section */}
         {pausedRoutines.length > 0 && !showArchived && (
@@ -757,6 +767,7 @@ export const RoutineModule: React.FC = () => {
           </div>
         </div>
       </Modal>
+      </div>
     </div>
   );
 };

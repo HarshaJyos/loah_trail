@@ -7,320 +7,39 @@ import {
   Pin,
   Trash2,
   Plus,
-  X,
-  Palette,
   StickyNote,
-  CheckSquare,
-  Image as ImageIcon,
-  Search,
   Archive,
   RefreshCcw,
-  PlusCircle,
+  SquarePen,
+  CornerDownRight,
 } from 'lucide-react';
-import Card from '../ui/Card';
-import Button from '../ui/Button';
-import Badge from '../ui/Badge';
 import { useRouter } from 'next/navigation';
 
 export const COLORS = [
   'transparent',
-  'rgba(239, 68, 68, 0.15)',
-  'rgba(249, 115, 22, 0.15)',
-  'rgba(234, 179, 8, 0.15)',
-  'rgba(16, 185, 129, 0.15)',
-  'rgba(6, 182, 212, 0.15)',
-  'rgba(59, 130, 246, 0.15)',
-  'rgba(139, 92, 246, 0.15)',
-  'rgba(236, 72, 153, 0.15)',
+  'rgba(239, 68, 68, 0.12)',
+  'rgba(249, 115, 22, 0.12)',
+  'rgba(234, 179, 8, 0.12)',
+  'rgba(16, 185, 129, 0.12)',
+  'rgba(6, 182, 212, 0.12)',
+  'rgba(59, 130, 246, 0.12)',
+  'rgba(139, 92, 246, 0.12)',
+  'rgba(236, 72, 153, 0.12)',
 ];
 
-const COLOR_LABELS: Record<string, string> = {
-  'transparent': 'Default',
-  'rgba(239, 68, 68, 0.15)': 'Red Glow',
-  'rgba(249, 115, 22, 0.15)': 'Orange Glow',
-  'rgba(234, 179, 8, 0.15)': 'Yellow Glow',
-  'rgba(16, 185, 129, 0.15)': 'Green Glow',
-  'rgba(6, 182, 212, 0.15)': 'Cyan Glow',
-  'rgba(59, 130, 246, 0.15)': 'Blue Glow',
-  'rgba(139, 92, 246, 0.15)': 'Purple Glow',
-  'rgba(236, 72, 153, 0.15)': 'Pink Glow',
-};
+const COLOR_HEX = [
+  '#E2E8F0',
+  '#FECACA',
+  '#FED7AA',
+  '#FEF08A',
+  '#BBF7D0',
+  '#C3E5FF',
+  '#BFDBFE',
+  '#DDD6FE',
+  '#FBCFE8',
+];
 
-export const NoteEditorModal: React.FC<{
-  initialNote?: Partial<Note>;
-  onSave: (data: Partial<Note>) => void;
-  onClose: () => void;
-  titleLabel?: string;
-}> = ({ initialNote, onSave, onClose, titleLabel }) => {
-  const [title, setTitle] = React.useState(initialNote?.title || '');
-  const [content, setContent] = React.useState(initialNote?.content || '');
-  const [listItems, setListItems] = React.useState<NoteItem[]>(
-    initialNote?.items || []
-  );
-  const [listItemInput, setListItemInput] = React.useState('');
-  const [images, setImages] = React.useState<string[]>(
-    initialNote?.images || []
-  );
-  const [selectedColor, setSelectedColor] = React.useState(
-    initialNote?.color || COLORS[0]
-  );
-  const [isPinned, setIsPinned] = React.useState(
-    initialNote?.isPinned || false
-  );
-
-  const [showChecklist, setShowChecklist] = React.useState(
-    !!(initialNote?.items && initialNote.items.length > 0)
-  );
-  const [showColorPicker, setShowColorPicker] = React.useState(false);
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
-
-  const handleSave = () => {
-    if (
-      !title.trim() &&
-      !content.trim() &&
-      listItems.length === 0 &&
-      images.length === 0
-    ) {
-      onClose();
-      return;
-    }
-    const noteData: Partial<Note> = {
-      title,
-      content,
-      items: listItems.length > 0 ? listItems : undefined,
-      images: images.length > 0 ? images : undefined,
-      type: listItems.length > 0 ? 'mixed' : 'text',
-      isPinned,
-      color: selectedColor,
-    };
-    onSave(noteData);
-  };
-
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      Array.from(files).forEach((file: File) => {
-        const reader = new FileReader();
-        reader.onloadend = () =>
-          setImages((prev) => [...prev, reader.result as string]);
-        reader.readAsDataURL(file);
-      });
-    }
-  };
-
-  const addListItem = () => {
-    if (!listItemInput.trim()) return;
-    setListItems([
-      ...listItems,
-      {
-        id: (Date.now().toString() + Math.random()),
-        text: listItemInput,
-        isDone: false,
-      },
-    ]);
-    setListItemInput('');
-  };
-
-  return (
-    <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in"
-      onClick={onClose}
-    >
-      <div
-        className="bg-white border border-slate-200 rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] transition-all relative"
-        style={{
-          boxShadow: selectedColor !== 'transparent' ? `0 0 30px ${selectedColor}` : undefined,
-          borderColor: selectedColor !== 'transparent' ? selectedColor : undefined,
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="px-6 py-4 flex justify-between items-center border-b border-slate-200/60">
-          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest font-mono">
-            {titleLabel || (initialNote?.id ? 'Edit Note' : 'New Note')}
-          </h3>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setIsPinned(!isPinned)}
-              className={`p-2 rounded-xl transition-all ${
-                isPinned
-                  ? 'bg-violet-600 text-white shadow-lg'
-                  : 'hover:bg-slate-100/50 text-slate-500 hover:text-slate-900'
-              }`}
-              title={isPinned ? 'Unpin' : 'Pin'}
-            >
-              <Pin size={18} fill={isPinned ? 'currentColor' : 'none'} />
-            </button>
-            <button
-              onClick={onClose}
-              className="text-slate-400 hover:text-slate-900 hover:bg-slate-100/50 p-2 rounded-xl transition-colors"
-            >
-              <X size={20} />
-            </button>
-          </div>
-        </div>
-        <div className="flex-1 overflow-y-auto p-6 md:p-8 no-scrollbar space-y-4">
-          {images.length > 0 && (
-            <div className="grid grid-cols-4 gap-2 mb-4">
-              {images.map((img, idx) => (
-                <div key={idx} className="relative group aspect-square">
-                  <img
-                    src={img}
-                    className="w-full h-full object-cover rounded-xl border border-slate-200/60"
-                    alt="note attachment"
-                  />
-                  <button
-                    onClick={() =>
-                      setImages(images.filter((_, i) => i !== idx))
-                    }
-                    className="absolute top-1 right-1 bg-black/75 hover:bg-rose-600 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm"
-                  >
-                    <X size={12} />
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-          <input
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Note Title..."
-            className="w-full bg-transparent text-2xl font-black text-slate-900 placeholder-zinc-700 focus:outline-none"
-          />
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="Start typing your note details..."
-            className="w-full bg-transparent text-slate-700 placeholder-zinc-600 focus:outline-none resize-none min-h-[160px] leading-relaxed text-sm"
-          />
-          {(showChecklist || listItems.length > 0) && (
-            <div className="space-y-2 border-t border-slate-200/60 pt-4">
-              {listItems.map((item, idx) => (
-                <div key={item.id} className="flex items-center gap-3 group">
-                  <button
-                    onClick={() =>
-                      setListItems(
-                        listItems.map((i, k) =>
-                          k === idx ? { ...i, isDone: !i.isDone } : i
-                        )
-                      )
-                    }
-                    className={item.isDone ? 'text-slate-400' : 'text-slate-700'}
-                  >
-                    {item.isDone ? (
-                      <CheckSquare size={18} className="text-violet-400" />
-                    ) : (
-                      <div className="w-4.5 h-4.5 border border-slate-200 rounded-md hover:border-violet-500" />
-                    )}
-                  </button>
-                  <input
-                    value={item.text}
-                    onChange={(e) =>
-                      setListItems(
-                        listItems.map((i, k) =>
-                          k === idx ? { ...i, text: e.target.value } : i
-                        )
-                      )
-                    }
-                    className={`flex-1 bg-transparent focus:outline-none text-sm ${
-                      item.isDone
-                        ? 'line-through text-slate-500'
-                        : 'text-slate-700'
-                    }`}
-                  />
-                  <button
-                    onClick={() =>
-                      setListItems(listItems.filter((_, k) => k !== idx))
-                    }
-                    className="text-slate-400 hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    <X size={14} />
-                  </button>
-                </div>
-              ))}
-              <div className="flex items-center gap-3 opacity-60 hover:opacity-100 transition-opacity pt-1">
-                <Plus size={16} className="text-slate-400" />
-                <input
-                  value={listItemInput}
-                  onChange={(e) => setListItemInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && listItemInput.trim())
-                      addListItem();
-                  }}
-                  placeholder="Add item details..."
-                  className="flex-1 bg-transparent focus:outline-none text-sm text-slate-500"
-                />
-              </div>
-            </div>
-          )}
-        </div>
-        <div className="p-4 border-t border-slate-200/60 flex justify-between items-center bg-slate-50">
-          <div className="flex gap-1.5 relative">
-            <button
-              onClick={() => setShowColorPicker(!showColorPicker)}
-              className="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100/50 rounded-xl transition-all"
-              title="Background Color Glow"
-            >
-              <Palette size={18} />
-            </button>
-            {showColorPicker && (
-              <div className="absolute bottom-full left-0 mb-3 bg-white border border-slate-200 shadow-2xl rounded-2xl p-2.5 flex gap-1.5 z-50 animate-fade-in w-max">
-                {COLORS.map((c) => (
-                  <button
-                    key={c}
-                    onClick={() => {
-                      setSelectedColor(c);
-                      setShowColorPicker(false);
-                    }}
-                    className={`w-6 h-6 rounded-full border border-slate-200 hover:scale-110 transition-transform relative ${
-                      selectedColor === c ? 'ring-2 ring-violet-500 ring-offset-2 ring-offset-white' : ''
-                    }`}
-                    style={{ backgroundColor: c === 'transparent' ? '#222' : c }}
-                    title={COLOR_LABELS[c]}
-                  />
-                ))}
-              </div>
-            )}
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              className="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100/50 rounded-xl transition-all"
-              title="Add Image"
-            >
-              <ImageIcon size={18} />
-              <input
-                ref={fileInputRef}
-                type="file"
-                multiple
-                accept="image/*"
-                className="hidden"
-                onChange={handleImageUpload}
-              />
-            </button>
-            <button
-              onClick={() => setShowChecklist(!showChecklist)}
-              className={`p-2 rounded-xl transition-all ${
-                showChecklist
-                  ? 'bg-slate-100 text-slate-900 border border-slate-200 shadow'
-                  : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/50'
-              }`}
-              title="Toggle Checklist"
-            >
-              <CheckSquare size={18} />
-            </button>
-          </div>
-          <div className="flex gap-2">
-            <Button onClick={onClose} variant="ghost">
-              Cancel
-            </Button>
-            <Button onClick={handleSave} variant="primary">
-              Save Note
-            </Button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
+// NoteCard matching Frame132 note-card layout
 export const NoteCard: React.FC<{
   note: Note;
   onClick: () => void;
@@ -329,130 +48,182 @@ export const NoteCard: React.FC<{
   onToggleItem: (noteId: string, itemId: string) => void;
   onArchive?: (id: string) => void;
   onUnarchive?: (id: string) => void;
-}> = ({
-  note,
-  onClick,
-  onPin,
-  onDelete,
-  onToggleItem,
-  onArchive,
-  onUnarchive,
-}) => {
+}> = ({ note, onClick, onPin, onDelete, onToggleItem, onArchive, onUnarchive }) => {
+  const hasImage = note.images && note.images.length > 0;
+
   return (
     <div
       onClick={onClick}
-      className="h-fit min-h-[160px] rounded-2xl border border-slate-200/60 hover:border-violet-500/20 shadow-md hover:shadow-2xl transition-all duration-300 cursor-pointer group relative overflow-hidden flex flex-col bg-white"
+      className="loah-card cursor-pointer group"
       style={{
-        boxShadow: note.color !== 'transparent' ? `0 0 25px -5px ${note.color}` : undefined,
-        borderColor: note.color !== 'transparent' ? note.color : undefined,
+        background: note.color && note.color !== 'transparent'
+          ? note.color.replace('0.12', '0.06')
+          : '#FFFFFF',
+        borderColor: note.color && note.color !== 'transparent'
+          ? note.color.replace('0.12', '0.30')
+          : '#E2E8F0',
       }}
     >
-      <div className="p-5 flex flex-col h-full">
-        <div className="flex justify-between items-start mb-3">
-          <h3 className="font-extrabold text-slate-900 text-base leading-tight line-clamp-2 pr-6 group-hover:text-[#8979FF] transition-colors">
-            {note.title || 'Untitled note'}
-          </h3>
-          <button
-            onClick={(e) => onPin(e, note)}
-            className={`absolute top-4 right-4 p-1.5 rounded-lg transition-all z-10 ${
-              note.isPinned
-                ? 'bg-violet-600 text-white shadow-lg'
-                : 'text-slate-400 hover:text-slate-900 hover:bg-slate-100/50 opacity-0 group-hover:opacity-100'
-            }`}
-          >
-            <Pin size={12} fill={note.isPinned ? 'currentColor' : 'none'} />
-          </button>
+      {/* Image Banner */}
+      {hasImage && (
+        <div style={{ height: 110, overflow: 'hidden' }}>
+          <img
+            src={note.images![0]}
+            alt="note"
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          />
+        </div>
+      )}
+
+      <div style={{ padding: '12px 14px' }}>
+        {/* Top row: type icon + date + pin */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <div
+              style={{
+                width: 26, height: 26, borderRadius: 6,
+                background: 'rgba(137, 121, 255, 0.10)',
+                border: '1px solid rgba(137, 121, 255, 0.18)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}
+            >
+              <StickyNote size={13} color="#8979FF" />
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span style={{ fontSize: 10, color: '#9CA3AF', fontWeight: 600 }}>
+              {new Date(note.updatedAt).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })}
+            </span>
+            <button
+              onClick={(e) => onPin(e, note)}
+              style={{
+                width: 22, height: 22, borderRadius: 6,
+                background: note.isPinned ? '#8979FF' : 'transparent',
+                border: 'none', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                opacity: note.isPinned ? 1 : 0,
+                transition: 'all 0.15s',
+              }}
+              className="group-hover:opacity-100"
+            >
+              <Pin size={11} color={note.isPinned ? '#fff' : '#9CA3AF'} fill={note.isPinned ? '#fff' : 'none'} />
+            </button>
+          </div>
         </div>
 
-        <div className="flex-1">
-          {note.images && note.images.length > 0 && (
-            <div className="mb-3 rounded-xl overflow-hidden h-32 w-full border border-slate-200/60">
-              <img
-                src={note.images[0]}
-                alt="Note attachment"
-                className="w-full h-full object-cover"
-              />
-            </div>
+        {/* Content */}
+        <div style={{ marginBottom: 10 }}>
+          {note.title && (
+            <h3
+              style={{
+                fontSize: 14, fontWeight: 700, color: '#1E1E1E',
+                lineHeight: 1.3, marginBottom: 4,
+              }}
+              className="line-clamp-2"
+            >
+              {note.title}
+            </h3>
           )}
 
           {note.items && note.items.length > 0 ? (
-            <div className="space-y-1.5">
-              {note.items.slice(0, 4).map((item) => (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+              {note.items.slice(0, 3).map((item) => (
                 <div
                   key={item.id}
-                  className="flex items-center gap-2 text-xs text-slate-700"
+                  style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+                  onClick={(e) => { e.stopPropagation(); onToggleItem(note.id, item.id); }}
                 >
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onToggleItem(note.id, item.id);
+                  <div
+                    style={{
+                      width: 12, height: 12, borderRadius: 3,
+                      border: `1.5px solid ${item.isDone ? '#8979FF' : '#D4D4D4'}`,
+                      background: item.isDone ? '#8979FF' : 'transparent',
+                      flexShrink: 0, cursor: 'pointer',
                     }}
-                    className={`shrink-0 ${item.isDone ? 'text-slate-500' : 'text-slate-700'}`}
-                  >
-                    {item.isDone ? (
-                      <CheckSquare size={14} className="text-violet-400" />
-                    ) : (
-                      <div className="w-3.5 h-3.5 border border-slate-200 rounded" />
-                    )}
-                  </button>
+                  />
                   <span
-                    className={`truncate ${
-                      item.isDone ? 'line-through text-slate-500' : ''
-                    }`}
+                    style={{
+                      fontSize: 11, color: item.isDone ? '#9CA3AF' : '#3F3F3F',
+                      textDecoration: item.isDone ? 'line-through' : 'none',
+                    }}
+                    className="truncate"
                   >
                     {item.text}
                   </span>
                 </div>
               ))}
-              {note.items.length > 4 && (
-                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block font-mono pl-6">
-                  +{note.items.length - 4} more items
+              {note.items.length > 3 && (
+                <span style={{ fontSize: 10, color: '#9CA3AF', fontWeight: 600 }}>
+                  +{note.items.length - 3} more
                 </span>
               )}
             </div>
           ) : (
-            <p className="text-xs text-slate-500 line-clamp-6 whitespace-pre-wrap leading-relaxed">
+            <p
+              style={{ fontSize: 12, color: '#64748B', lineHeight: 1.5 }}
+              className="line-clamp-4 whitespace-pre-wrap"
+            >
               {note.content}
             </p>
           )}
         </div>
 
-        <div className="mt-5 pt-3 border-t border-slate-200/60 flex justify-between items-center">
-          <span className="text-[9px] text-slate-400 font-bold font-mono">
-            {new Date(note.updatedAt).toLocaleDateString()}
-          </span>
-          <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        {/* Footer actions */}
+        <div
+          style={{
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+            paddingTop: 8, borderTop: '1px solid rgba(226,232,240,0.60)',
+          }}
+        >
+          <button
+            onClick={(e) => { e.stopPropagation(); onClick(); }}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 4,
+              fontSize: 11, fontWeight: 700, color: '#8979FF',
+              background: 'none', border: 'none', cursor: 'pointer',
+              padding: '2px 0',
+            }}
+          >
+            <CornerDownRight size={12} />
+            Open Note
+          </button>
+
+          <div style={{ display: 'flex', gap: 4, opacity: 0 }} className="group-hover:opacity-100 transition-opacity">
             {onArchive ? (
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onArchive(note.id);
+                onClick={(e) => { e.stopPropagation(); onArchive(note.id); }}
+                style={{
+                  width: 26, height: 26, borderRadius: 6, border: 'none',
+                  background: 'transparent', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9CA3AF',
                 }}
-                className="p-1.5 hover:bg-slate-100/50 rounded-lg text-slate-400 hover:text-slate-900 transition-all"
                 title="Archive"
               >
-                <Archive size={12} />
+                <Archive size={13} />
               </button>
-            ) : (
-              onUnarchive && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onUnarchive(note.id);
-                  }}
-                  className="p-1.5 hover:bg-slate-100/50 rounded-lg text-slate-400 hover:text-slate-900 transition-all"
-                  title="Unarchive"
-                >
-                  <RefreshCcw size={12} />
-                </button>
-              )
-            )}
+            ) : onUnarchive ? (
+              <button
+                onClick={(e) => { e.stopPropagation(); onUnarchive(note.id); }}
+                style={{
+                  width: 26, height: 26, borderRadius: 6, border: 'none',
+                  background: 'transparent', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9CA3AF',
+                }}
+                title="Restore"
+              >
+                <RefreshCcw size={13} />
+              </button>
+            ) : null}
             <button
               onClick={onDelete}
-              className="p-1.5 hover:bg-rose-500/10 rounded-lg text-slate-400 hover:text-rose-400 transition-all"
+              style={{
+                width: 26, height: 26, borderRadius: 6, border: 'none',
+                background: 'transparent', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9CA3AF',
+              }}
               title="Delete"
             >
-              <Trash2 size={12} />
+              <Trash2 size={13} />
             </button>
           </div>
         </div>
@@ -461,57 +232,39 @@ export const NoteCard: React.FC<{
   );
 };
 
+// ═══════════════════════════════════════════════════
+// NOTES MODULE — Main list view matching Frame132 loah-notes
+// ═══════════════════════════════════════════════════
 export const NotesModule: React.FC = () => {
-  const notes = useAppStore((state) => state.notes);
-  const onAddNote = useAppStore((state) => state.handleAddNote);
-  const onUpdateNote = useAppStore((state) => state.handleUpdateNote);
-  const onDeleteNote = useAppStore((state) => state.handleDeleteNote);
-  const onArchiveNote = (id: string) => useAppStore.getState().handleArchive(id, 'note');
-  const onUnarchiveNote = (id: string) => useAppStore.getState().handleUnarchive(id, 'note');
-  const convertingDump = useAppStore((state) => state.convertingDump);
-  const onClearConvertingDump = () => useAppStore.getState().setConvertingDump(null);
-  const onConvertComplete = useAppStore((state) => state.handleConvertComplete);
+  const notes = useAppStore((s) => s.notes);
+  const onAddNote = useAppStore((s) => s.handleAddNote);
+  const onUpdateNote = useAppStore((s) => s.handleUpdateNote);
+  const onDeleteNote = useAppStore((s) => s.handleDeleteNote);
+  const convertingDump = useAppStore((s) => s.convertingDump);
 
   const router = useRouter();
   const [showArchived, setShowArchived] = React.useState(false);
-  const [searchQuery, setSearchQuery] = React.useState('');
+
+  const onArchiveNote = (id: string) => useAppStore.getState().handleArchive(id, 'note');
+  const onUnarchiveNote = (id: string) => useAppStore.getState().handleUnarchive(id, 'note');
 
   const activeNotes = notes.filter((n) => !n.deletedAt && !n.archivedAt);
   const archivedNotes = notes.filter((n) => !n.deletedAt && n.archivedAt);
+  const currentNotes = showArchived ? archivedNotes : activeNotes;
 
-  const currentViewNotes = showArchived ? archivedNotes : activeNotes;
-
-  const filteredNotes = React.useMemo(() => {
-    return currentViewNotes
-      .filter(
-        (n) =>
-          n.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          n.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          n.items?.some((i) =>
-            i.text.toLowerCase().includes(searchQuery.toLowerCase())
-          )
-      )
-      .sort(
-        (a, b) =>
-          (b.isPinned ? 1 : 0) - (a.isPinned ? 1 : 0) ||
-          b.updatedAt - a.updatedAt
-      );
-  }, [currentViewNotes, searchQuery]);
+  const sortedNotes = React.useMemo(
+    () => currentNotes.sort((a, b) => (b.isPinned ? 1 : 0) - (a.isPinned ? 1 : 0) || b.updatedAt - a.updatedAt),
+    [currentNotes]
+  );
 
   React.useEffect(() => {
-    if (convertingDump) {
-      router.push('/notes/new' as any);
-    }
+    if (convertingDump) router.push('/notes/new' as any);
   }, [convertingDump, router]);
-
-  // Save note & close modal handlers removed because editing is now handled by full page editor route
 
   const handleToggleItem = (noteId: string, itemId: string) => {
     const note = notes.find((n) => n.id === noteId);
-    if (note && note.items) {
-      const newItems = note.items.map((i) =>
-        i.id === itemId ? { ...i, isDone: !i.isDone } : i
-      );
+    if (note?.items) {
+      const newItems = note.items.map((i) => (i.id === itemId ? { ...i, isDone: !i.isDone } : i));
       onUpdateNote({ ...note, items: newItems, updatedAt: Date.now() });
     }
   };
@@ -526,85 +279,102 @@ export const NotesModule: React.FC = () => {
     onDeleteNote(id);
   };
 
-  // initialNoteForModal removed
-
   return (
-    <div className="w-full h-full p-4 md:p-8 overflow-y-auto no-scrollbar pb-32 max-w-7xl mx-auto flex flex-col">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-200/60 pb-4 mb-6 gap-4 shrink-0">
+    <div className="w-full h-full flex flex-col overflow-hidden">
+      {/* ── Header matching Frame132 header-notes ─────────────── */}
+      <div
+        style={{
+          padding: '16px 20px 12px',
+          borderBottom: '1px solid #E2E8F0',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+          flexShrink: 0,
+          background: '#F5F7FA',
+        }}
+      >
         <div>
-          <h2 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
-            Notes
-          </h2>
-          {showArchived && (
-            <span className="text-xs font-bold text-orange-400 bg-orange-500/10 px-2.5 py-0.5 rounded-full uppercase tracking-wider mt-2 border border-orange-500/20 inline-block font-mono">
-              Archived View
-            </span>
-          )}
+          <div style={{ fontSize: 26, fontWeight: 700, color: '#1E1E1E', letterSpacing: '-0.03em' }}>
+            {showArchived ? 'Archive' : 'Notes'}
+          </div>
+          <div style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>
+            {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+          </div>
         </div>
 
-        <div className="flex items-center gap-3 w-full md:w-auto">
-          <div className="relative flex-1 md:w-64">
-            <Search
-              size={16}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-            />
-            <input
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search notes..."
-              className="w-full bg-white border border-slate-200/60 pl-9 pr-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-violet-500/50 text-slate-900 transition-all font-semibold"
-            />
-          </div>
+        <div style={{ display: 'flex', gap: 8, paddingTop: 4 }}>
           <button
             onClick={() => setShowArchived(!showArchived)}
-            className={`p-2.5 rounded-xl border transition-all ${
-              showArchived
-                ? 'bg-amber-500/15 border-amber-500/20 text-amber-400'
-                : 'border-slate-200/60 text-slate-400 hover:text-slate-900 hover:bg-slate-100/50'
-            }`}
+            className="loah-icon-btn"
             title={showArchived ? 'View Active' : 'View Archive'}
-          >
-            <Archive size={20} />
-          </button>
-          <Button
-            onClick={() => {
-              router.push('/notes/new' as any);
+            style={{
+              background: showArchived ? 'rgba(137,121,255,0.10)' : '#FFFFFF',
+              borderColor: showArchived ? '#8979FF' : '#E2E8F0',
+              color: showArchived ? '#8979FF' : '#64748B',
             }}
-            variant="primary"
-            className="flex items-center gap-2 active:scale-95 whitespace-nowrap"
           >
-            <Plus size={18} />
-            <span>New Note</span>
-          </Button>
+            <Archive size={17} />
+          </button>
+          <button
+            onClick={() => router.push('/notes/new' as any)}
+            className="loah-icon-btn"
+            style={{ background: '#8979FF', borderColor: '#8979FF', color: '#fff' }}
+            title="New Note"
+          >
+            <Plus size={17} />
+          </button>
         </div>
       </div>
 
-      <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6 pb-10">
-        {filteredNotes.map((note) => (
-          <div key={note.id} className="break-inside-avoid">
-            <NoteCard
-              note={note}
-              onClick={() => {
-                router.push(`/notes/edit?id=${note.id}` as any);
-              }}
-              onPin={handlePin}
-              onDelete={(e) => handleDelete(e, note.id)}
-              onToggleItem={handleToggleItem}
-              onArchive={showArchived ? undefined : onArchiveNote}
-              onUnarchive={showArchived ? onUnarchiveNote : undefined}
-            />
+      {/* ── Content area ─────────────────────────────────────── */}
+      <div className="flex-1 overflow-y-auto no-scrollbar" style={{ padding: '16px 16px 100px' }}>
+        {sortedNotes.length === 0 ? (
+          <div
+            style={{
+              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+              padding: '60px 20px', textAlign: 'center',
+              border: '1px dashed #E2E8F0', borderRadius: 20,
+              background: '#FAFBFC', marginTop: 8,
+            }}
+          >
+            <StickyNote size={40} color="#D4D4D4" />
+            <p style={{ fontSize: 16, fontWeight: 700, color: '#1E1E1E', marginTop: 16, marginBottom: 6 }}>
+              {showArchived ? 'No Archived Notes' : 'No Notes Yet!'}
+            </p>
+            <p style={{ fontSize: 13, color: '#64748B', maxWidth: 240, lineHeight: 1.5 }}>
+              {showArchived
+                ? 'Your archived notes will appear here.'
+                : 'Create your first note and keep your thoughts organized in one place.'}
+            </p>
+            {!showArchived && (
+              <button
+                onClick={() => router.push('/notes/new' as any)}
+                className="loah-btn-primary"
+                style={{ marginTop: 20 }}
+              >
+                <Plus size={16} />
+                New Note
+              </button>
+            )}
           </div>
-        ))}
+        ) : (
+          <div className="columns-1 sm:columns-2 lg:columns-3 gap-4" style={{ columnGap: 12 }}>
+            {sortedNotes.map((note) => (
+              <div key={note.id} style={{ marginBottom: 12, breakInside: 'avoid' }}>
+                <NoteCard
+                  note={note}
+                  onClick={() => router.push(`/notes/edit?id=${note.id}` as any)}
+                  onPin={handlePin}
+                  onDelete={(e) => handleDelete(e, note.id)}
+                  onToggleItem={handleToggleItem}
+                  onArchive={showArchived ? undefined : onArchiveNote}
+                  onUnarchive={showArchived ? onUnarchiveNote : undefined}
+                />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-
-      {filteredNotes.length === 0 && (
-        <div className="text-center py-20 text-slate-400 flex flex-col items-center justify-center border border-dashed border-slate-200 rounded-3xl bg-slate-100">
-          <StickyNote size={48} className="mb-4 opacity-20 text-slate-500" />
-          <p className="text-sm">No notes found.</p>
-        </div>
-      )}
-
-      {/* NoteEditorModal Removed */}
     </div>
   );
 };

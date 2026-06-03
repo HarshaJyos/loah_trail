@@ -10,45 +10,35 @@ import {
   Brain,
   Plus,
   X,
+  Route,
+  SmilePlus,
 } from 'lucide-react';
 import ActivityChart from '../charts/ActivityChart';
 import MoodChart from '../charts/MoodChart';
 import FocusBreakdown from '../charts/FocusBreakdown';
-import Card from '../ui/Card';
-import Button from '../ui/Button';
-
 import { Mood } from '../../types';
+import { useRouter } from 'next/navigation';
 
 type TimeRange = 'Day' | 'Week' | 'Month' | 'Year';
 
-const MOOD_VALUES = {
-  awesome: 5,
-  good: 4,
-  neutral: 3,
-  bad: 2,
-  awful: 1,
-};
-
 const MOOD_COLORS: Record<Mood, string> = {
-  awesome: '#10b981', // Emerald
-  good: '#3b82f6', // Blue
-  neutral: '#9ca3af', // Gray
-  bad: '#f97316', // Orange
-  awful: '#ef4444', // Red
+  awesome: '#059669',
+  good:    '#3366CC',
+  neutral: '#64748B',
+  bad:     '#DB8A66',
+  awful:   '#9F3834',
 };
 
 export const DashboardModule: React.FC = () => {
-  const tasks = useAppStore((state) => state.tasks);
-  const routines = useAppStore((state) => state.routines);
-  const notes = useAppStore((state) => state.notes);
-  const focusSessions = useAppStore((state) => state.focusSessions);
-  const journalEntries = useAppStore((state) => state.journalEntries);
-
-  const startRoutine = useAppStore((state) => state.startRoutine);
-  const setCurrentView = useAppStore((state) => state.setCurrentView);
-  const handleQuickAction = useAppStore((state) => state.handleQuickAction);
-  const handleExport = useAppStore((state) => state.handleExport);
-  const importStoreData = useAppStore((state) => state.importStoreData);
+  const router = useRouter();
+  const tasks = useAppStore((s) => s.tasks);
+  const routines = useAppStore((s) => s.routines);
+  const focusSessions = useAppStore((s) => s.focusSessions);
+  const journalEntries = useAppStore((s) => s.journalEntries);
+  const handleQuickAction = useAppStore((s) => s.handleQuickAction);
+  const setCurrentView = useAppStore((s) => s.setCurrentView);
+  const handleExport = useAppStore((s) => s.handleExport);
+  const importStoreData = useAppStore((s) => s.importStoreData);
 
   const [range, setRange] = React.useState<TimeRange>('Week');
   const [now, setNow] = React.useState(new Date());
@@ -61,39 +51,33 @@ export const DashboardModule: React.FC = () => {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
-    const interval = setInterval(() => setNow(new Date()), 60000);
-    return () => clearInterval(interval);
+    const iv = setInterval(() => setNow(new Date()), 60000);
+    return () => clearInterval(iv);
   }, []);
 
   const getRangeStart = (r: TimeRange) => {
-    const date = new Date(now);
-    date.setHours(0, 0, 0, 0);
-    if (r === 'Day') return date.getTime();
+    const d = new Date(now);
+    d.setHours(0, 0, 0, 0);
     if (r === 'Week') {
-      const day = date.getDay();
-      const diff = date.getDate() - day + (day === 0 ? -6 : 1);
-      date.setDate(diff);
+      const day = d.getDay();
+      d.setDate(d.getDate() - day + (day === 0 ? -6 : 1));
     } else if (r === 'Month') {
-      date.setDate(1);
+      d.setDate(1);
     } else if (r === 'Year') {
-      date.setMonth(0);
-      date.setDate(1);
+      d.setMonth(0, 1);
     }
-    return date.getTime();
+    return d.getTime();
   };
 
-  const formatDurationShort = (seconds: number) => {
-    const h = Math.floor(seconds / 3600);
-    const m = Math.floor((seconds % 3600) / 60);
-    if (h > 0) return `${h}h${m}m`;
-    return `${m}m`;
+  const formatDur = (s: number) => {
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    return h > 0 ? `${h}h${m}m` : `${m}m`;
   };
 
   const rangeStart = getRangeStart(range);
   const activeTasks = React.useMemo(() => tasks.filter((t) => !t.deletedAt), [tasks]);
-  const activeRoutines = React.useMemo(() => routines.filter((r) => !r.deletedAt), [routines]);
 
-  // Timeline Data - LIMITED TO 2 ITEMS
   const timelineData = React.useMemo(() => {
     const items: {
       id: string;
@@ -102,13 +86,13 @@ export const DashboardModule: React.FC = () => {
       title: string;
       subtitle?: string;
       icon: any;
-      color: string;
+      dot: string;
       item: any;
     }[] = [];
 
     tasks
       .filter((t) => t.isCompleted && t.completedAt)
-      .forEach((t) => {
+      .forEach((t) =>
         items.push({
           id: t.id,
           type: 'task',
@@ -116,27 +100,27 @@ export const DashboardModule: React.FC = () => {
           title: t.title,
           subtitle: 'Task Completed',
           icon: CheckCircle2,
-          color: 'text-blue-400 bg-blue-500/10 border-blue-500/20',
+          dot: 'bg-[#BFDBFE]',
           item: t,
-        });
-      });
+        })
+      );
 
-    focusSessions.forEach((s) => {
+    focusSessions.forEach((s) =>
       items.push({
         id: s.id,
         type: 'session',
         timestamp: s.endTime,
         title: s.routineTitle,
-        subtitle: `${formatDurationShort(s.durationSeconds)} Focus`,
+        subtitle: `${formatDur(s.durationSeconds)} Focus`,
         icon: Zap,
-        color: 'text-amber-400 bg-amber-500/10 border-amber-500/20',
+        dot: 'bg-[#FEF08A]',
         item: s,
-      });
-    });
+      })
+    );
 
     journalEntries
       .filter((j) => !j.deletedAt)
-      .forEach((j) => {
+      .forEach((j) =>
         items.push({
           id: j.id,
           type: 'journal',
@@ -144,464 +128,385 @@ export const DashboardModule: React.FC = () => {
           title: j.title,
           subtitle: `Mood: ${j.mood}`,
           icon: Smile,
-          color: 'text-purple-400 bg-purple-500/10 border-purple-500/20',
+          dot: 'bg-[#DDD6FE]',
           item: j,
-        });
-      });
+        })
+      );
 
-    // Sort by recent first, then slice to top 2
-    return items.sort((a, b) => b.timestamp - a.timestamp).slice(0, 2);
+    return items.sort((a, b) => b.timestamp - a.timestamp).slice(0, 3);
   }, [tasks, focusSessions, journalEntries]);
 
-  const handleImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const totalActions = React.useMemo(() => {
+    const steps =
+      range === 'Day' ? 24 : range === 'Week' ? 7 : range === 'Month'
+        ? new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()
+        : 12;
+    let sum = 0;
+    for (let i = 0; i < steps; i++) {
+      const d = new Date(rangeStart);
+      if (range === 'Day') d.setHours(i);
+      else if (range === 'Week') d.setDate(d.getDate() + i);
+      else if (range === 'Month') d.setDate(i + 1);
+      else d.setMonth(i);
+      const ps = d.getTime();
+      const pe = range === 'Day' ? ps + 3600000 : range === 'Year'
+        ? new Date(d.getFullYear(), d.getMonth() + 1, 1).getTime()
+        : ps + 86400000;
+      sum += tasks.filter((t) => t.completedAt && t.completedAt >= ps && t.completedAt < pe).length
+           + focusSessions.filter((s) => s.startTime >= ps && s.startTime < pe).length;
+    }
+    return sum;
+  }, [range, tasks, focusSessions, rangeStart, now]);
+
+  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     const reader = new FileReader();
-    reader.onload = (event) => {
+    reader.onload = (ev) => {
       try {
-        const content = event.target?.result as string;
-        const data = JSON.parse(content);
-        if (confirm('Import data? This will replace your current data permanently.')) {
-          const success = importStoreData(data);
-          if (success) {
-            alert('Data imported successfully!');
-          } else {
-            alert('Failed to import. Invalid backup data format.');
-          }
+        const data = JSON.parse(ev.target?.result as string);
+        if (confirm('Import data? This will replace your current data.')) {
+          const ok = importStoreData(data);
+          alert(ok ? 'Imported!' : 'Invalid data format.');
         }
-      } catch (err) {
-        alert('Failed to import. Invalid JSON file format.');
-      }
+      } catch { alert('Invalid JSON.'); }
     };
     reader.readAsText(file);
     e.target.value = '';
   };
 
-  const totalActions = React.useMemo(() => {
-    const steps =
-      range === 'Day'
-        ? 24
-        : range === 'Week'
-        ? 7
-        : range === 'Month'
-        ? new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()
-        : 12;
-
-    let sum = 0;
-    for (let i = 0; i < steps; i++) {
-      let date = new Date(rangeStart);
-      if (range === 'Day') date.setHours(i);
-      else if (range === 'Week') date.setDate(date.getDate() + i);
-      else if (range === 'Month') date.setDate(i + 1);
-      else date.setMonth(i);
-
-      const periodStart = date.getTime();
-      let periodEnd = 0;
-
-      if (range === 'Day') periodEnd = periodStart + 3600000;
-      else if (range === 'Week' || range === 'Month') periodEnd = periodStart + 86400000;
-      else periodEnd = new Date(date.getFullYear(), date.getMonth() + 1, 1).getTime();
-
-      const completedTasks = tasks.filter(
-        (t) => t.completedAt && t.completedAt >= periodStart && t.completedAt < periodEnd
-      ).length;
-      const sessions = focusSessions.filter(
-        (s) => s.startTime >= periodStart && s.startTime < periodEnd
-      ).length;
-      sum += completedTasks + sessions;
-    }
-    return sum;
-  }, [range, tasks, focusSessions, rangeStart, now]);
-
   return (
-    <div className="w-full h-full p-4 md:p-8 space-y-6 pb-32 max-w-7xl mx-auto overflow-y-auto no-scrollbar">
-      {/* Header */}
-      <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 shrink-0">
+    <div className="w-full h-full overflow-y-auto no-scrollbar pb-32">
+      {/* ── Header ─────────────────────────────────────────────── */}
+      <div
+        className="loah-module-header"
+        style={{ paddingBottom: 12, borderBottom: '1px solid #E2E8F0', marginBottom: 16 }}
+      >
         <div>
-          <h1 className="text-3xl md:text-4xl font-extrabold text-[var(--text-primary)] tracking-tight">
-            Dashboard
-          </h1>
-          <p className="text-[var(--text-secondary)] mt-1 font-medium text-sm">
-            {now.toLocaleDateString('en-US', {
-              weekday: 'long',
-              month: 'long',
-              day: 'numeric',
-            })}
-          </p>
+          <div className="loah-module-title">Dashboard</div>
+          <div className="loah-module-date">
+            {now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+          </div>
         </div>
-
-        {/* Range Selector */}
-        <div className="flex bg-white border border-slate-200/60 p-1 rounded-2xl shadow-lg shrink-0 overflow-x-auto no-scrollbar">
-          {(['Day', 'Week', 'Month', 'Year'] as TimeRange[]).map((r) => (
-            <button
-              key={r}
-              onClick={() => setRange(r)}
-              className={`px-4 py-2 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all whitespace-nowrap
-                ${
-                  range === r
-                    ? 'bg-gradient-to-r from-violet-600 to-pink-600 text-slate-900 shadow-md'
-                    : 'text-[var(--text-secondary)] hover:text-slate-900 hover:bg-slate-100/50'
-                }
-              `}
-            >
-              {r}
-            </button>
-          ))}
-        </div>
-      </header>
-
-      {/* Quick Action Grid (Glassmorphism) */}
-      <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {/* Brain Dump */}
-        <button
-          onClick={() => handleQuickAction('dump')}
-          className="bg-amber-500/5 hover:bg-amber-500/10 border border-amber-500/20 hover:border-amber-400 p-5 rounded-3xl flex flex-col items-start gap-4 transition-all duration-300 group active:scale-95 shadow-lg hover:shadow-amber-500/5"
-        >
-          <div className="bg-amber-500/15 p-3 rounded-2xl text-amber-400 group-hover:scale-110 transition-transform shadow-[0_0_20px_rgba(245,158,11,0.1)]">
-            <Brain size={24} />
-          </div>
-          <div className="text-left">
-            <span className="block font-black text-[var(--text-primary)] text-lg">
-              Brain Dump
-            </span>
-            <span className="text-xs text-[var(--text-secondary)] font-medium">
-              Unload your mind
-            </span>
-          </div>
-        </button>
-
-        {/* Quick Task */}
-        <button
-          onClick={() => handleQuickAction('task')}
-          className="bg-cyan-500/5 hover:bg-cyan-500/10 border border-cyan-500/20 hover:border-cyan-400 p-5 rounded-3xl flex flex-col items-start gap-4 transition-all duration-300 group active:scale-95 shadow-lg hover:shadow-cyan-500/5"
-        >
-          <div className="bg-cyan-500/15 p-3 rounded-2xl text-cyan-400 group-hover:scale-110 transition-transform shadow-[0_0_20px_rgba(6,182,212,0.1)]">
-            <Plus size={24} />
-          </div>
-          <div className="text-left">
-            <span className="block font-black text-[var(--text-primary)] text-lg">
-              Quick Task
-            </span>
-            <span className="text-xs text-[var(--text-secondary)] font-medium">
-              Add to-do
-            </span>
-          </div>
-        </button>
-
-        {/* Focus Now */}
-        <button
-          onClick={() => handleQuickAction('focus')}
-          className="bg-violet-500/5 hover:bg-violet-500/10 border border-violet-500/20 hover:border-violet-400 p-5 rounded-3xl flex flex-col items-start gap-4 transition-all duration-300 group active:scale-95 shadow-lg hover:shadow-violet-500/5"
-        >
-          <div className="bg-violet-500/15 p-3 rounded-2xl text-violet-400 group-hover:scale-110 transition-transform shadow-[0_0_20px_rgba(124,58,237,0.1)]">
-            <Zap size={24} fill="currentColor" />
-          </div>
-          <div className="text-left">
-            <span className="block font-black text-[var(--text-primary)] text-lg">
-              Focus Now
-            </span>
-            <span className="text-xs text-[var(--text-secondary)] font-medium">
-              Go to Routines
-            </span>
-          </div>
-        </button>
-
-        {/* Log Mood */}
-        <button
-          onClick={() => handleQuickAction('journal')}
-          className="bg-emerald-500/5 hover:bg-emerald-500/10 border border-emerald-500/20 hover:border-emerald-400 p-5 rounded-3xl flex flex-col items-start gap-4 transition-all duration-300 group active:scale-95 shadow-lg hover:shadow-emerald-500/5"
-        >
-          <div className="bg-emerald-500/15 p-3 rounded-2xl text-emerald-400 group-hover:scale-110 transition-transform shadow-[0_0_20px_rgba(16,185,129,0.1)]">
-            <Smile size={24} />
-          </div>
-          <div className="text-left">
-            <span className="block font-black text-[var(--text-primary)] text-lg">
-              Log Mood
-            </span>
-            <span className="text-xs text-[var(--text-secondary)] font-medium">
-              Check in
-            </span>
-          </div>
-        </button>
-      </section>
-
-      {/* Grid panels */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Activity Chart */}
-        <div className="lg:col-span-2">
-          <ActivityChart
-            tasks={activeTasks}
-            focusSessions={focusSessions}
-            range={range}
-            rangeStart={rangeStart}
-          />
-        </div>
-
-        {/* Focus Breakdown */}
-        <div className="col-span-1">
-          <FocusBreakdown focusSessions={focusSessions} rangeStart={rangeStart} />
-        </div>
-
-        {/* Mood Trends */}
-        <div className="lg:col-span-2">
-          <MoodChart
-            journalEntries={journalEntries}
-            range={range}
-            rangeStart={rangeStart}
-          />
-        </div>
-
-        {/* Activity Timeline Feed */}
-        <div className="col-span-1">
-          <Card className="p-6 md:p-8 flex flex-col h-full bg-slate-50/30">
-            <div className="flex justify-between items-center mb-6 shrink-0">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-emerald-500/10 rounded-xl text-emerald-600">
-                  <Activity size={20} />
-                </div>
-                <h3 className="text-lg font-bold text-[var(--text-primary)]">
-                  Activity Feed
-                </h3>
-              </div>
-              <Button
-                size="sm"
-                variant="glass"
-                onClick={() => setCurrentView('activity')}
-                className="text-xs font-bold text-emerald-600 hover:text-emerald-700"
+        <div className="flex items-center gap-2 pt-1">
+          {/* Range selector */}
+          <div className="loah-filter-tabs">
+            {(['Day', 'Week', 'Month', 'Year'] as TimeRange[]).map((r) => (
+              <button
+                key={r}
+                onClick={() => setRange(r)}
+                className={`loah-filter-tab ${range === r ? 'active' : ''}`}
               >
-                View All
-              </Button>
-            </div>
-
-            <div className="flex-1 overflow-hidden relative pl-4 pr-1 min-h-[160px]">
-              <div className="absolute left-[27px] top-4 bottom-0 w-px bg-slate-100/50" />
-              <div className="space-y-6 pb-4">
-                {timelineData.map((item) => (
-                  <button
-                    key={`${item.type}-${item.id}`}
-                    onClick={() =>
-                      setSelectedActivity({
-                        id: item.id,
-                        type: item.type,
-                        item: item.item,
-                      })
-                    }
-                    className="relative flex items-start gap-4 group w-full text-left hover:bg-slate-100/50 p-2 -ml-2 rounded-xl transition-all"
-                  >
-                    <div
-                      className={`w-6 h-6 rounded-full border border-zinc-950 shrink-0 z-10 flex items-center justify-center shadow-sm relative top-1 ${item.color}`}
-                    >
-                      <item.icon size={12} strokeWidth={3} />
-                    </div>
-                    <div className="min-w-0 flex-1 pt-1">
-                      <div className="text-[9px] font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-1 flex justify-between font-mono">
-                        <span>
-                          {new Date(item.timestamp).toLocaleTimeString([], {
-                            hour: 'numeric',
-                            minute: '2-digit',
-                          })}
-                        </span>
-                        <span>
-                          {new Date(item.timestamp).toLocaleDateString(
-                            undefined,
-                            { month: 'short', day: 'numeric' }
-                          )}
-                        </span>
-                      </div>
-                      <h4 className="text-sm font-bold text-[var(--text-primary)] leading-normal truncate group-hover:text-slate-900">
-                        {item.title}
-                      </h4>
-                      {item.subtitle && (
-                        <p className="text-xs text-[var(--text-secondary)] truncate">
-                          {item.subtitle}
-                        </p>
-                      )}
-                    </div>
-                  </button>
-                ))}
-                {timelineData.length === 0 && (
-                  <p className="text-gray-500 text-sm font-medium italic pl-10 pt-4">
-                    No recent activity.
-                  </p>
-                )}
-                {timelineData.length > 0 && (
-                  <div className="text-center text-[10px] text-[var(--text-secondary)] font-bold uppercase tracking-widest pt-4 font-mono">
-                    See {Math.max(0, totalActions - 2)} more in Activity
-                  </div>
-                )}
-              </div>
-            </div>
-          </Card>
+                {r}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Hidden input for backup uploads */}
+      <div className="px-4 md:px-6 space-y-6">
+        {/* ── Quick Action 2×2 Grid ───────────────────────────── */}
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            onClick={() => handleQuickAction('dump')}
+            className="loah-quick-btn"
+            style={{ background: '#FFFAC3', borderColor: '#FED7AA' }}
+          >
+            <div
+              style={{
+                width: 38, height: 38, borderRadius: 10,
+                background: 'rgba(253, 230, 138, 0.5)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}
+            >
+              <Brain size={20} color="#D97706" />
+            </div>
+            <div className="text-left">
+              <div style={{ fontSize: 14, fontWeight: 700, color: '#1E1E1E' }}>Brain Dump</div>
+              <div style={{ fontSize: 11, color: '#64748B', marginTop: 1 }}>Unload your mind</div>
+            </div>
+          </button>
+
+          <button
+            onClick={() => handleQuickAction('task')}
+            className="loah-quick-btn"
+            style={{ background: '#EFF6FF', borderColor: '#BFDBFE' }}
+          >
+            <div
+              style={{
+                width: 38, height: 38, borderRadius: 10,
+                background: 'rgba(191, 219, 254, 0.5)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}
+            >
+              <Plus size={20} color="#3366CC" />
+            </div>
+            <div className="text-left">
+              <div style={{ fontSize: 14, fontWeight: 700, color: '#1E1E1E' }}>Quick Task</div>
+              <div style={{ fontSize: 11, color: '#64748B', marginTop: 1 }}>Add to-do</div>
+            </div>
+          </button>
+
+          <button
+            onClick={() => handleQuickAction('focus')}
+            className="loah-quick-btn"
+            style={{ background: '#F5F0FF', borderColor: '#DDD6FE' }}
+          >
+            <div
+              style={{
+                width: 38, height: 38, borderRadius: 10,
+                background: 'rgba(221, 214, 254, 0.5)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}
+            >
+              <Route size={20} color="#8979FF" />
+            </div>
+            <div className="text-left">
+              <div style={{ fontSize: 14, fontWeight: 700, color: '#1E1E1E' }}>Focus Now</div>
+              <div style={{ fontSize: 11, color: '#64748B', marginTop: 1 }}>Go to Routines</div>
+            </div>
+          </button>
+
+          <button
+            onClick={() => handleQuickAction('journal')}
+            className="loah-quick-btn"
+            style={{ background: '#F0FDF4', borderColor: '#BBF7D0' }}
+          >
+            <div
+              style={{
+                width: 38, height: 38, borderRadius: 10,
+                background: 'rgba(187, 247, 208, 0.5)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}
+            >
+              <SmilePlus size={20} color="#059669" />
+            </div>
+            <div className="text-left">
+              <div style={{ fontSize: 14, fontWeight: 700, color: '#1E1E1E' }}>Log Mood</div>
+              <div style={{ fontSize: 11, color: '#64748B', marginTop: 1 }}>Check in</div>
+            </div>
+          </button>
+        </div>
+
+        {/* ── Charts Grid ─────────────────────────────────────── */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          {/* Activity Chart - 2/3 */}
+          <div className="lg:col-span-2">
+            <div className="loah-card p-5">
+              <ActivityChart
+                tasks={activeTasks}
+                focusSessions={focusSessions}
+                range={range}
+                rangeStart={rangeStart}
+              />
+            </div>
+          </div>
+
+          {/* Focus Breakdown - 1/3 */}
+          <div className="loah-card p-5">
+            <FocusBreakdown focusSessions={focusSessions} rangeStart={rangeStart} />
+          </div>
+
+          {/* Mood Trends - 2/3 */}
+          <div className="lg:col-span-2">
+            <div className="loah-card p-5">
+              <MoodChart
+                journalEntries={journalEntries}
+                range={range}
+                rangeStart={rangeStart}
+              />
+            </div>
+          </div>
+
+          {/* Activity Feed - 1/3 */}
+          <div className="loah-card p-5 flex flex-col">
+            <div className="flex justify-between items-center mb-4 shrink-0">
+              <div className="flex items-center gap-2">
+                <div
+                  style={{
+                    width: 30, height: 30, borderRadius: 8,
+                    background: 'rgba(1, 247, 171, 0.15)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}
+                >
+                  <Activity size={15} color="#059669" />
+                </div>
+                <span style={{ fontSize: 14, fontWeight: 700, color: '#1E1E1E' }}>
+                  Activity Feed
+                </span>
+              </div>
+              <button
+                onClick={() => setCurrentView('activity')}
+                style={{
+                  fontSize: 11, fontWeight: 700, color: '#8979FF',
+                  background: 'none', border: 'none', cursor: 'pointer',
+                }}
+              >
+                View All
+              </button>
+            </div>
+
+            <div className="flex-1 space-y-3">
+              {timelineData.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => setSelectedActivity({ id: item.id, type: item.type, item: item.item })}
+                  className="w-full text-left flex items-start gap-3 group"
+                  style={{ padding: '8px', borderRadius: 10, transition: 'background 0.15s' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = '#F8FAFC')}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                >
+                  <div
+                    className={item.dot}
+                    style={{
+                      width: 26, height: 26, borderRadius: '50%',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      border: '1px solid rgba(226,232,240,0.8)',
+                      flexShrink: 0, marginTop: 1,
+                    }}
+                  >
+                    <item.icon size={12} color="#64748B" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div style={{ fontSize: 12, fontWeight: 700, color: '#1E1E1E' }} className="truncate">
+                      {item.title}
+                    </div>
+                    {item.subtitle && (
+                      <div style={{ fontSize: 10, color: '#808DA9', marginTop: 1 }}>
+                        {item.subtitle} ·{' '}
+                        {new Date(item.timestamp).toLocaleDateString(undefined, {
+                          month: 'short',
+                          day: 'numeric',
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </button>
+              ))}
+
+              {timelineData.length === 0 && (
+                <div style={{ textAlign: 'center', padding: '24px 0', color: '#9CA3AF', fontSize: 12 }}>
+                  No recent activity
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Import input */}
       <input
         type="file"
         ref={fileInputRef}
-        onChange={handleImportFile}
+        onChange={handleImport}
         accept=".json"
         className="hidden"
       />
 
-      {/* Activity Details Popup Card (Glassmorphic blur) */}
+      {/* ── Activity Detail Panel ──────────────────────────────── */}
       {selectedActivity && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-md animate-[fadeIn_0.2s_ease-out]">
-          <div className="bg-white border border-slate-200/60 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-            <div className="px-6 py-4 border-b border-slate-200/60 flex justify-between items-center bg-slate-100/50">
-              <h2 className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider font-mono">
+        <div
+          className="fixed inset-0 z-[200] flex items-end justify-center"
+          style={{ background: 'rgba(0,0,0,0.40)', backdropFilter: 'blur(8px)' }}
+          onClick={() => setSelectedActivity(null)}
+        >
+          <div
+            className="loah-card w-full max-w-md mb-6 mx-4 animate-slide-up overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div
+              style={{
+                padding: '14px 20px',
+                borderBottom: '1px solid #E2E8F0',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <span style={{ fontSize: 11, fontWeight: 700, color: '#808DA9', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                 Activity Details
-              </h2>
+              </span>
               <button
                 onClick={() => setSelectedActivity(null)}
-                className="text-[var(--text-secondary)] hover:text-slate-900 p-1 rounded-full hover:bg-slate-100/50 transition-colors"
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748B' }}
               >
                 <X size={16} />
               </button>
             </div>
-            <div className="p-6 overflow-y-auto no-scrollbar space-y-4">
+
+            <div style={{ padding: '20px' }}>
               {selectedActivity.type === 'task' && (
-                <div className="space-y-4">
-                  <div className="w-12 h-12 bg-blue-500/15 rounded-full flex items-center justify-center mx-auto text-blue-400 mb-2">
-                    <CheckCircle2 size={24} />
-                  </div>
-                  <h3 className="text-xl font-bold text-center text-[var(--text-primary)]">
+                <div>
+                  <h3 style={{ fontSize: 18, fontWeight: 700, color: '#1E1E1E', marginBottom: 4 }}>
                     {selectedActivity.item.title}
                   </h3>
-                  <p className="text-center text-xs text-[var(--text-secondary)] font-mono">
-                    Completed on{' '}
-                    {new Date(
-                      selectedActivity.item.completedAt
-                    ).toLocaleString()}
+                  <p style={{ fontSize: 11, color: '#808DA9', marginBottom: 12 }}>
+                    Completed on {new Date(selectedActivity.item.completedAt).toLocaleString()}
                   </p>
-                  <div className="bg-slate-100/50 border border-slate-200/60 rounded-2xl p-4 space-y-2 mt-4 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-[var(--text-secondary)] font-medium">Category</span>
-                      <span className="font-bold">{selectedActivity.item.category}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-[var(--text-secondary)] font-medium">Duration Est.</span>
-                      <span className="font-bold">{selectedActivity.item.duration}m</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-[var(--text-secondary)] font-medium">Priority</span>
-                      <span className="font-bold">{selectedActivity.item.priority}</span>
-                    </div>
-                  </div>
-                </div>
-              )}
-              {selectedActivity.type === 'session' && (
-                <div className="space-y-4">
-                  <div className="w-12 h-12 bg-amber-500/15 rounded-full flex items-center justify-center mx-auto text-amber-400 mb-2">
-                    <Zap size={24} fill="currentColor" />
-                  </div>
-                  <h3 className="text-xl font-bold text-center text-[var(--text-primary)]">
-                    {selectedActivity.item.routineTitle}
-                  </h3>
-                  <p className="text-center text-xs text-[var(--text-secondary)] font-mono">
-                    Session ended on{' '}
-                    {new Date(selectedActivity.item.endTime).toLocaleString()}
-                  </p>
-                  <div className="grid grid-cols-2 gap-3 mt-4">
-                    <div className="bg-slate-100/50 p-3 rounded-2xl text-center border border-slate-200/60">
-                      <div className="text-[9px] text-[var(--text-secondary)] font-bold uppercase tracking-wider font-mono">
-                        Duration
-                      </div>
-                      <div className="text-lg font-bold text-[var(--text-primary)] font-mono">
-                        {Math.round(selectedActivity.item.durationSeconds / 60)}m
-                      </div>
-                    </div>
-                    <div className="bg-slate-100/50 p-3 rounded-2xl text-center border border-slate-200/60">
-                      <div className="text-[9px] text-[var(--text-secondary)] font-bold uppercase tracking-wider font-mono">
-                        Steps
-                      </div>
-                      <div className="text-lg font-bold text-[var(--text-primary)] font-mono">
-                        {selectedActivity.item.completedSteps} /{' '}
-                        {selectedActivity.item.totalSteps}
-                      </div>
-                    </div>
-                  </div>
-                  {selectedActivity.item.logs &&
-                    selectedActivity.item.logs.length > 0 && (
-                      <div className="mt-4">
-                        <h4 className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-2 font-mono">
-                          Step Breakdown
-                        </h4>
-                        <div className="space-y-2">
-                          {selectedActivity.item.logs.map(
-                            (log: any, i: number) => (
-                              <div
-                                key={i}
-                                className="flex justify-between text-xs bg-slate-100/50 p-2 rounded-xl border border-slate-200/60"
-                              >
-                                <span className="text-[var(--text-primary)] font-medium">
-                                  {log.title}
-                                </span>
-                                <span className="text-[var(--text-secondary)] font-mono">
-                                  {formatDurationShort(log.actualDuration)}
-                                </span>
-                              </div>
-                            )
-                          )}
-                        </div>
-                      </div>
-                    )}
-                </div>
-              )}
-              {selectedActivity.type === 'journal' && (
-                <div className="space-y-4">
-                  <div className="w-12 h-12 bg-purple-500/15 rounded-full flex items-center justify-center mx-auto text-purple-400 mb-2">
-                    <Smile size={24} />
-                  </div>
-                  <h3 className="text-xl font-bold text-center text-[var(--text-primary)]">
-                    {selectedActivity.item.title}
-                  </h3>
-                  <p className="text-center text-xs text-[var(--text-secondary)] font-mono">
-                    Logged on{' '}
-                    {new Date(selectedActivity.item.createdAt).toLocaleString()}
-                  </p>
-                  <div className="bg-slate-100/50 border border-slate-200/60 rounded-2xl p-4 space-y-2 mt-4 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-[var(--text-secondary)] font-medium">Mood</span>
-                      <span
-                        className="font-bold capitalize"
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                    {[
+                      { label: 'Category', value: selectedActivity.item.category },
+                      { label: 'Priority', value: selectedActivity.item.priority },
+                      { label: 'Duration', value: `${selectedActivity.item.duration}m` },
+                    ].map((row) => (
+                      <div
+                        key={row.label}
                         style={{
-                          color:
-                            MOOD_COLORS[
-                              selectedActivity.item.mood as Mood
-                            ] || '#fff',
+                          background: '#F8FAFC',
+                          border: '1px solid #E2E8F0',
+                          borderRadius: 10,
+                          padding: '10px 12px',
                         }}
                       >
-                        {selectedActivity.item.mood}
-                      </span>
-                    </div>
-                    {selectedActivity.item.tags &&
-                      selectedActivity.item.tags.length > 0 && (
-                        <div className="pt-2">
-                          <span className="block text-xs text-[var(--text-secondary)] mb-1 font-medium">
-                            Tags
-                          </span>
-                          <div className="flex flex-wrap gap-1">
-                            {selectedActivity.item.tags.map((tag: string) => (
-                              <span
-                                key={tag}
-                                className="px-2 py-0.5 rounded-full bg-purple-500/15 text-purple-300 text-[10px] font-semibold"
-                              >
-                                {tag}
-                              </span>
-                            ))}
-                          </div>
+                        <div style={{ fontSize: 10, color: '#808DA9', marginBottom: 2 }}>{row.label}</div>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: '#1E1E1E', textTransform: 'capitalize' }}>
+                          {row.value}
                         </div>
-                      )}
+                      </div>
+                    ))}
                   </div>
+                </div>
+              )}
+
+              {selectedActivity.type === 'session' && (
+                <div>
+                  <h3 style={{ fontSize: 18, fontWeight: 700, color: '#1E1E1E', marginBottom: 4 }}>
+                    {selectedActivity.item.routineTitle}
+                  </h3>
+                  <p style={{ fontSize: 11, color: '#808DA9', marginBottom: 12 }}>
+                    {formatDur(selectedActivity.item.durationSeconds)} · {selectedActivity.item.completedSteps}/{selectedActivity.item.totalSteps} steps
+                  </p>
+                </div>
+              )}
+
+              {selectedActivity.type === 'journal' && (
+                <div>
+                  <h3 style={{ fontSize: 18, fontWeight: 700, color: '#1E1E1E', marginBottom: 4 }}>
+                    {selectedActivity.item.title}
+                  </h3>
+                  <p style={{ fontSize: 11, color: '#808DA9', marginBottom: 4 }}>
+                    Logged on {new Date(selectedActivity.item.createdAt).toLocaleString()}
+                  </p>
+                  <span
+                    style={{
+                      fontSize: 11, fontWeight: 700,
+                      color: MOOD_COLORS[selectedActivity.item.mood as Mood] || '#64748B',
+                      textTransform: 'capitalize',
+                    }}
+                  >
+                    Mood: {selectedActivity.item.mood}
+                  </span>
                 </div>
               )}
             </div>
-            <div className="px-6 py-4 bg-slate-100/50 border-t border-slate-200/60 flex justify-end">
-              <Button onClick={() => setSelectedActivity(null)} variant="secondary">
+
+            <div style={{ padding: '12px 20px', borderTop: '1px solid #E2E8F0', textAlign: 'right' }}>
+              <button
+                onClick={() => setSelectedActivity(null)}
+                className="loah-btn-ghost"
+              >
                 Close
-              </Button>
+              </button>
             </div>
           </div>
         </div>
@@ -609,4 +514,11 @@ export const DashboardModule: React.FC = () => {
     </div>
   );
 };
+
+const formatDur = (s: number) => {
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  return h > 0 ? `${h}h${m}m` : `${m}m`;
+};
+
 export default DashboardModule;

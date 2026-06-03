@@ -22,7 +22,7 @@ import {
   PlayCircle,
   Filter,
 } from 'lucide-react';
-import { NoteCard, NoteEditorModal } from './NotesModule';
+import { NoteCard } from './NotesModule';
 import Card from '../ui/Card';
 import Button from '../ui/Button';
 import Badge from '../ui/Badge';
@@ -799,13 +799,81 @@ const ProjectDetailView: React.FC<{
         </div>
       </div>
 
+      {/* Inline project note editor */}
       {isNoteModalOpen && (
-        <NoteEditorModal
-          initialNote={initialNoteData}
-          onSave={handleSaveNote}
-          onClose={closeNoteModal}
-          titleLabel={editingNoteId ? 'Edit Project Note' : 'New Project Note'}
-        />
+        <div
+          style={{
+            position: 'fixed', inset: 0, zIndex: 200,
+            background: 'rgba(0,0,0,0.30)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: 20,
+          }}
+          onClick={closeNoteModal}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: '#FFFFFF', borderRadius: 20,
+              border: '1px solid #E2E8F0',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
+              width: '100%', maxWidth: 480,
+              padding: 24,
+              display: 'flex', flexDirection: 'column', gap: 16,
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: 15, fontWeight: 700, color: '#1E1E1E' }}>
+                {editingNoteId ? 'Edit Note' : 'Add Project Note'}
+              </span>
+              <button onClick={closeNoteModal} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9CA3AF' }}>
+                ✕
+              </button>
+            </div>
+            <input
+              value={(initialNoteData?.title as string) || ''}
+              onChange={(e) => setInitialNoteData((prev) => ({ ...prev, title: e.target.value }))}
+              placeholder="Note title..."
+              style={{
+                width: '100%', background: '#F5F7FA', border: '1px solid #E2E8F0',
+                borderRadius: 10, padding: '10px 14px',
+                fontSize: 14, fontWeight: 600, color: '#1E1E1E', outline: 'none',
+              }}
+            />
+            <textarea
+              value={(initialNoteData?.content as string) || ''}
+              onChange={(e) => setInitialNoteData((prev) => ({ ...prev, content: e.target.value }))}
+              placeholder="Note content..."
+              style={{
+                width: '100%', background: '#F5F7FA', border: '1px solid #E2E8F0',
+                borderRadius: 10, padding: '10px 14px',
+                fontSize: 13, color: '#1E1E1E', outline: 'none',
+                minHeight: 120, resize: 'vertical',
+              }}
+            />
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+              <button
+                onClick={closeNoteModal}
+                style={{
+                  padding: '8px 16px', borderRadius: 200,
+                  border: '1px solid #E2E8F0', background: 'transparent',
+                  fontSize: 12, fontWeight: 700, color: '#64748B', cursor: 'pointer',
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleSaveNote(initialNoteData || {})}
+                style={{
+                  padding: '8px 16px', borderRadius: 200,
+                  background: '#8979FF', border: 'none',
+                  fontSize: 12, fontWeight: 700, color: '#fff', cursor: 'pointer',
+                }}
+              >
+                Save Note
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

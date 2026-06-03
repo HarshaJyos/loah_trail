@@ -4,18 +4,19 @@ import * as React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAppStore } from '../../store/useAppStore';
 import { Note, NoteItem } from '../../types';
-import { ArrowLeft, Plus, Trash2, Pin, CheckSquare } from 'lucide-react';
-import Card from '../ui/Card';
-import Button from '../ui/Button';
+import { ArrowLeft, Pin, X, Plus, Trash2, CheckSquare } from 'lucide-react';
 import QuillEditor from '../ui/QuillEditor';
 
-const NOTE_COLORS = [
-  '#FFFFFF', // White
-  '#FFF9DB', // Soft Yellow Glow
-  '#E6FCF5', // Soft Green Glow
-  '#E8F4FD', // Soft Blue Glow
-  '#F3F0FF', // Soft Purple Glow
-  '#FFF0F6', // Soft Pink Glow
+// Note background colors from Frame132
+const NOTE_BG_COLORS = [
+  { label: 'Default', bg: '#FFFFFF', border: '#E2E8F0' },
+  { label: 'Yellow',  bg: '#FFFAC3', border: '#FEF08A' },
+  { label: 'Red',     bg: '#FECACA', border: '#FCA5A5' },
+  { label: 'Orange',  bg: '#FED7AA', border: '#FDBA74' },
+  { label: 'Green',   bg: '#BBF7D0', border: '#6EE7B7' },
+  { label: 'Blue',    bg: '#C3E5FF', border: '#93C5FD' },
+  { label: 'Purple',  bg: '#DDD6FE', border: '#C4B5FD' },
+  { label: 'Pink',    bg: '#FBD1AB', border: '#FCA5A5' },
 ];
 
 interface NoteEditorProps {
@@ -27,26 +28,22 @@ export const NoteEditor: React.FC<NoteEditorProps> = ({ mode }) => {
   const searchParams = useSearchParams();
   const id = searchParams.get('id');
 
-  // Zustand State & Actions
-  const notes = useAppStore((state) => state.notes);
-  const onAddNote = useAppStore((state) => state.handleAddNote);
-  const onUpdateNote = useAppStore((state) => state.handleUpdateNote);
-  const convertingDump = useAppStore((state) => state.convertingDump);
-  const onConvertComplete = useAppStore((state) => state.handleConvertComplete);
+  const notes = useAppStore((s) => s.notes);
+  const onAddNote = useAppStore((s) => s.handleAddNote);
+  const onUpdateNote = useAppStore((s) => s.handleUpdateNote);
+  const convertingDump = useAppStore((s) => s.convertingDump);
+  const onConvertComplete = useAppStore((s) => s.handleConvertComplete);
   const onClearConvertingDump = () => useAppStore.getState().setConvertingDump(null);
 
-  // Form State
   const [title, setTitle] = React.useState('');
   const [content, setContent] = React.useState('');
   const [noteType, setNoteType] = React.useState<'text' | 'list' | 'mixed'>('text');
-  const [selectedColor, setSelectedColor] = React.useState(NOTE_COLORS[0]);
+  const [selectedColorIdx, setSelectedColorIdx] = React.useState(0);
   const [isPinned, setIsPinned] = React.useState(false);
-
-  // Checklist Items
   const [items, setItems] = React.useState<NoteItem[]>([]);
   const [itemInput, setItemInput] = React.useState('');
+  const [showColorPicker, setShowColorPicker] = React.useState(false);
 
-  // Load note if editing
   React.useEffect(() => {
     if (mode === 'edit' && id) {
       const note = notes.find((n) => n.id === id);
@@ -54,28 +51,29 @@ export const NoteEditor: React.FC<NoteEditorProps> = ({ mode }) => {
         setTitle(note.title);
         setContent(note.content || '');
         setNoteType(note.type);
-        setSelectedColor(note.color || NOTE_COLORS[0]);
         setIsPinned(note.isPinned || false);
         setItems(note.items || []);
+        // Find matching color
+        const idx = NOTE_BG_COLORS.findIndex((c) => c.bg === note.color);
+        setSelectedColorIdx(idx >= 0 ? idx : 0);
       }
     } else if (mode === 'new' && convertingDump) {
       setTitle(convertingDump.title);
       setContent(convertingDump.description);
-      setNoteType('text');
-      setSelectedColor(NOTE_COLORS[0]);
-      setIsPinned(false);
-      setItems([]);
     }
   }, [mode, id, notes, convertingDump]);
 
   const handleSave = () => {
-    if (!title.trim() && !content.trim() && items.length === 0) return;
+    if (!title.trim() && !content.trim() && items.length === 0) {
+      handleDiscard();
+      return;
+    }
 
     const noteData: Partial<Note> = {
-      title: title.trim() || 'Untitled Note',
+      title: title.trim() || 'Untitled',
       content,
       type: noteType,
-      color: selectedColor,
+      color: NOTE_BG_COLORS[selectedColorIdx].bg,
       isPinned,
       items: noteType !== 'text' ? items : [],
       updatedAt: Date.now(),
@@ -87,10 +85,10 @@ export const NoteEditor: React.FC<NoteEditorProps> = ({ mode }) => {
     } else {
       const newNote: Note = {
         id: Date.now().toString(),
-        title: title.trim() || 'Untitled Note',
+        title: title.trim() || 'Untitled',
         content,
         type: noteType,
-        color: selectedColor,
+        color: NOTE_BG_COLORS[selectedColorIdx].bg,
         isPinned,
         items: noteType !== 'text' ? items : [],
         createdAt: Date.now(),
@@ -99,11 +97,8 @@ export const NoteEditor: React.FC<NoteEditorProps> = ({ mode }) => {
       onAddNote(newNote);
     }
 
-    if (convertingDump) {
-      onConvertComplete();
-    } else {
-      onClearConvertingDump();
-    }
+    if (convertingDump) onConvertComplete();
+    else onClearConvertingDump();
 
     router.push('/notes' as any);
   };
@@ -113,179 +108,275 @@ export const NoteEditor: React.FC<NoteEditorProps> = ({ mode }) => {
     router.push('/notes' as any);
   };
 
-  const addChecklistItem = () => {
+  const addItem = () => {
     if (!itemInput.trim()) return;
-    setItems([
-      ...items,
-      {
-        id: Date.now().toString() + Math.random(),
-        text: itemInput.trim(),
-        isDone: false,
-      },
-    ]);
+    setItems([...items, { id: Date.now().toString() + Math.random(), text: itemInput.trim(), isDone: false }]);
     setItemInput('');
   };
 
-  const toggleChecklistItem = (itemid: string) => {
-    setItems(
-      items.map((i) => (i.id === itemid ? { ...i, isDone: !i.isDone } : i))
-    );
-  };
-
-  const removeChecklistItem = (itemid: string) => {
-    setItems(items.filter((i) => i.id !== itemid));
-  };
+  const selectedColor = NOTE_BG_COLORS[selectedColorIdx];
 
   return (
-    <div className="w-full min-h-screen bg-[#F5F7FA] text-[#1E1E1E] p-4 md:p-8 pb-32 max-w-3xl mx-auto flex flex-col space-y-6 animate-fade-in">
-      {/* Header Actions */}
-      <div className="flex items-center justify-between border-b border-slate-200/80 pb-4">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={handleDiscard}
-            className="p-2.5 hover:bg-slate-100 rounded-2xl text-slate-500 hover:text-slate-900 transition-all border border-transparent hover:border-slate-200/60 active:scale-95"
-            title="Go Back"
-          >
-            <ArrowLeft size={20} />
-          </button>
-          <div>
-            <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">
-              {mode === 'edit' ? 'Edit Note' : 'New Note'}
-            </h2>
-            <p className="text-xs text-slate-500 font-medium mt-0.5">
-              Draft rich text notes and checklists.
-            </p>
-          </div>
-        </div>
+    <div
+      className="w-full h-full flex flex-col overflow-hidden animate-fade-in"
+      style={{ background: selectedColor.bg }}
+    >
+      {/* ── Header matching Frame132 header-new-notes ──────────── */}
+      <div
+        style={{
+          padding: '14px 20px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          borderBottom: `1px solid ${selectedColor.border}`,
+          background: selectedColor.bg,
+          flexShrink: 0,
+          position: 'sticky',
+          top: 0,
+          zIndex: 50,
+        }}
+      >
+        {/* Left: back button */}
+        <button
+          onClick={handleDiscard}
+          style={{
+            width: 36, height: 36, borderRadius: 10,
+            border: `1px solid ${selectedColor.border}`,
+            background: 'transparent',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            cursor: 'pointer', color: '#64748B',
+          }}
+        >
+          <ArrowLeft size={18} />
+        </button>
 
-        <div className="flex items-center gap-2">
-          {/* Pin Button */}
-          <button
-            onClick={() => setIsPinned(!isPinned)}
-            className={`p-2.5 rounded-2xl border transition-all ${
-              isPinned
-                ? 'bg-amber-500/10 border-amber-500/25 text-amber-500'
-                : 'border-slate-200/60 text-slate-400 hover:text-slate-600 hover:bg-slate-150/40'
-            }`}
-            title={isPinned ? 'Unpin Note' : 'Pin Note'}
-          >
-            <Pin size={18} fill={isPinned ? 'currentColor' : 'none'} />
-          </button>
-          <Button onClick={handleDiscard} variant="ghost" className="text-slate-500">
-            Cancel
-          </Button>
-          <Button onClick={handleSave} variant="primary">
-            Save
-          </Button>
-        </div>
-      </div>
+        {/* Center: title */}
+        <span style={{ fontSize: 14, fontWeight: 700, color: '#1E1E1E' }}>
+          {mode === 'edit' ? 'Edit Note' : 'New Note'}
+        </span>
 
-      <Card variant="glass" className="p-6 md:p-8 space-y-6 border border-slate-200/60 shadow-xl bg-white text-sm font-bold">
-        {/* Title */}
-        <div>
-          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 font-mono">
-            Note Title
-          </label>
-          <input
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Title your thoughts..."
-            className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3.5 text-slate-900 placeholder-slate-400 focus:border-[#8979FF] focus:bg-white focus:shadow-[var(--glow-purple)] outline-none transition-all text-sm font-bold"
-            autoFocus
-          />
-        </div>
-
-        {/* Note Type & Color */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 font-mono">
-              Note Format
-            </label>
-            <select
-              value={noteType}
-              onChange={(e) => setNoteType(e.target.value as any)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm font-bold text-slate-900 focus:border-[#8979FF] outline-none transition-all"
+        {/* Right: Pin + Color + Save/Discard */}
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          {/* Color picker trigger */}
+          <div style={{ position: 'relative' }}>
+            <button
+              onClick={() => setShowColorPicker(!showColorPicker)}
+              style={{
+                width: 36, height: 36, borderRadius: 10,
+                border: `1px solid ${selectedColor.border}`,
+                background: selectedColor.bg,
+                cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}
+              title="Pick Color"
             >
-              <option value="text">Rich Text Only</option>
-              <option value="list">Checklist Only</option>
-              <option value="mixed">Mixed (Rich Text + Checklist)</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2.5 font-mono">
-              Card Color Accent
-            </label>
-            <div className="flex flex-wrap gap-2 pt-1">
-              {NOTE_COLORS.map((c) => (
-                <button
-                  key={c}
-                  type="button"
-                  onClick={() => setSelectedColor(c)}
-                  className={`w-7 h-7 rounded-full transition-transform active:scale-95 border
-                    ${selectedColor === c ? 'scale-110 border-slate-800 ring-2 ring-[#8979FF]/20' : 'border-slate-200'}`}
-                  style={{ backgroundColor: c }}
-                  title={c}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Rich Text Editor Block (Quill) */}
-        {(noteType === 'text' || noteType === 'mixed') && (
-          <div className="pt-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 font-mono">
-              Rich Text Content
-            </label>
-            <QuillEditor
-              value={content}
-              onChange={setContent}
-              placeholder="Flesh out your rich note content here..."
-            />
-          </div>
-        )}
-
-        {/* Checklist Block */}
-        {(noteType === 'list' || noteType === 'mixed') && (
-          <div className="pt-2 border-t border-slate-100">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 font-mono">
-              Checklist Items
-            </label>
-            <div className="flex gap-2 mb-3">
-              <input
-                value={itemInput}
-                onChange={(e) => setItemInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addChecklistItem())}
-                placeholder="Add checklist item..."
-                className="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-sm font-bold text-slate-900 placeholder-slate-400 focus:border-[#8979FF] outline-none"
+              <div
+                style={{
+                  width: 16, height: 16, borderRadius: '50%',
+                  background: selectedColor.bg,
+                  border: `2px solid ${selectedColor.border}`,
+                  outline: '2px solid rgba(0,0,0,0.1)',
+                }}
               />
-              <Button type="button" onClick={addChecklistItem} variant="secondary" className="rounded-2xl">
-                <Plus size={18} />
-              </Button>
-            </div>
-            {items.length > 0 && (
-              <div className="space-y-2 border border-slate-200/60 rounded-2xl p-3 bg-slate-50/50">
-                {items.map((it) => (
-                  <div key={it.id} className="flex items-center justify-between bg-white border border-slate-200 p-2.5 rounded-xl">
-                    <div className="flex items-center gap-2.5 cursor-pointer" onClick={() => toggleChecklistItem(it.id)}>
-                      <button type="button" className={`text-slate-500 ${it.isDone ? 'text-emerald-500' : 'text-slate-300'}`}>
-                        {it.isDone ? <CheckSquare size={16} /> : <div className="w-4 h-4 border border-current rounded" />}
-                      </button>
-                      <span className={`text-xs font-bold text-slate-800 ${it.isDone ? 'line-through opacity-50' : ''}`}>
-                        {it.text}
-                      </span>
-                    </div>
-                    <button type="button" onClick={() => removeChecklistItem(it.id)} className="text-slate-400 hover:text-rose-500 transition-colors p-1">
-                      <Trash2 size={14} />
-                    </button>
-                  </div>
+            </button>
+            {showColorPicker && (
+              <div
+                style={{
+                  position: 'absolute', top: 44, right: 0,
+                  background: '#FFFFFF', borderRadius: 14,
+                  border: '1px solid #E2E8F0',
+                  boxShadow: '0 10px 30px rgba(0,0,0,0.12)',
+                  padding: '10px 12px',
+                  display: 'flex', gap: 8, flexWrap: 'wrap',
+                  width: 160, zIndex: 200,
+                }}
+                className="animate-fade-in"
+              >
+                {NOTE_BG_COLORS.map((c, i) => (
+                  <button
+                    key={i}
+                    onClick={() => { setSelectedColorIdx(i); setShowColorPicker(false); }}
+                    style={{
+                      width: 26, height: 26, borderRadius: '50%',
+                      background: c.bg,
+                      border: `2px solid ${c.border}`,
+                      outline: selectedColorIdx === i ? '2px solid #8979FF' : '2px solid transparent',
+                      outlineOffset: 2,
+                      cursor: 'pointer',
+                      transition: 'outline 0.15s',
+                    }}
+                    title={c.label}
+                  />
                 ))}
               </div>
             )}
           </div>
+
+          {/* Pin */}
+          <button
+            onClick={() => setIsPinned(!isPinned)}
+            style={{
+              width: 36, height: 36, borderRadius: 10,
+              border: `1px solid ${isPinned ? '#8979FF' : selectedColor.border}`,
+              background: isPinned ? 'rgba(137,121,255,0.10)' : 'transparent',
+              color: isPinned ? '#8979FF' : '#64748B',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer',
+            }}
+            title={isPinned ? 'Unpin' : 'Pin'}
+          >
+            <Pin size={16} fill={isPinned ? 'currentColor' : 'none'} />
+          </button>
+
+          {/* Discard */}
+          <button
+            onClick={handleDiscard}
+            style={{
+              padding: '7px 14px', borderRadius: 200,
+              border: `1px solid ${selectedColor.border}`,
+              background: 'transparent',
+              fontSize: 12, fontWeight: 700, color: '#64748B',
+              cursor: 'pointer',
+            }}
+          >
+            Discard
+          </button>
+
+          {/* Save */}
+          <button
+            onClick={handleSave}
+            style={{
+              padding: '7px 16px', borderRadius: 200,
+              background: '#8979FF', border: 'none',
+              fontSize: 12, fontWeight: 700, color: '#fff',
+              cursor: 'pointer',
+              boxShadow: '0 2px 8px rgba(137,121,255,0.30)',
+            }}
+          >
+            Save
+          </button>
+        </div>
+      </div>
+
+      {/* ── Content area — full page Quill editor ───────────── */}
+      <div className="flex-1 overflow-y-auto no-scrollbar" style={{ paddingBottom: 120 }}>
+        {/* Title */}
+        <div style={{ padding: '16px 20px 0' }}>
+          <input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="UNTITLED"
+            className="loah-title-input"
+            autoFocus
+          />
+        </div>
+
+        {/* Note type selector (minimal pills) */}
+        <div style={{ padding: '8px 20px', display: 'flex', gap: 6 }}>
+          {(['text', 'list', 'mixed'] as const).map((t) => (
+            <button
+              key={t}
+              onClick={() => setNoteType(t)}
+              style={{
+                padding: '3px 10px', borderRadius: 200,
+                fontSize: 10, fontWeight: 700,
+                border: `1px solid ${noteType === t ? '#8979FF' : selectedColor.border}`,
+                background: noteType === t ? 'rgba(137,121,255,0.10)' : 'transparent',
+                color: noteType === t ? '#8979FF' : '#64748B',
+                cursor: 'pointer',
+                textTransform: 'uppercase', letterSpacing: '0.04em',
+              }}
+            >
+              {t === 'text' ? 'Rich Text' : t === 'list' ? 'Checklist' : 'Mixed'}
+            </button>
+          ))}
+        </div>
+
+        {/* Rich Text Quill Editor */}
+        {(noteType === 'text' || noteType === 'mixed') && (
+          <div style={{ padding: '0 20px' }}>
+            <QuillEditor
+              value={content}
+              onChange={setContent}
+              placeholder="Start writing your note here... The formatting controls are placed in a floating island, creating a premium and distraction-free writing experience."
+            />
+          </div>
         )}
-      </Card>
+
+        {/* Checklist */}
+        {(noteType === 'list' || noteType === 'mixed') && (
+          <div style={{ padding: '12px 20px' }}>
+            <div style={{ fontSize: 10, fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>
+              Checklist
+            </div>
+            <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+              <input
+                value={itemInput}
+                onChange={(e) => setItemInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && addItem()}
+                placeholder="Add item..."
+                style={{
+                  flex: 1,
+                  background: 'rgba(255,255,255,0.6)',
+                  border: `1px solid ${selectedColor.border}`,
+                  borderRadius: 10,
+                  padding: '8px 12px',
+                  fontSize: 13, color: '#1E1E1E',
+                  outline: 'none',
+                }}
+              />
+              <button
+                onClick={addItem}
+                style={{
+                  width: 36, height: 36, borderRadius: 10,
+                  background: '#8979FF', border: 'none', color: '#fff',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  cursor: 'pointer',
+                }}
+              >
+                <Plus size={16} />
+              </button>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              {items.map((it) => (
+                <div
+                  key={it.id}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 8,
+                    background: 'rgba(255,255,255,0.5)',
+                    border: `1px solid ${selectedColor.border}`,
+                    borderRadius: 10, padding: '8px 12px',
+                  }}
+                >
+                  <button
+                    onClick={() => setItems(items.map((i) => i.id === it.id ? { ...i, isDone: !i.isDone } : i))}
+                    style={{
+                      width: 16, height: 16, borderRadius: 4,
+                      border: `1.5px solid ${it.isDone ? '#8979FF' : '#D4D4D4'}`,
+                      background: it.isDone ? '#8979FF' : 'transparent',
+                      cursor: 'pointer', flexShrink: 0,
+                    }}
+                  />
+                  <span
+                    style={{
+                      flex: 1, fontSize: 13, color: it.isDone ? '#9CA3AF' : '#1E1E1E',
+                      textDecoration: it.isDone ? 'line-through' : 'none',
+                    }}
+                  >
+                    {it.text}
+                  </span>
+                  <button
+                    onClick={() => setItems(items.filter((i) => i.id !== it.id))}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9CA3AF' }}
+                  >
+                    <Trash2 size={13} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

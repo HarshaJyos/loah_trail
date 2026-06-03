@@ -4,17 +4,15 @@ import * as React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAppStore } from '../../store/useAppStore';
 import { JournalEntry, Mood } from '../../types';
-import { ArrowLeft, Smile, Plus, Trash2, X } from 'lucide-react';
-import Card from '../ui/Card';
-import Button from '../ui/Button';
+import { ArrowLeft, Image as ImageIcon, X, Plus } from 'lucide-react';
 import QuillEditor from '../ui/QuillEditor';
 
-const MOODS: { type: Mood; emoji: string; label: string; color: string }[] = [
-  { type: 'awesome', emoji: '🤩', label: 'Awesome', color: 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20' },
-  { type: 'good', emoji: '😊', label: 'Good', color: 'text-blue-500 bg-blue-500/10 border-blue-500/20' },
-  { type: 'neutral', emoji: '😐', label: 'Neutral', color: 'text-slate-500 bg-slate-500/10 border-slate-500/20' },
-  { type: 'bad', emoji: '😕', label: 'Bad', color: 'text-orange-500 bg-orange-500/10 border-orange-500/20' },
-  { type: 'awful', emoji: '😭', label: 'Awful', color: 'text-rose-500 bg-rose-500/10 border-rose-500/20' },
+const MOODS: { type: Mood; emoji: string; label: string; color: string; bg: string }[] = [
+  { type: 'awesome', emoji: '😁', label: 'Awesome', color: '#059669', bg: '#BBF7D0' },
+  { type: 'good',    emoji: '😊', label: 'Good',    color: '#3366CC', bg: '#BFDBFE' },
+  { type: 'neutral', emoji: '😐', label: 'Neutral', color: '#64748B', bg: '#E6E8EB' },
+  { type: 'bad',     emoji: '🙁', label: 'Bad',     color: '#DB8A66', bg: '#FED7AA' },
+  { type: 'awful',   emoji: '😒', label: 'Awful',   color: '#9F3834', bg: '#FECACA' },
 ];
 
 interface JournalEditorProps {
@@ -26,22 +24,21 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({ mode }) => {
   const searchParams = useSearchParams();
   const id = searchParams.get('id');
 
-  // Zustand State & Actions
-  const journalEntries = useAppStore((state) => state.journalEntries);
-  const onAddEntry = useAppStore((state) => state.handleAddJournalEntry);
-  const onUpdateEntry = useAppStore((state) => state.handleUpdateJournalEntry);
-  const convertingDump = useAppStore((state) => state.convertingDump);
-  const onConvertComplete = useAppStore((state) => state.handleConvertComplete);
+  const journalEntries = useAppStore((s) => s.journalEntries);
+  const onAddEntry = useAppStore((s) => s.handleAddJournalEntry);
+  const onUpdateEntry = useAppStore((s) => s.handleUpdateJournalEntry);
+  const convertingDump = useAppStore((s) => s.convertingDump);
+  const onConvertComplete = useAppStore((s) => s.handleConvertComplete);
   const onClearConvertingDump = () => useAppStore.getState().setConvertingDump(null);
 
-  // Form State
   const [title, setTitle] = React.useState('');
   const [content, setContent] = React.useState('');
   const [mood, setMood] = React.useState<Mood>('neutral');
   const [tags, setTags] = React.useState<string[]>([]);
   const [tagInput, setTagInput] = React.useState('');
+  const [images, setImages] = React.useState<string[]>([]);
+  const fileRef = React.useRef<HTMLInputElement>(null);
 
-  // Load journal entry if editing
   React.useEffect(() => {
     if (mode === 'edit' && id) {
       const entry = journalEntries.find((j) => j.id === id);
@@ -50,29 +47,30 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({ mode }) => {
         setContent(entry.content || '');
         setMood(entry.mood || 'neutral');
         setTags(entry.tags || []);
+        setImages(entry.images || []);
       }
     } else if (mode === 'new') {
-      const pr = searchParams.get('prompt');
-      if (pr) {
-        setContent(pr);
-      }
+      const prompt = searchParams.get('prompt');
+      if (prompt) setContent(prompt);
       if (convertingDump) {
         setTitle(convertingDump.title);
         setContent(convertingDump.description);
-        setMood('neutral');
-        setTags([]);
       }
     }
   }, [mode, id, journalEntries, convertingDump, searchParams]);
 
   const handleSave = () => {
-    if (!title.trim() && !content.trim()) return;
+    if (!title.trim() && !content.trim()) {
+      handleDiscard();
+      return;
+    }
 
     const entryData: Partial<JournalEntry> = {
       title: title.trim() || 'Untitled Log',
       content,
       mood,
       tags,
+      images,
     };
 
     if (mode === 'edit' && id) {
@@ -85,16 +83,14 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({ mode }) => {
         content,
         mood,
         tags,
+        images,
         createdAt: Date.now(),
       };
       onAddEntry(newEntry);
     }
 
-    if (convertingDump) {
-      onConvertComplete();
-    } else {
-      onClearConvertingDump();
-    }
+    if (convertingDump) onConvertComplete();
+    else onClearConvertingDump();
 
     router.push('/journal' as any);
   };
@@ -111,130 +107,237 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({ mode }) => {
     setTagInput('');
   };
 
-  const removeTag = (t: string) => {
-    setTags(tags.filter((tag) => tag !== t));
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      Array.from(files).forEach((f) => {
+        const reader = new FileReader();
+        reader.onloadend = () => setImages((prev) => [...prev, reader.result as string]);
+        reader.readAsDataURL(f);
+      });
+    }
   };
 
+  const activeMood = MOODS.find((m) => m.type === mood)!;
+
   return (
-    <div className="w-full min-h-screen bg-[#F5F7FA] text-[#1E1E1E] p-4 md:p-8 pb-32 max-w-3xl mx-auto flex flex-col space-y-6 animate-fade-in">
-      {/* Header Actions */}
-      <div className="flex items-center justify-between border-b border-slate-200/80 pb-4">
-        <div className="flex items-center gap-3">
+    <div className="w-full h-full flex flex-col overflow-hidden animate-fade-in" style={{ background: '#F5F7FA' }}>
+      {/* ── Header matching Frame132 header-new-notes ───────────── */}
+      <div
+        style={{
+          padding: '14px 20px',
+          borderBottom: '1px solid #E2E8F0',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexShrink: 0,
+          background: '#F5F7FA',
+          position: 'sticky', top: 0, zIndex: 50,
+        }}
+      >
+        {/* Back */}
+        <button onClick={handleDiscard} className="loah-editor-back">
+          <ArrowLeft size={18} />
+        </button>
+
+        {/* Title */}
+        <span style={{ fontSize: 14, fontWeight: 700, color: '#1E1E1E' }}>
+          {mode === 'edit' ? 'Edit Log' : 'New Log'}
+        </span>
+
+        {/* Right: mood indicator + image + save/discard */}
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          {/* Active mood pill */}
+          <div
+            style={{
+              fontSize: 18, background: activeMood.bg + '40',
+              borderRadius: 200, padding: '3px 10px',
+              border: `1px solid ${activeMood.bg}`,
+              cursor: 'default',
+            }}
+            title={activeMood.label}
+          >
+            {activeMood.emoji}
+          </div>
+
+          {/* Image attach */}
+          <button
+            onClick={() => fileRef.current?.click()}
+            className="loah-icon-btn"
+            title="Attach Image"
+          >
+            <ImageIcon size={16} />
+          </button>
+          <input
+            type="file"
+            ref={fileRef}
+            accept="image/*"
+            multiple
+            className="hidden"
+            onChange={handleImageUpload}
+          />
+
+          {/* Discard */}
           <button
             onClick={handleDiscard}
-            className="p-2.5 hover:bg-slate-100 rounded-2xl text-slate-500 hover:text-slate-900 transition-all border border-transparent hover:border-slate-200/60 active:scale-95"
-            title="Go Back"
+            style={{
+              padding: '7px 14px', borderRadius: 200,
+              border: '1px solid #E2E8F0', background: 'transparent',
+              fontSize: 12, fontWeight: 700, color: '#64748B', cursor: 'pointer',
+            }}
           >
-            <ArrowLeft size={20} />
+            Discard
           </button>
-          <div>
-            <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">
-              {mode === 'edit' ? 'Edit Log' : 'New Journal Log'}
-            </h2>
-            <p className="text-xs text-slate-500 font-medium mt-0.5">
-              Check in with yourself and record reflections.
-            </p>
-          </div>
-        </div>
 
-        <div className="flex gap-2">
-          <Button onClick={handleDiscard} variant="ghost" className="text-slate-500">
-            Cancel
-          </Button>
-          <Button onClick={handleSave} variant="primary">
+          {/* Save */}
+          <button
+            onClick={handleSave}
+            style={{
+              padding: '7px 16px', borderRadius: 200,
+              background: '#8979FF', border: 'none',
+              fontSize: 12, fontWeight: 700, color: '#fff',
+              cursor: 'pointer',
+              boxShadow: '0 2px 8px rgba(137,121,255,0.30)',
+            }}
+          >
             Save
-          </Button>
+          </button>
         </div>
       </div>
 
-      <Card variant="glass" className="p-6 md:p-8 space-y-6 border border-slate-200/60 shadow-xl bg-white text-sm font-bold">
-        {/* Title */}
-        <div>
-          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 font-mono">
-            Log Title
-          </label>
+      {/* Scrollable content */}
+      <div className="flex-1 overflow-y-auto no-scrollbar" style={{ paddingBottom: 120 }}>
+        {/* Title input */}
+        <div style={{ padding: '16px 20px 0' }}>
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="How was your day?"
-            className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3.5 text-slate-900 placeholder-slate-400 focus:border-[#8979FF] focus:bg-white focus:shadow-[var(--glow-purple)] outline-none transition-all text-sm font-bold"
+            placeholder="UNTITLED"
+            className="loah-title-input"
             autoFocus
           />
         </div>
 
-        {/* Mood Selector Grid */}
-        <div>
-          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2.5 font-mono">
-            How are you feeling?
-          </label>
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
-            {MOODS.map((m) => {
-              const isSelected = mood === m.type;
-              return (
-                <button
-                  key={m.type}
-                  type="button"
-                  onClick={() => setMood(m.type)}
-                  className={`flex flex-col items-center justify-center p-3 rounded-2xl border transition-all duration-200 active:scale-95
-                    ${
-                      isSelected
-                        ? 'bg-[#8979FF] border-transparent text-white shadow-lg shadow-indigo-500/25 scale-[1.02]'
-                        : 'bg-slate-50 border-slate-200 hover:bg-slate-100/50 text-slate-700'
-                    }`}
-                >
-                  <span className="text-2xl mb-1">{m.emoji}</span>
-                  <span className={`text-[10px] font-black uppercase tracking-wider ${isSelected ? 'text-white' : 'text-slate-500'}`}>
-                    {m.label}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
+        {/* Mood selector — matching Frame132 mood emojis row */}
+        <div
+          style={{
+            padding: '12px 20px 8px',
+            display: 'flex', gap: 8,
+            borderBottom: '1px solid rgba(226,232,240,0.60)',
+            marginBottom: 4,
+          }}
+        >
+          {MOODS.map((m) => (
+            <button
+              key={m.type}
+              onClick={() => setMood(m.type)}
+              style={{
+                width: 42, height: 42, borderRadius: '50%',
+                fontSize: 20,
+                border: `2px solid ${mood === m.type ? m.color : 'transparent'}`,
+                background: mood === m.type ? m.bg + '60' : 'rgba(226,232,240,0.30)',
+                cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                transform: mood === m.type ? 'scale(1.15)' : 'scale(1)',
+                transition: 'all 0.15s ease',
+              }}
+              title={m.label}
+            >
+              {m.emoji}
+            </button>
+          ))}
         </div>
 
-        {/* Quill Editor */}
-        <div className="pt-2">
-          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 font-mono">
-            Reflections / Journal Details
-          </label>
+        {/* Attached images */}
+        {images.length > 0 && (
+          <div style={{ padding: '8px 20px', display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            {images.map((img, i) => (
+              <div key={i} style={{ position: 'relative', width: 70, height: 70 }}>
+                <img
+                  src={img}
+                  alt={`att ${i}`}
+                  style={{ width: 70, height: 70, objectFit: 'cover', borderRadius: 10, border: '1px solid #E2E8F0' }}
+                />
+                <button
+                  onClick={() => setImages(images.filter((_, j) => j !== i))}
+                  style={{
+                    position: 'absolute', top: -6, right: -6,
+                    width: 18, height: 18, borderRadius: '50%',
+                    background: '#EF4444', border: 'none', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    color: '#fff',
+                  }}
+                >
+                  <X size={10} />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Quill editor */}
+        <div style={{ padding: '0 20px' }}>
           <QuillEditor
             value={content}
             onChange={setContent}
-            placeholder="Start writing down your feelings, thoughts, and reflections..."
+            placeholder="Start writing your log here... The formatting controls are placed in a floating island, creating a premium and distraction-free writing experience."
           />
         </div>
 
-        {/* Tags list */}
-        <div className="pt-2 border-t border-slate-100">
-          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 font-mono">
-            Tags / Labels
-          </label>
-          <div className="flex gap-2 mb-3">
-            <input
-              value={tagInput}
-              onChange={(e) => setTagInput(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
-              placeholder="Add a tag..."
-              className="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-sm font-bold text-slate-900 placeholder-slate-400 focus:border-[#8979FF] outline-none"
-            />
-            <Button type="button" onClick={addTag} variant="secondary" className="rounded-2xl">
-              <Plus size={18} />
-            </Button>
+        {/* Tags */}
+        <div style={{ padding: '12px 20px', borderTop: '1px solid rgba(226,232,240,0.60)', marginTop: 8 }}>
+          <div style={{ fontSize: 10, fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>
+            Tags
           </div>
-          {tags.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {tags.map((tag) => (
-                <div key={tag} className="flex items-center gap-1.5 px-3 py-1 bg-purple-500/10 text-purple-600 rounded-full text-xs font-bold border border-purple-500/20 font-mono">
-                  <span>{tag}</span>
-                  <button type="button" onClick={() => removeTag(tag)} className="hover:text-rose-500 transition-colors">
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              ))}
+          <div style={{ display: 'flex', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
+            {tags.map((t) => (
+              <span
+                key={t}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 4,
+                  padding: '3px 10px', borderRadius: 200,
+                  background: 'rgba(137,121,255,0.10)',
+                  border: '1px solid rgba(137,121,255,0.25)',
+                  fontSize: 11, fontWeight: 700, color: '#8979FF',
+                }}
+              >
+                {t}
+                <button
+                  onClick={() => setTags(tags.filter((x) => x !== t))}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ABA2FD', display: 'flex' }}
+                >
+                  <X size={11} />
+                </button>
+              </span>
+            ))}
+            <div style={{ display: 'flex', gap: 6 }}>
+              <input
+                value={tagInput}
+                onChange={(e) => setTagInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && addTag()}
+                placeholder="Add tag..."
+                style={{
+                  background: '#FFFFFF', border: '1px solid #E2E8F0',
+                  borderRadius: 200, padding: '4px 12px',
+                  fontSize: 12, color: '#1E1E1E', outline: 'none',
+                  width: 110,
+                }}
+              />
+              <button
+                onClick={addTag}
+                style={{
+                  width: 28, height: 28, borderRadius: '50%',
+                  background: 'rgba(137,121,255,0.15)', border: 'none',
+                  cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: '#8979FF',
+                }}
+              >
+                <Plus size={14} />
+              </button>
             </div>
-          )}
+          </div>
         </div>
-      </Card>
+      </div>
     </div>
   );
 };

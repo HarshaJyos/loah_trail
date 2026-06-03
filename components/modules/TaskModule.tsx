@@ -399,142 +399,113 @@ export const TaskModule: React.FC = () => {
     return (
       <div
         onClick={() => openModal(task)}
-        className={`group relative bg-slate-50/40 hover:bg-slate-50/70 border rounded-2xl p-4 transition-all duration-300 cursor-pointer flex flex-col gap-3
-          ${isCompleted ? 'opacity-50 border-slate-200/60 bg-white/[0.02]' : 'border-slate-200/60 hover:border-violet-500/25'}
-          ${isOverdue && !isCompleted ? 'border-rose-500/30 bg-rose-500/5' : ''}`}
+        className="loah-card group relative cursor-pointer"
+        style={{
+          borderLeft: `3px solid ${task.color || '#8979FF'}`,
+          opacity: isCompleted ? 0.6 : 1,
+          background: isOverdue && !isCompleted ? 'rgba(254,202,202,0.15)' : '#FFFFFF',
+          borderColor: isOverdue && !isCompleted ? '#FECACA' : undefined,
+        }}
       >
-        {/* Color accent vertical line */}
-        <div
-          className="absolute left-0 top-3 bottom-3 w-1 rounded-r-md"
-          style={{ backgroundColor: task.color || '#fff' }}
-        />
+        <div style={{ padding: '12px 14px' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+            {/* Checkbox */}
+            <button
+              onClick={(e) => { e.stopPropagation(); onToggleTask(task.id); }}
+              style={{
+                marginTop: 2, flexShrink: 0,
+                width: 18, height: 18, borderRadius: 5,
+                border: `1.5px solid ${isCompleted ? '#8979FF' : '#D4D4D4'}`,
+                background: isCompleted ? '#8979FF' : 'transparent',
+                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}
+            >
+              {isCompleted && <span style={{ color: '#fff', fontSize: 10, fontWeight: 900 }}>✓</span>}
+            </button>
 
-        <div className="flex items-start gap-3 pl-2">
-          {/* Check Box */}
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggleTask(task.id);
-            }}
-            className={`mt-1 shrink-0 transition-colors ${
-              isCompleted ? 'text-emerald-500' : 'text-slate-400 hover:text-slate-900'
-            }`}
-          >
-            {isCompleted ? (
-              <CheckSquare size={20} />
-            ) : (
-              <div className="w-5 h-5 border border-current rounded-lg" />
-            )}
-          </button>
-
-          <div className="flex-1 min-w-0">
-            <div className="flex justify-between items-start">
-              <h4
-                className={`text-sm md:text-base font-bold text-[#f1f0ff] leading-snug group-hover:text-slate-900 ${
-                  isCompleted ? 'line-through opacity-50' : ''
-                }`}
-              >
-                {task.title}
-              </h4>
-              <div className="flex gap-1 shrink-0 pl-2">
-                {!isCompleted && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onStartTask(task);
-                    }}
-                    className="p-1.5 bg-violet-600/90 hover:bg-violet-500 text-slate-900 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
-                    title="Start Focus"
-                  >
-                    <Play size={12} fill="currentColor" />
-                  </button>
-                )}
-                {isCompleted ? (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onUnarchiveTask(task.id);
-                    }}
-                    className="p-1.5 hover:bg-slate-100/50 text-slate-400 hover:text-slate-900 rounded-lg transition-all opacity-0 group-hover:opacity-100"
-                    title="Restore Task"
-                  >
-                    <Archive size={12} />
-                  </button>
-                ) : (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onArchiveTask(task.id);
-                    }}
-                    className="p-1.5 hover:bg-slate-100/50 text-slate-400 hover:text-slate-900 rounded-lg transition-all opacity-0 group-hover:opacity-100"
-                    title="Archive Task"
-                  >
-                    <Archive size={12} />
-                  </button>
-                )}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onDeleteTask(task.id);
+            <div style={{ flex: 1, minWidth: 0 }}>
+              {/* Title + actions row */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <h4
+                  style={{
+                    fontSize: 13, fontWeight: 700,
+                    color: isCompleted ? '#9CA3AF' : '#1E1E1E',
+                    textDecoration: isCompleted ? 'line-through' : 'none',
+                    lineHeight: 1.3, flex: 1, marginRight: 8,
                   }}
-                  className="p-1.5 hover:bg-rose-500/10 text-slate-400 hover:text-rose-400 rounded-lg transition-all opacity-0 group-hover:opacity-100"
-                  title="Delete Task"
+                  className="line-clamp-2"
                 >
-                  <Trash2 size={12} />
-                </button>
-              </div>
-            </div>
-
-            {task.description && (
-              <p className="text-xs text-[var(--text-secondary)] mt-1 font-light line-clamp-2">
-                {task.description}
-              </p>
-            )}
-
-            <div className="flex flex-wrap items-center gap-2 mt-3">
-              {task.startTime && (
-                <span
-                  className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full flex items-center gap-1 font-mono
-                    ${isOverdue && !isCompleted ? 'bg-rose-500/15 text-rose-300' : 'bg-slate-100/50 text-slate-500'}`}
-                >
-                  {isOverdue && !isCompleted && <AlertCircle size={10} />}
-                  <Calendar size={10} />
-                  {new Date(task.startTime).toLocaleDateString(undefined, {
-                    month: 'short',
-                    day: 'numeric',
-                  })}
-                  {new Date(task.startTime).getHours() !== 9 && (
-                    <span className="opacity-75">
-                      {' '}
-                      {new Date(task.startTime).toLocaleTimeString([], {
-                        hour: 'numeric',
-                        minute: '2-digit',
-                      })}
-                    </span>
+                  {task.title}
+                </h4>
+                <div style={{ display: 'flex', gap: 4, opacity: 0, flexShrink: 0 }} className="group-hover:opacity-100 transition-opacity">
+                  {!isCompleted && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); onStartTask(task); }}
+                      style={{ width: 26, height: 26, borderRadius: 6, border: 'none', background: '#8979FF', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}
+                      title="Focus"
+                    >
+                      <Play size={11} fill="currentColor" />
+                    </button>
                   )}
-                </span>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); isCompleted ? onUnarchiveTask(task.id) : onArchiveTask(task.id); }}
+                    style={{ width: 26, height: 26, borderRadius: 6, border: 'none', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9CA3AF' }}
+                  >
+                    <Archive size={12} />
+                  </button>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onDeleteTask(task.id); }}
+                    style={{ width: 26, height: 26, borderRadius: 6, border: 'none', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9CA3AF' }}
+                  >
+                    <Trash2 size={12} />
+                  </button>
+                </div>
+              </div>
+
+              {task.description && (
+                <p style={{ fontSize: 11, color: '#64748B', marginTop: 3, lineHeight: 1.5 }} className="line-clamp-2">
+                  {task.description}
+                </p>
               )}
-              <Badge
-                variant={
-                  task.priority === 'High'
-                    ? 'rose'
-                    : task.priority === 'Medium'
-                    ? 'amber'
-                    : 'cyan'
-                }
-              >
-                {task.priority}
-              </Badge>
-              {project && (
-                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-violet-500/10 text-violet-300 flex items-center gap-1 max-w-[100px] truncate border border-violet-500/10">
-                  <Briefcase size={8} /> {project.title}
+
+              {/* Footer badges */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, marginTop: 8, alignItems: 'center' }}>
+                {task.startTime && (
+                  <span
+                    style={{
+                      fontSize: 9, fontWeight: 700, padding: '2px 7px',
+                      borderRadius: 200, display: 'flex', alignItems: 'center', gap: 3,
+                      background: isOverdue && !isCompleted ? '#FECACA' : '#EFF6FF',
+                      color: isOverdue && !isCompleted ? '#EF4444' : '#3366CC',
+                      border: `1px solid ${isOverdue && !isCompleted ? '#FCA5A5' : '#BFDBFE'}`,
+                    }}
+                  >
+                    {isOverdue && !isCompleted && <AlertCircle size={9} />}
+                    <Calendar size={9} />
+                    {new Date(task.startTime).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                  </span>
+                )}
+                <span
+                  style={{
+                    fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 200,
+                    background: task.priority === 'High' ? '#FECACA' : task.priority === 'Medium' ? '#FED7AA' : '#BFDBFE',
+                    color: task.priority === 'High' ? '#EF4444' : task.priority === 'Medium' ? '#D97706' : '#3366CC',
+                    border: `1px solid ${task.priority === 'High' ? '#FCA5A5' : task.priority === 'Medium' ? '#FDBA74' : '#93C5FD'}`,
+                  }}
+                >
+                  {task.priority}
                 </span>
-              )}
-              {subtaskCount > 0 && (
-                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-slate-100/50 text-slate-500 flex items-center gap-1 border border-slate-200/60">
-                  <ListTodo size={8} /> {subtaskDone}/{subtaskCount}
-                </span>
-              )}
+                {project && (
+                  <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 200, background: 'rgba(137,121,255,0.10)', color: '#8979FF', border: '1px solid rgba(137,121,255,0.20)', display: 'flex', alignItems: 'center', gap: 3, maxWidth: 100, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <Briefcase size={8} /> {project.title}
+                  </span>
+                )}
+                {subtaskCount > 0 && (
+                  <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 200, background: '#F1F5F9', color: '#64748B', border: '1px solid #E2E8F0', display: 'flex', alignItems: 'center', gap: 3 }}>
+                    <ListTodo size={8} /> {subtaskDone}/{subtaskCount}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -716,35 +687,35 @@ export const TaskModule: React.FC = () => {
 
   return (
     <div className="flex flex-col h-full bg-[#F5F7FA] relative overflow-hidden">
-      {/* Header Container */}
-      <div className="flex flex-col gap-4 px-4 py-4 md:px-8 md:py-6 border-b border-slate-200/60 bg-white/85 backdrop-blur-md z-20 shrink-0 shadow-lg">
-        <div className="flex flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-tr from-violet-600 to-pink-600 rounded-xl flex items-center justify-center text-slate-900 shadow-lg">
-              <ListTodo size={20} />
+      {/* ── Header matching Frame132 header-notes ──────────── */}
+      <div
+        style={{
+          padding: '16px 20px 12px',
+          borderBottom: '1px solid #E2E8F0',
+          display: 'flex', flexDirection: 'column', gap: 10,
+          flexShrink: 0, background: '#F5F7FA',
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div>
+            <div style={{ fontSize: 26, fontWeight: 700, color: '#1E1E1E', letterSpacing: '-0.03em' }}>
+              {showArchived ? 'Archive' : showCompleted ? 'Completed' : 'Tasks'}
             </div>
-            <div>
-              <h2 className="text-2xl font-black text-slate-900 tracking-tight leading-none">
-                Tasks
-              </h2>
-              <p className="text-xs text-[var(--text-secondary)] font-medium mt-1">
-                {showCompleted
-                  ? 'Showing completed'
-                  : showArchived
-                  ? 'Showing archived'
-                  : `${activeTasks.filter((t) => !t.isCompleted).length} pending tasks`}
-              </p>
+            <div style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>
+              {showCompleted
+                ? 'Showing completed tasks'
+                : showArchived
+                ? 'Showing archived tasks'
+                : `${activeTasks.filter((t) => !t.isCompleted).length} pending`}
             </div>
           </div>
-
-          <Button
+          <button
             onClick={() => openModal()}
-            variant="primary"
-            className="flex items-center justify-center gap-2 active:scale-95"
+            className="loah-icon-btn"
+            style={{ background: '#8979FF', borderColor: '#8979FF', color: '#fff' }}
           >
-            <Plus size={20} />
-            <span className="hidden md:inline">New Task</span>
-          </Button>
+            <Plus size={17} />
+          </button>
         </div>
 
         <div className="flex flex-col md:flex-row gap-3">

@@ -6,103 +6,89 @@ import { useAppStore } from '../../store/useAppStore';
 import {
   LayoutDashboard,
   Brain,
-  Briefcase,
-  CheckCircle,
   Calendar as CalendarIcon,
-  ListTodo,
-  PlayCircle,
+  CircleCheckBig,
   StickyNote,
-  BookOpen,
-  Trash2,
   Minus,
   Plus,
   Play,
   Pause,
   SkipForward,
   X,
-  Clock,
-  Sparkles,
   ChevronDown,
-  ChevronUp,
 } from 'lucide-react';
 import useTimerWorker from '../../hooks/useTimerWorker';
 import useReminderSystem from '../../hooks/useReminderSystem';
 
 interface AppShellProps {
   children: React.ReactNode;
-  miniPlayer?: React.ReactNode;
 }
+
+// Exactly 5 nav items matching Frame132 nav-bar icons:
+// lucide-layout-dashboard, lucide-brain, lucide-calendar, lucide-circle-check-big, lucide-sticky-note
+const NAV_ITEMS = [
+  {
+    id: 'dashboard',
+    icon: LayoutDashboard,
+    paths: ['/dashboard', '/activity'],
+  },
+  {
+    id: 'dump',
+    icon: Brain,
+    paths: ['/dump', '/trash'],
+  },
+  {
+    id: 'calendar',
+    icon: CalendarIcon,
+    paths: ['/calendar', '/tasks', '/projects'],
+  },
+  {
+    id: 'routines',
+    icon: CircleCheckBig,
+    paths: ['/routines', '/habits'],
+  },
+  {
+    id: 'notes',
+    icon: StickyNote,
+    paths: ['/notes', '/journal'],
+  },
+] as const;
 
 export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   const router = useRouter();
   const pathname = usePathname();
 
-  // Run global background hooks
+  // Background hooks
   useTimerWorker();
   useReminderSystem();
 
-  const uiScale = useAppStore((state) => state.uiScale);
-  const setUiScale = useAppStore((state) => state.setUiScale);
-  const currentView = pathname.replace('/', '') || 'dashboard';
+  const uiScale = useAppStore((s) => s.uiScale);
+  const setUiScale = useAppStore((s) => s.setUiScale);
 
-  // Routine Player states for Dynamic Island
-  const activeRoutine = useAppStore((state) => state.activeRoutine);
-  const isPlaying = useAppStore((state) => state.isPlaying);
-  const currentStepIndex = useAppStore((state) => state.currentStepIndex);
-  const timeElapsedInStep = useAppStore((state) => state.timeElapsedInStep);
-  const playerSteps = useAppStore((state) => state.playerSteps);
-  const setPlayerState = useAppStore((state) => state.setPlayerState);
-  const exitPlayer = useAppStore((state) => state.exitPlayer);
-  const handleStepComplete = useAppStore((state) => state.handleStepComplete);
+  // Routine player state
+  const activeRoutine = useAppStore((s) => s.activeRoutine);
+  const isPlaying = useAppStore((s) => s.isPlaying);
+  const currentStepIndex = useAppStore((s) => s.currentStepIndex);
+  const timeElapsedInStep = useAppStore((s) => s.timeElapsedInStep);
+  const playerSteps = useAppStore((s) => s.playerSteps);
+  const setPlayerState = useAppStore((s) => s.setPlayerState);
+  const exitPlayer = useAppStore((s) => s.exitPlayer);
+  const handleStepComplete = useAppStore((s) => s.handleStepComplete);
 
-  // Island expansion state
   const [isIslandExpanded, setIsIslandExpanded] = React.useState(false);
 
-  const navItems = [
-    {
-      id: 'dashboard',
-      label: 'Dashboard',
-      icon: LayoutDashboard,
-      paths: ['/dashboard', '/activity'],
-    },
-    {
-      id: 'dump',
-      label: 'Brain',
-      icon: Brain,
-      paths: ['/dump', '/tasks', '/projects'],
-    },
-    {
-      id: 'calendar',
-      label: 'Calendar',
-      icon: CalendarIcon,
-      paths: ['/calendar', '/trash'],
-    },
-    {
-      id: 'routines',
-      label: 'Focus',
-      icon: PlayCircle,
-      paths: ['/routines', '/habits'],
-    },
-    {
-      id: 'notes',
-      label: 'Notes',
-      icon: StickyNote,
-      paths: ['/notes', '/journal'],
-    },
-  ];
-
-  const getActiveTabId = () => {
+  // ── Active tab detection ──────────────────────────────────
+  const activeTabId = React.useMemo(() => {
     if (pathname.includes('/dashboard') || pathname.includes('/activity')) return 'dashboard';
-    if (pathname.includes('/dump') || pathname.includes('/tasks') || pathname.includes('/projects')) return 'dump';
-    if (pathname.includes('/calendar') || pathname.includes('/trash')) return 'calendar';
+    if (pathname.includes('/dump') || pathname.includes('/trash')) return 'dump';
+    if (pathname.includes('/calendar') || pathname.includes('/tasks') || pathname.includes('/projects')) return 'calendar';
     if (pathname.includes('/routines') || pathname.includes('/habits') || pathname.includes('/routine-player')) return 'routines';
     if (pathname.includes('/notes') || pathname.includes('/journal')) return 'notes';
-    return '';
-  };
+    return 'dashboard';
+  }, [pathname]);
 
-  const activeTabId = getActiveTabId();
-
-  const handleNavClick = (item: typeof navItems[0]) => {
+  // ── Nav click: cycle through paths on repeated tap ───────
+  const handleNavClick = (item: (typeof NAV_ITEMS)[number]) => {
     let matchedIdx = -1;
     for (let i = 0; i < item.paths.length; i++) {
       if (pathname === item.paths[i] || pathname.startsWith(item.paths[i] + '/')) {
@@ -110,7 +96,6 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
         break;
       }
     }
-    
     if (matchedIdx !== -1) {
       const nextIdx = (matchedIdx + 1) % item.paths.length;
       router.push(item.paths[nextIdx] as any);
@@ -119,24 +104,32 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
     }
   };
 
-  // Active step details for timer calculation
+  // ── Timer display ─────────────────────────────────────────
   const currentStep = playerSteps[currentStepIndex];
-  const duration = currentStep ? currentStep.durationSeconds : 0;
-  const remainingSeconds = Math.max(0, duration - timeElapsedInStep);
-  const mins = Math.floor(remainingSeconds / 60);
-  const secs = remainingSeconds % 60;
+  const duration = currentStep?.durationSeconds ?? 0;
+  const remaining = Math.max(0, duration - timeElapsedInStep);
+  const mins = Math.floor(remaining / 60);
+  const secs = remaining % 60;
   const timeString = `${mins}:${secs.toString().padStart(2, '0')}`;
   const progressPercent = duration > 0 ? (timeElapsedInStep / duration) * 100 : 0;
 
-  const handleZoom = (direction: 'in' | 'out') => {
-    const step = 0.1;
-    const newScale = direction === 'in' ? uiScale + step : uiScale - step;
-    setUiScale(Math.max(0.5, Math.min(1.5, parseFloat(newScale.toFixed(1)))));
+  const handleZoom = (dir: 'in' | 'out') => {
+    const next = dir === 'in' ? uiScale + 0.1 : uiScale - 0.1;
+    setUiScale(Math.max(0.5, Math.min(1.5, parseFloat(next.toFixed(1)))));
   };
 
-  const resetZoom = () => setUiScale(1);
+  // ── Page type helpers ─────────────────────────────────────
+  const isRoutinePlayer = pathname.startsWith('/routine-player');
 
-  // Modules that are full-width container views
+  // Quill editor pages — replace nav with quill toolbar area (toolbar is rendered by Quill itself)
+  const isEditorPage =
+    pathname.includes('/notes/new') ||
+    pathname.includes('/notes/edit') ||
+    pathname.includes('/journal/new') ||
+    pathname.includes('/journal/edit') ||
+    pathname.includes('/dump/new') ||
+    pathname.includes('/dump/edit');
+
   const isFullWidthView =
     pathname.startsWith('/calendar') ||
     pathname.startsWith('/notes') ||
@@ -146,81 +139,66 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
     pathname.startsWith('/tasks') ||
     pathname.startsWith('/routine-player');
 
-  const isRoutinePlayer = currentView === 'routine-player';
-  const isQuillPage =
-    pathname.includes('/notes/new') ||
-    pathname.includes('/notes/edit') ||
-    pathname.includes('/journal/new') ||
-    pathname.includes('/journal/edit');
-
   return (
     <div
-      className="fixed inset-0 bg-[#F5F7FA] text-[#1E1E1E] font-sans overflow-hidden flex flex-col transition-all duration-200 ease-out"
+      className="fixed inset-0 bg-[#F5F7FA] text-[#1E1E1E] font-sans overflow-hidden flex flex-col"
       style={{
         zoom: uiScale,
         height: `calc(100dvh / ${uiScale})`,
         width: `calc(100vw / ${uiScale})`,
+        colorScheme: 'light',
       }}
     >
-      {/* 🏝️ DYNAMIC ISLAND (TOP CENTER NAVIGATION & PLAYER STATUS) */}
+      {/* ── Routine Player Dynamic Island (top center) ──────── */}
       {!isRoutinePlayer && activeRoutine && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] transition-all duration-500 ease-in-out">
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[200] transition-all duration-500">
           <div
-            className={`bg-slate-900 text-white rounded-[28px] shadow-2xl border border-white/10 transition-all duration-500 ease-in-out overflow-hidden flex flex-col justify-center
-              ${isIslandExpanded ? 'w-[320px] p-5' : 'w-[240px] px-4 py-2.5 h-[48px]'}`}
+            className={`bg-[#1E1E1E] text-white rounded-[28px] border border-white/10 transition-all duration-500 overflow-hidden flex flex-col justify-center
+              ${isIslandExpanded ? 'w-[300px] p-5 shadow-2xl' : 'w-[220px] px-4 py-2.5 h-[44px] shadow-lg'}`}
           >
-            {/* Compact Header View */}
             <div className="flex items-center justify-between w-full">
               <div
                 className="flex items-center gap-2 cursor-pointer min-w-0"
                 onClick={() => setIsIslandExpanded(!isIslandExpanded)}
               >
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-                <span className="text-xs font-black truncate max-w-[120px] tracking-tight">
+                <span className="w-2 h-2 rounded-full bg-[#01F7AB] animate-pulse shrink-0" />
+                <span className="text-xs font-bold truncate max-w-[110px]">
                   {currentStep ? currentStep.title : activeRoutine.title}
                 </span>
               </div>
-
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-mono font-black text-violet-300 tabular-nums">
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs font-mono font-bold text-[#ABA2FD] tabular-nums">
                   {timeString}
                 </span>
                 <button
                   onClick={() => router.push('/routine-player' as any)}
                   className="p-1 hover:bg-white/10 rounded-lg text-zinc-400 hover:text-white transition-colors"
-                  title="Fullscreen Mode"
                 >
-                  <ChevronDown size={14} className="rotate-180" />
+                  <ChevronDown size={12} className="rotate-180" />
                 </button>
               </div>
             </div>
 
-            {/* Expanded Action & Status View */}
             {isIslandExpanded && (
-              <div className="mt-4 space-y-4 animate-fade-in">
-                {/* Progress Bar */}
-                <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
+              <div className="mt-4 space-y-3 animate-fade-in">
+                <div className="w-full bg-white/10 h-1 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-violet-400 to-pink-500 rounded-full transition-all duration-1000"
+                    className="h-full bg-[#8979FF] rounded-full transition-all duration-1000"
                     style={{ width: `${progressPercent}%` }}
                   />
                 </div>
-
-                {/* Controller Buttons */}
-                <div className="flex items-center justify-center gap-4">
+                <div className="flex items-center justify-center gap-3">
                   <button
                     onClick={() => setPlayerState({ isPlaying: !isPlaying })}
-                    className="p-2.5 bg-white text-slate-900 rounded-full hover:scale-105 active:scale-95 transition-all"
-                    title={isPlaying ? 'Pause' : 'Play'}
+                    className="p-2 bg-white text-[#1E1E1E] rounded-full hover:scale-105 active:scale-95 transition-all"
                   >
-                    {isPlaying ? <Pause size={14} fill="currentColor" /> : <Play size={14} fill="currentColor" />}
+                    {isPlaying ? <Pause size={13} fill="currentColor" /> : <Play size={13} fill="currentColor" />}
                   </button>
                   <button
                     onClick={handleStepComplete}
-                    className="p-2.5 bg-white/10 rounded-full hover:bg-white/20 active:scale-95 transition-all text-white"
-                    title="Skip Step"
+                    className="p-2 bg-white/10 rounded-full hover:bg-white/20 active:scale-95 transition-all"
                   >
-                    <SkipForward size={14} />
+                    <SkipForward size={13} />
                   </button>
                   <button
                     onClick={() => {
@@ -229,19 +207,16 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
                         setIsIslandExpanded(false);
                       }
                     }}
-                    className="p-2.5 bg-rose-500/20 text-rose-400 rounded-full hover:bg-rose-500/30 active:scale-95 transition-all"
-                    title="End Session"
+                    className="p-2 bg-rose-500/20 text-rose-400 rounded-full hover:bg-rose-500/30 active:scale-95 transition-all"
                   >
-                    <X size={14} />
+                    <X size={13} />
                   </button>
                 </div>
-
-                {/* Collapse Toggle */}
                 <button
                   onClick={() => setIsIslandExpanded(false)}
-                  className="w-full text-center text-[10px] uppercase font-mono tracking-widest text-zinc-500 hover:text-zinc-300 pt-1"
+                  className="w-full text-center text-[10px] uppercase tracking-widest text-zinc-500 hover:text-zinc-300 font-mono"
                 >
-                  Collapse View
+                  Collapse
                 </button>
               </div>
             )}
@@ -249,70 +224,111 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
         </div>
       )}
 
-      {/* Main Content Area */}
-      <main className={`flex-1 flex flex-col h-full overflow-hidden relative ${activeRoutine ? 'pt-16' : 'pt-6'}`}>
-        <div
-          className={`flex-1 flex flex-col h-full ${
-            isFullWidthView
-              ? 'overflow-hidden p-0'
-              : 'overflow-y-auto p-4 md:p-8 pb-32 md:pb-32'
+      {/* ── Main Content ──────────────────────────────────────── */}
+      <main
+        className={`flex-1 flex flex-col h-full overflow-hidden relative ${activeRoutine ? 'pt-14' : 'pt-0'
           }`}
+      >
+        <div
+          className={`flex-1 flex flex-col h-full ${isFullWidthView
+            ? 'overflow-hidden p-0'
+            : 'overflow-y-auto p-4 md:p-8 pb-32'
+            }`}
         >
           {children}
         </div>
       </main>
 
-      {/* 🏝️ FLOATING BOTTOM NAVIGATION BAR */}
-      {!isRoutinePlayer && !isQuillPage && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] w-[95%] max-w-[640px] px-2">
-          <nav className="bg-white/85 backdrop-blur-xl border border-slate-200/80 shadow-2xl rounded-[28px] p-2 flex items-center gap-1 overflow-x-auto no-scrollbar justify-between">
-            <div className="flex items-center gap-1 w-full justify-between">
-              {navItems.map((item) => {
-                const isActive = activeTabId === item.id;
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => handleNavClick(item)}
-                    className={`flex items-center gap-2 px-3.5 py-2.5 rounded-2xl transition-all duration-200 shrink-0 select-none
-                      ${
-                        isActive
-                          ? 'bg-[#8979FF] text-white shadow-lg shadow-indigo-500/25 font-bold scale-[1.02]'
-                          : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/50'
-                      }`}
-                  >
-                    <item.icon
-                      size={18}
-                      className={isActive ? 'text-white' : 'text-slate-500'}
-                      strokeWidth={isActive ? 2.5 : 2}
-                    />
-                    <span className="text-xs font-extrabold hidden md:inline">{item.label}</span>
-                  </button>
-                );
-              })}
-            </div>
+      {/* ── Floating Bottom Navigation Bar ───────────────────── */}
+      {/* Frame132 style: frame-98 inside nav-bar, exactly 5 icon slots */}
+      {!isRoutinePlayer && !isEditorPage && (
+        <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-[100]">
+          <nav
+            style={{
+              background: 'rgba(0, 0, 0, 0)',
+              borderRadius: '27.5px',
+              border: '1px solid rgba(31, 31, 31, 0.12)',
+              padding: '5px 10px',
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              boxShadow: '2px 2px 4px 0px rgba(31, 31, 31, 0.12)',
+              width: '320px',
+              maxWidth: '92vw',
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)',
+              backgroundColor: 'rgba(255,255,255,0.88)',
+            }}
+          >
+            {NAV_ITEMS.map((item) => {
+              const isActive = activeTabId === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => handleNavClick(item)}
+                  style={{
+                    width: 44,
+                    height: 44,
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    border: 'none',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    background: isActive ? '#8979FF' : 'transparent',
+                    boxShadow: isActive ? '2px 2px 10px 0px rgba(147, 51, 234, 0.40)' : 'none',
+                    flexShrink: 0,
+                  }}
+                >
+                  <item.icon
+                    size={19}
+                    color={isActive ? '#FFFFFF' : '#808DA9'}
+                    strokeWidth={isActive ? 2.5 : 2}
+                  />
+                </button>
+              );
+            })}
 
-            {/* Desktop Zoom Control Widget embedded in pill */}
-            <div className="hidden lg:flex items-center border-l border-slate-200/80 ml-2 pl-2 gap-1 shrink-0">
+            {/* Zoom control (hidden on mobile) */}
+            <div
+              className="hidden lg:flex items-center gap-1 border-l border-[rgba(31,31,31,0.10)] pl-2 ml-1"
+              style={{ height: 28 }}
+            >
               <button
                 onClick={() => handleZoom('out')}
-                className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-900 transition-colors"
+                style={{
+                  width: 24, height: 24,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  borderRadius: 6, border: 'none', background: 'transparent',
+                  color: '#808DA9', cursor: 'pointer',
+                }}
                 title="Zoom Out"
               >
-                <Minus size={12} />
+                <Minus size={11} />
               </button>
               <span
-                className="text-[10px] font-black text-slate-500 tabular-nums cursor-pointer px-1 select-none"
-                onDoubleClick={resetZoom}
-                title="Double click to reset"
+                style={{
+                  fontSize: 10, fontWeight: 700, color: '#808DA9',
+                  fontFamily: 'monospace', cursor: 'pointer', minWidth: 28, textAlign: 'center',
+                }}
+                onDoubleClick={() => setUiScale(1)}
+                title="Double-click to reset"
               >
                 {Math.round(uiScale * 100)}%
               </span>
               <button
                 onClick={() => handleZoom('in')}
-                className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-900 transition-colors"
+                style={{
+                  width: 24, height: 24,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  borderRadius: 6, border: 'none', background: 'transparent',
+                  color: '#808DA9', cursor: 'pointer',
+                }}
                 title="Zoom In"
               >
-                <Plus size={12} />
+                <Plus size={11} />
               </button>
             </div>
           </nav>
