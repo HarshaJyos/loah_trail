@@ -203,58 +203,75 @@ export const ProjectModule: React.FC = () => {
   }
 
   return (
-    <div className="w-full h-full p-4 md:p-8 overflow-y-auto no-scrollbar pb-32 max-w-7xl mx-auto flex flex-col">
-      <div className="flex flex-col gap-6 border-b border-slate-200/60 pb-6 mb-8 shrink-0">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div className="w-full h-full p-4 md:p-8 overflow-y-auto no-scrollbar pb-32 max-w-7xl mx-auto flex flex-col animate-fade-in">
+      {/* ── Frame132 Header ──────────── */}
+      <div className="loah-module-header mb-8">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16 }}>
           <div>
-            <h2 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
-              Projects
-            </h2>
-            {showArchived && (
-              <span className="text-xs font-bold text-orange-400 bg-orange-500/10 px-2.5 py-0.5 rounded-full uppercase tracking-wider mt-2 border border-orange-500/20 inline-block font-mono">
-                Archived View
-              </span>
-            )}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ fontSize: 28, fontWeight: 800, color: '#1E1E1E', letterSpacing: '-0.03em' }}>
+                Projects
+              </div>
+              {showArchived && (
+                <span style={{
+                  fontSize: 10, fontWeight: 700, color: '#F97316', background: 'rgba(249, 115, 22, 0.1)',
+                  padding: '2px 8px', borderRadius: 4, textTransform: 'uppercase', letterSpacing: '0.05em'
+                }}>
+                  Archived View
+                </span>
+              )}
+            </div>
+            <div style={{ fontSize: 13, color: '#64748B', marginTop: 4 }}>
+              Manage your big goals, organize notes, and track task progress.
+            </div>
           </div>
-
-          <div className="flex items-center gap-2">
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <button
               onClick={() => setShowArchived(!showArchived)}
-              className={`p-2.5 rounded-xl border transition-all ${
-                showArchived
-                  ? 'bg-amber-500/15 border-amber-500/20 text-amber-400'
-                  : 'border-slate-200/60 text-slate-400 hover:text-slate-900 hover:bg-slate-100/50'
-              }`}
+              className="loah-icon-btn"
+              style={{
+                background: showArchived ? 'rgba(249, 115, 22, 0.1)' : '#FFFFFF',
+                borderColor: showArchived ? '#F97316' : '#E2E8F0',
+                color: showArchived ? '#F97316' : '#64748B',
+              }}
               title={showArchived ? 'View Active' : 'View Archive'}
             >
-              <Archive size={20} />
+              <Archive size={16} />
             </button>
-            <Button
+            <button
               onClick={() => openModal()}
-              variant="primary"
-              className="flex items-center gap-2 active:scale-95"
+              style={{
+                background: '#8979FF', color: '#FFFFFF', padding: '0 16px', height: 40,
+                borderRadius: 12, fontSize: 13, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8,
+                border: 'none', cursor: 'pointer',
+              }}
+              className="hover:opacity-90 transition-opacity active:scale-95"
             >
-              <Plus size={18} />
-              <span>New Project</span>
-            </Button>
+              <Plus size={16} />
+              New Project
+            </button>
           </div>
         </div>
 
         {/* Filters */}
-        <div className="flex gap-2 overflow-x-auto no-scrollbar">
-          {['all', 'active', 'on-hold', 'completed'].map((filter) => (
-            <button
-              key={filter}
-              onClick={() => setStatusFilter(filter as any)}
-              className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap border ${
-                statusFilter === filter
-                  ? 'bg-slate-100/50 border-slate-200 text-slate-900 shadow-md'
-                  : 'border-transparent text-slate-400 hover:text-slate-900 hover:bg-slate-100/50'
-              }`}
-            >
-              {filter.replace('-', ' ')}
-            </button>
-          ))}
+        <div style={{ display: 'flex', gap: 8, overflowX: 'auto' }} className="no-scrollbar mt-4">
+          <div style={{ display: 'flex', background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 8, padding: 3, alignItems: 'center', gap: 4 }}>
+            {['all', 'active', 'on-hold', 'completed'].map((f) => (
+              <button
+                key={f}
+                onClick={() => setStatusFilter(f as any)}
+                style={{
+                  padding: '6px 16px', borderRadius: 6, fontSize: 11, fontWeight: 700, textTransform: 'uppercase',
+                  background: statusFilter === f ? '#F1F5F9' : 'transparent',
+                  color: statusFilter === f ? '#1E1E1E' : '#64748B',
+                  border: 'none', cursor: 'pointer', transition: 'all 0.2s',
+                }}
+              >
+                {f.replace('-', ' ')}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 

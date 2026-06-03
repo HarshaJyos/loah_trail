@@ -160,58 +160,68 @@ export const ActivityModule: React.FC = () => {
 
   return (
     <div className="w-full h-full flex flex-col bg-[#F5F7FA] animate-fade-in">
-      {/* Top sticky navbar */}
-      <div className="px-6 py-5 border-b border-slate-200/60 flex flex-col md:flex-row md:items-center justify-between gap-4 shrink-0 bg-[#F5F7FA] z-20">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => router.push('/dashboard')}
-            className="p-2.5 hover:bg-slate-100/50 rounded-2xl text-slate-500 hover:text-slate-900 transition-all border border-transparent hover:border-slate-200/60 active:scale-95"
-            title="Go back to Dashboard"
-          >
-            <ArrowLeft size={20} />
-          </button>
-          <div>
-            <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-3">
-              <Activity className="text-emerald-400" size={28} /> Activity History
-            </h2>
-            <p className="text-[var(--text-secondary)] text-xs font-medium mt-0.5 hidden md:block">
-              Audit trails of your completed tasks, routine player focus sessions, and logs.
-            </p>
+      {/* Top sticky navbar matching Frame132 header-notes */}
+      <div
+        style={{
+          padding: '16px 20px 12px',
+          borderBottom: '1px solid #E2E8F0',
+          display: 'flex', flexDirection: 'column', gap: 16,
+          flexShrink: 0, background: '#F5F7FA', zIndex: 20
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <button
+              onClick={() => router.push('/dashboard')}
+              style={{
+                width: 32, height: 32, borderRadius: 8, border: '1px solid #E2E8F0',
+                background: '#FFFFFF', color: '#64748B', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'
+              }}
+              className="hover:bg-slate-100 hover:text-slate-900 transition-colors"
+            >
+              <ArrowLeft size={16} />
+            </button>
+            <div>
+              <div style={{ fontSize: 26, fontWeight: 700, color: '#1E1E1E', letterSpacing: '-0.03em', display: 'flex', alignItems: 'center', gap: 8 }}>
+                <Activity className="text-emerald-500" size={24} /> Activity History
+              </div>
+              <div style={{ fontSize: 12, color: '#64748B', marginTop: 8 }}>
+                Audit trails of your completed tasks, routine player focus sessions, and logs.
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Filters and Ranges */}
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex bg-white border border-slate-200/60 p-1 rounded-2xl">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+          <div style={{ display: 'flex', background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 8, padding: 3, alignItems: 'center', gap: 4 }}>
             {(['all', 'task', 'session', 'journal'] as FilterType[]).map((f) => (
               <button
                 key={f}
                 onClick={() => setFilter(f)}
-                className={`px-3 py-1.5 text-xs font-extrabold capitalize rounded-xl transition-all whitespace-nowrap
-                  ${
-                    filter === f
-                      ? 'bg-gradient-to-r from-violet-600 to-pink-600 text-slate-900 shadow-md'
-                      : 'text-[var(--text-secondary)] hover:text-slate-900 hover:bg-slate-100/50'
-                  }`}
+                style={{
+                  padding: '4px 12px', borderRadius: 6, fontSize: 11, fontWeight: 700, textTransform: 'uppercase',
+                  background: filter === f ? '#F1F5F9' : 'transparent',
+                  color: filter === f ? '#1E1E1E' : '#64748B',
+                  border: 'none', cursor: 'pointer'
+                }}
               >
                 {f === 'all' ? 'All' : f === 'session' ? 'Focus' : f === 'journal' ? 'Logs' : 'Tasks'}
               </button>
             ))}
           </div>
 
-          <div className="hidden md:block w-px h-6 bg-slate-100" />
-
-          <div className="flex bg-white border border-slate-200/60 p-1 rounded-2xl">
+          <div style={{ display: 'flex', background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 8, padding: 3, alignItems: 'center', gap: 4 }}>
             {(['day', 'week', 'month', 'all'] as TimeRange[]).map((r) => (
               <button
                 key={r}
                 onClick={() => setRange(r)}
-                className={`px-3 py-1.5 text-xs font-extrabold capitalize rounded-xl transition-all whitespace-nowrap
-                  ${
-                    range === r
-                      ? 'bg-gradient-to-r from-violet-600 to-pink-600 text-slate-900 shadow-md'
-                      : 'text-[var(--text-secondary)] hover:text-slate-900 hover:bg-slate-100/50'
-                  }`}
+                style={{
+                  padding: '4px 12px', borderRadius: 6, fontSize: 11, fontWeight: 700, textTransform: 'uppercase',
+                  background: range === r ? '#F1F5F9' : 'transparent',
+                  color: range === r ? '#1E1E1E' : '#64748B',
+                  border: 'none', cursor: 'pointer'
+                }}
               >
                 {r}
               </button>
@@ -224,9 +234,8 @@ export const ActivityModule: React.FC = () => {
       <div className="flex-1 overflow-y-auto no-scrollbar p-4 md:p-8 pb-32">
         <div className="max-w-4xl mx-auto space-y-4">
           {filteredItems.map((item) => (
-            <Card
+            <div
               key={`${item.type}-${item.id}`}
-              variant="glass"
               onClick={() =>
                 setSelectedActivity({
                   id: item.id,
@@ -234,31 +243,35 @@ export const ActivityModule: React.FC = () => {
                   item: item.item,
                 })
               }
-              className="p-4 flex items-center justify-between gap-4 border border-slate-200/60 hover:border-violet-500/30 transition-all duration-300 group cursor-pointer"
+              className="loah-card group relative cursor-pointer"
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16,
+                padding: '16px 20px',
+              }}
             >
               <div className="flex items-center gap-4 min-w-0">
                 <div
-                  className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 border ${item.color} group-hover:scale-105 transition-transform`}
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border ${item.color} group-hover:scale-105 transition-transform`}
                 >
                   <item.icon size={20} strokeWidth={2.5} />
                 </div>
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    <span className="text-[9px] font-bold text-[var(--text-secondary)] font-mono uppercase bg-slate-100/50 px-2 py-0.5 rounded-md border border-slate-200/60">
+                    <span style={{ fontSize: 9, fontWeight: 700, color: '#64748B', background: '#F1F5F9', padding: '2px 8px', borderRadius: 4, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                       {new Date(item.timestamp).toLocaleDateString()}
                     </span>
-                    <span className="text-[9px] font-bold text-slate-400 font-mono">
+                    <span style={{ fontSize: 9, fontWeight: 700, color: '#9CA3AF' }}>
                       {new Date(item.timestamp).toLocaleTimeString([], {
                         hour: 'numeric',
                         minute: '2-digit',
                       })}
                     </span>
                   </div>
-                  <h4 className="text-base font-extrabold text-slate-900 truncate max-w-sm sm:max-w-md md:max-w-lg">
+                  <h4 style={{ fontSize: 15, fontWeight: 700, color: '#1E1E1E', lineHeight: 1.3 }} className="truncate max-w-sm sm:max-w-md md:max-w-lg">
                     {item.title}
                   </h4>
                   {item.subtitle && (
-                    <p className="text-xs text-[var(--text-secondary)] font-medium mt-0.5">
+                    <p style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>
                       {item.subtitle}
                     </p>
                   )}
@@ -270,12 +283,16 @@ export const ActivityModule: React.FC = () => {
                   e.stopPropagation();
                   handleDeleteActivity(item.id, item.type);
                 }}
-                className="p-2 text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-all border border-transparent hover:border-rose-500/20 opacity-0 group-hover:opacity-100"
+                className="opacity-0 group-hover:opacity-100 transition-opacity"
+                style={{
+                  width: 32, height: 32, borderRadius: 8, background: 'transparent', border: 'none', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9CA3AF'
+                }}
                 title="Delete Record"
               >
                 <Trash2 size={16} />
               </button>
-            </Card>
+            </div>
           ))}
 
           {filteredItems.length === 0 && (

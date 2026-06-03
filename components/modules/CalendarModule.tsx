@@ -937,130 +937,141 @@ export const CalendarModule: React.FC = () => {
   return (
     <div className="w-full h-full flex flex-col relative bg-[#F5F7FA]">
       {/* Calendar Header Controls */}
-      <div className="flex flex-col gap-4 p-4 md:p-6 border-b border-slate-200/60 bg-white/30 shrink-0">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 w-full">
-          <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
-            <div className="flex bg-white border border-slate-200/60 rounded-xl p-1 shrink-0">
+      {/* ── Header matching Frame132 header-notes ──────────── */}
+      <div
+        style={{
+          padding: '16px 20px 12px',
+          borderBottom: '1px solid #E2E8F0',
+          display: 'flex', flexDirection: 'column', gap: 16,
+          flexShrink: 0, background: '#F5F7FA',
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ display: 'flex', background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 8, padding: 2, alignItems: 'center' }}>
               <button
                 onClick={() => navigate('prev')}
-                className="p-1.5 hover:bg-slate-100/50 rounded-lg text-slate-500 hover:text-slate-900 transition-colors"
+                style={{ padding: 4, borderRadius: 6, color: '#64748B', background: 'transparent', border: 'none', cursor: 'pointer' }}
+                className="hover:bg-slate-100 hover:text-slate-900 transition-colors"
               >
                 <ChevronLeft size={16} />
               </button>
               <button
                 onClick={() => setCurrentDate(new Date())}
-                className="px-3 text-[10px] font-bold text-slate-700 hover:text-slate-900 uppercase tracking-wider font-mono"
+                style={{ padding: '4px 8px', fontSize: 10, fontWeight: 700, color: '#1E1E1E', background: 'transparent', border: 'none', cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.05em' }}
+                className="hover:bg-slate-100 transition-colors"
               >
                 Today
               </button>
               <button
                 onClick={() => navigate('next')}
-                className="p-1.5 hover:bg-slate-100/50 rounded-lg text-slate-500 hover:text-slate-900 transition-colors"
+                style={{ padding: 4, borderRadius: 6, color: '#64748B', background: 'transparent', border: 'none', cursor: 'pointer' }}
+                className="hover:bg-slate-100 hover:text-slate-900 transition-colors"
               >
                 <ChevronRight size={16} />
               </button>
             </div>
-            <h2 className="text-base md:text-lg font-black text-slate-900 tracking-tight font-mono shrink-0">
+            <div style={{ fontSize: 22, fontWeight: 700, color: '#1E1E1E', letterSpacing: '-0.03em' }}>
               {currentDate.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}
-            </h2>
+            </div>
           </div>
 
-          {/* Desktop Zoom controls */}
-          <div className="hidden md:flex items-center gap-4">
-            {view !== 'month' && (
-              <div className="flex items-center gap-1 text-slate-400 border border-slate-200/60 rounded-xl bg-white p-1">
-                <button
-                  onClick={() => setHourHeight(Math.max(40, hourHeight - 10))}
-                  className="p-1.5 hover:bg-slate-100/50 rounded-lg hover:text-slate-900 transition-colors"
-                >
-                  <ZoomOut size={16} />
-                </button>
-                <button
-                  onClick={() => setHourHeight(Math.min(150, hourHeight + 10))}
-                  className="p-1.5 hover:bg-slate-100/50 rounded-lg hover:text-slate-900 transition-colors"
-                >
-                  <ZoomIn size={16} />
-                </button>
-              </div>
-            )}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div className="hidden md:flex" style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 8, padding: 2, alignItems: 'center' }}>
+              {view !== 'month' && (
+                <>
+                  <button
+                    onClick={() => setHourHeight(Math.max(40, hourHeight - 10))}
+                    style={{ padding: 4, borderRadius: 6, color: '#64748B', background: 'transparent', border: 'none', cursor: 'pointer' }}
+                    className="hover:bg-slate-100 transition-colors"
+                  >
+                    <ZoomOut size={16} />
+                  </button>
+                  <button
+                    onClick={() => setHourHeight(Math.min(150, hourHeight + 10))}
+                    style={{ padding: 4, borderRadius: 6, color: '#64748B', background: 'transparent', border: 'none', cursor: 'pointer' }}
+                    className="hover:bg-slate-100 transition-colors"
+                  >
+                    <ZoomIn size={16} />
+                  </button>
+                </>
+              )}
+            </div>
+            
+            <button
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className="loah-icon-btn"
+              style={{
+                background: isDraggingOverLibrary ? 'rgba(239, 68, 68, 0.1)' : isSidebarOpen ? 'rgba(137,121,255,0.1)' : '#FFFFFF',
+                borderColor: isDraggingOverLibrary ? '#EF4444' : isSidebarOpen ? '#8979FF' : '#E2E8F0',
+                color: isDraggingOverLibrary ? '#EF4444' : isSidebarOpen ? '#8979FF' : '#64748B',
+                width: 'auto', padding: '0 12px', gap: 6, display: 'flex', alignItems: 'center', justifyContent: 'center'
+              }}
+              onDragOver={(e) => { e.preventDefault(); setIsDraggingOverLibrary(true); }}
+              onDragLeave={(e) => { e.preventDefault(); setIsDraggingOverLibrary(false); }}
+              onDrop={handleDropOnLibrary}
+            >
+              {isDraggingOverLibrary ? <X size={16} /> : <PanelLeft size={16} />}
+              <span style={{ fontSize: 12, fontWeight: 700 }}>
+                {isDraggingOverLibrary ? 'Drop to Unschedule' : 'Library'}
+              </span>
+            </button>
           </div>
         </div>
 
-        {/* Tab / Toolbar rows */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1 sm:pb-0 w-full sm:w-auto">
-            {/* Mode: Plan vs Focus */}
-            <div className="flex bg-white border border-slate-200/60 p-1 rounded-xl shrink-0">
-              <button
-                onClick={() => setMode('scheduled')}
-                className={`flex items-center justify-center gap-1.5 rounded-lg text-xs font-bold transition-all uppercase tracking-wider font-mono px-3.5 py-2 ${
-                  mode === 'scheduled'
-                    ? 'bg-slate-100/50 text-slate-900 shadow-md'
-                    : 'text-slate-400 hover:text-slate-900'
-                }`}
-              >
-                <LayoutGrid size={14} /> Plan
-              </button>
-              <button
-                onClick={() => setMode('focus')}
-                className={`flex items-center justify-center gap-1.5 rounded-lg text-xs font-bold transition-all uppercase tracking-wider font-mono px-3.5 py-2 ${
-                  mode === 'focus'
-                    ? 'bg-slate-100/50 text-slate-900 shadow-md'
-                    : 'text-slate-400 hover:text-slate-900'
-                }`}
-              >
-                <Focus size={14} /> Focus
-              </button>
-            </div>
-            <div className="w-px h-6 bg-slate-100/50 mx-1" />
+        {/* Filters/Tabs Row */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+          <div style={{ display: 'flex', background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 8, padding: 3, alignItems: 'center', gap: 4 }}>
             <button
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className={`flex items-center justify-center gap-1.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all z-50 border px-3.5 py-2 font-mono ${
-                isDraggingOverLibrary
-                  ? 'bg-rose-500/10 border-rose-500/30 text-rose-400 animate-pulse'
-                  : isSidebarOpen
-                  ? 'bg-slate-100/50 border-slate-200 text-slate-900 shadow-md'
-                  : 'border-slate-200/60 bg-white text-slate-400 hover:text-slate-900'
-              }`}
-              onDragOver={(e) => {
-                e.preventDefault();
-                setIsDraggingOverLibrary(true);
+              onClick={() => setMode('scheduled')}
+              style={{
+                padding: '4px 12px', borderRadius: 6, fontSize: 11, fontWeight: 700,
+                background: mode === 'scheduled' ? '#F1F5F9' : 'transparent',
+                color: mode === 'scheduled' ? '#1E1E1E' : '#64748B',
+                border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6
               }}
-              onDragLeave={(e) => {
-                e.preventDefault();
-                setIsDraggingOverLibrary(false);
-              }}
-              onDrop={handleDropOnLibrary}
             >
-              {isDraggingOverLibrary ? <X size={14} /> : <PanelLeft size={14} />}
-              <span>{isDraggingOverLibrary ? 'Drop to Unschedule' : 'Library'}</span>
+              <LayoutGrid size={12} /> Plan
+            </button>
+            <button
+              onClick={() => setMode('focus')}
+              style={{
+                padding: '4px 12px', borderRadius: 6, fontSize: 11, fontWeight: 700,
+                background: mode === 'focus' ? '#F1F5F9' : 'transparent',
+                color: mode === 'focus' ? '#1E1E1E' : '#64748B',
+                border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6
+              }}
+            >
+              <Focus size={12} /> Focus
             </button>
           </div>
 
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar w-full sm:w-auto justify-between sm:justify-end">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <button
               onClick={() => setShowCompleted(!showCompleted)}
-              className={`flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold uppercase rounded-xl border transition-all font-mono whitespace-nowrap
-                ${
-                  showCompleted
-                    ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
-                    : 'bg-white border-slate-200/60 text-slate-400 hover:text-slate-900'
-                }
-              `}
-              title={showCompleted ? 'Hide Completed Tasks' : 'Show Completed Tasks'}
+              style={{
+                padding: '4px 12px', borderRadius: 6, fontSize: 11, fontWeight: 700,
+                background: showCompleted ? 'rgba(16, 185, 129, 0.1)' : '#FFFFFF',
+                color: showCompleted ? '#10B981' : '#64748B',
+                border: `1px solid ${showCompleted ? '#10B981' : '#E2E8F0'}`,
+                cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6
+              }}
             >
-              {showCompleted ? <Eye size={14} /> : <EyeOff size={14} />}
-              <span>Done Tasks</span>
+              {showCompleted ? <Eye size={12} /> : <EyeOff size={12} />}
+              Done Tasks
             </button>
 
-            <div className="flex bg-white border border-slate-200/60 p-1 rounded-xl shrink-0">
+            <div style={{ display: 'flex', background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 8, padding: 3, alignItems: 'center', gap: 4 }}>
               {(['day', 'week', 'month'] as CalendarView[]).map((v) => (
                 <button
                   key={v}
                   onClick={() => setView(v)}
-                  className={`px-3.5 py-1.5 text-xs font-bold uppercase rounded-lg transition-all font-mono ${
-                    view === v ? 'bg-slate-100/50 text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-900'
-                  }`}
+                  style={{
+                    padding: '4px 12px', borderRadius: 6, fontSize: 11, fontWeight: 700, textTransform: 'uppercase',
+                    background: view === v ? '#F1F5F9' : 'transparent',
+                    color: view === v ? '#1E1E1E' : '#64748B',
+                    border: 'none', cursor: 'pointer'
+                  }}
                 >
                   {v}
                 </button>
