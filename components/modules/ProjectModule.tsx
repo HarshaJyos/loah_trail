@@ -1,0 +1,1003 @@
+'use client';
+
+import * as React from 'react';
+import { useAppStore } from '../../store/useAppStore';
+import { Project, Task, FocusSession, Note, Priority } from '../../types';
+import {
+  Plus,
+  Briefcase,
+  Calendar,
+  Clock,
+  ArrowRight,
+  Archive,
+  RefreshCcw,
+  Edit2,
+  Trash2,
+  X,
+  CheckCircle2,
+  Play,
+  CheckSquare,
+  Pin,
+  PauseCircle,
+  PlayCircle,
+  Filter,
+} from 'lucide-react';
+import { NoteCard, NoteEditorModal } from './NotesModule';
+import Card from '../ui/Card';
+import Button from '../ui/Button';
+import Badge from '../ui/Badge';
+import Modal from '../ui/Modal';
+
+const PROJECT_COLORS = [
+  '#3b82f6',
+  '#8b5cf6',
+  '#ec4899',
+  '#ef4444',
+  '#f97316',
+  '#f59e0b',
+  '#10b981',
+  '#06b6d4',
+  '#6366f1',
+  '#14b8a6',
+];
+
+export const ProjectModule: React.FC = () => {
+  const projects = useAppStore((state) => state.projects);
+  const tasks = useAppStore((state) => state.tasks);
+  const focusSessions = useAppStore((state) => state.focusSessions);
+
+  const onAddProject = useAppStore((state) => state.handleAddProject);
+  const onUpdateProject = useAppStore((state) => state.handleUpdateProject);
+  const onDeleteProject = useAppStore((state) => state.handleDeleteProject);
+  const onArchiveProject = (id: string) => useAppStore.getState().handleArchive(id, 'project');
+  const onUnarchiveProject = (id: string) => useAppStore.getState().handleUnarchive(id, 'project');
+  const onReorder = useAppStore((state) => state.handleReorderProjects);
+
+  const convertingDump = useAppStore((state) => state.convertingDump);
+  const onClearConvertingDump = () => useAppStore.getState().setConvertingDump(null);
+  const onConvertComplete = useAppStore((state) => state.handleConvertComplete);
+
+  const onAddTask = useAppStore((state) => state.handleAddTask);
+  const onUpdateTask = useAppStore((state) => state.handleUpdateTask);
+  const onDeleteTask = useAppStore((state) => state.handleDeleteTask);
+  const onStartTask = useAppStore((state) => state.startTaskFocus);
+  const onToggleTask = useAppStore((state) => state.toggleTask);
+
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [viewingProjectId, setViewingProjectId] = React.useState<string | null>(null);
+  const [editingProjectId, setEditingProjectId] = React.useState<string | null>(null);
+  const [showArchived, setShowArchived] = React.useState(false);
+  const [statusFilter, setStatusFilter] = React.useState<'all' | 'active' | 'on-hold' | 'completed'>('active');
+  const [draggedProjectId, setDraggedProjectId] = React.useState<string | null>(null);
+
+  // Form State
+  const [title, setTitle] = React.useState('');
+  const [description, setDescription] = React.useState('');
+  const [startDate, setStartDate] = React.useState('');
+  const [dueDate, setDueDate] = React.useState('');
+  const [color, setColor] = React.useState(PROJECT_COLORS[0]);
+  const [status, setStatus] = React.useState<'active' | 'completed' | 'on-hold'>('active');
+  const [priority, setPriority] = React.useState<Priority>('Medium');
+
+  const activeProjects = projects.filter((p) => !p.deletedAt && !p.archivedAt);
+  const archivedProjects = projects.filter((p) => !p.deletedAt && p.archivedAt);
+
+  const currentViewProjects = showArchived ? archivedProjects : activeProjects;
+
+  const filteredProjects = React.useMemo(() => {
+    let filtered = currentViewProjects;
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter((p) => p.status === statusFilter);
+    }
+    return [...filtered].sort(
+      (a, b) => (b.isPinned ? 1 : 0) - (a.isPinned ? 1 : 0)
+    );
+  }, [currentViewProjects, statusFilter]);
+
+  React.useEffect(() => {
+    if (convertingDump) {
+      setTitle(convertingDump.title);
+      setDescription(convertingDump.description);
+      setStartDate(new Date().toISOString().split('T')[0]);
+      setDueDate('');
+      setEditingProjectId(null);
+      setColor(PROJECT_COLORS[0]);
+      setStatus('active');
+      setPriority('Medium');
+      setIsModalOpen(true);
+    }
+  }, [convertingDump]);
+
+  const resetForm = () => {
+    setTitle('');
+    setDescription('');
+    setStartDate('');
+    setDueDate('');
+    setColor(PROJECT_COLORS[0]);
+    setStatus('active');
+    setPriority('Medium');
+    setEditingProjectId(null);
+  };
+
+  const openModal = (project?: Project) => {
+    if (project) {
+      setEditingProjectId(project.id);
+      setTitle(project.title);
+      setDescription(project.description);
+      setStartDate(new Date(project.startDate).toISOString().split('T')[0]);
+      setDueDate(new Date(project.dueDate).toISOString().split('T')[0]);
+      setColor(project.color);
+      setStatus(project.status);
+      setPriority(project.priority || 'Medium');
+    } else {
+      resetForm();
+      setStartDate(new Date().toISOString().split('T')[0]);
+    }
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    resetForm();
+    onClearConvertingDump();
+  };
+
+  const handleSave = () => {
+    if (!title.trim() || !startDate || !dueDate) return;
+
+    const projectData = {
+      title,
+      description,
+      startDate: new Date(startDate).getTime(),
+      dueDate: new Date(dueDate).getTime(),
+      color,
+      status,
+      priority,
+    };
+
+    if (editingProjectId) {
+      const existing = projects.find((p) => p.id === editingProjectId);
+      if (existing) onUpdateProject({ ...existing, ...projectData });
+    } else {
+      const newProject: Project = {
+        id: Date.now().toString(),
+        createdAt: Date.now(),
+        notes: [],
+        title,
+        description,
+        startDate: new Date(startDate).getTime(),
+        dueDate: new Date(dueDate).getTime(),
+        color,
+        status,
+        priority,
+      };
+      onAddProject(newProject);
+    }
+
+    if (convertingDump) {
+      onConvertComplete();
+    }
+
+    closeModal();
+  };
+
+  const handleTogglePin = (e: React.MouseEvent, project: Project) => {
+    e.stopPropagation();
+    onUpdateProject({ ...project, isPinned: !project.isPinned });
+  };
+
+  const handleCycleStatus = (e: React.MouseEvent, project: Project) => {
+    e.stopPropagation();
+    let nextStatus: 'active' | 'completed' | 'on-hold' = 'active';
+    if (project.status === 'active') nextStatus = 'completed';
+    else if (project.status === 'completed') nextStatus = 'on-hold';
+    else nextStatus = 'active';
+    onUpdateProject({ ...project, status: nextStatus });
+  };
+
+  const handleDragStart = (e: React.DragEvent, id: string) => {
+    setDraggedProjectId(id);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e: React.DragEvent, targetId: string) => {
+    e.preventDefault();
+    if (!draggedProjectId || draggedProjectId === targetId || !onReorder)
+      return;
+
+    const allProjects = [...projects];
+    const fromIndex = allProjects.findIndex((r) => r.id === draggedProjectId);
+    const toIndex = allProjects.findIndex((r) => r.id === targetId);
+
+    if (fromIndex !== -1 && toIndex !== -1) {
+      const [moved] = allProjects.splice(fromIndex, 1);
+      allProjects.splice(toIndex, 0, moved);
+      onReorder(allProjects);
+    }
+    setDraggedProjectId(null);
+  };
+
+  const getProjectStats = (projectId: string) => {
+    const projectTasks = tasks.filter(
+      (t) => t.projectId === projectId && !t.deletedAt
+    );
+    const totalTasks = projectTasks.length;
+    const completedTasks = projectTasks.filter((t) => t.isCompleted).length;
+    const progress =
+      totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+    let totalSeconds = 0;
+    projectTasks.forEach((task) => {
+      const taskSessions = focusSessions.filter(
+        (s) => s.routineId === `task-${task.id}`
+      );
+      totalSeconds += taskSessions.reduce(
+        (acc, s) => acc + s.durationSeconds,
+        0
+      );
+    });
+    return { totalTasks, completedTasks, progress, totalSeconds };
+  };
+
+  const formatDuration = (seconds: number) => {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    if (h > 0) return `${h}h ${m}m`;
+    return `${m}m`;
+  };
+
+  const getPriorityColor = (p: Priority) => {
+    if (p === 'High') return 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.5)]';
+    if (p === 'Medium') return 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]';
+    return 'bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]';
+  };
+
+  if (viewingProjectId) {
+    const project = projects.find((p) => p.id === viewingProjectId);
+    if (project) {
+      return (
+        <ProjectDetailView
+          project={project}
+          tasks={tasks.filter(
+            (t) => t.projectId === project.id && !t.deletedAt
+          )}
+          onBack={() => setViewingProjectId(null)}
+          onAddTask={onAddTask}
+          onUpdateTask={onUpdateTask}
+          onDeleteTask={onDeleteTask}
+          onStartTask={onStartTask}
+          onToggleTask={onToggleTask}
+          onUpdateProject={onUpdateProject}
+          stats={getProjectStats(project.id)}
+        />
+      );
+    }
+  }
+
+  return (
+    <div className="w-full h-full p-4 md:p-8 overflow-y-auto no-scrollbar pb-32 max-w-7xl mx-auto flex flex-col">
+      <div className="flex flex-col gap-6 border-b border-white/5 pb-6 mb-8 shrink-0">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h2 className="text-3xl font-black text-white tracking-tight flex items-center gap-3">
+              Projects
+            </h2>
+            {showArchived && (
+              <span className="text-xs font-bold text-orange-400 bg-orange-500/10 px-2.5 py-0.5 rounded-full uppercase tracking-wider mt-2 border border-orange-500/20 inline-block font-mono">
+                Archived View
+              </span>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowArchived(!showArchived)}
+              className={`p-2.5 rounded-xl border transition-all ${
+                showArchived
+                  ? 'bg-amber-500/15 border-amber-500/20 text-amber-400'
+                  : 'border-white/5 text-zinc-500 hover:text-white hover:bg-white/5'
+              }`}
+              title={showArchived ? 'View Active' : 'View Archive'}
+            >
+              <Archive size={20} />
+            </button>
+            <Button
+              onClick={() => openModal()}
+              variant="primary"
+              className="flex items-center gap-2 active:scale-95"
+            >
+              <Plus size={18} />
+              <span>New Project</span>
+            </Button>
+          </div>
+        </div>
+
+        {/* Filters */}
+        <div className="flex gap-2 overflow-x-auto no-scrollbar">
+          {['all', 'active', 'on-hold', 'completed'].map((filter) => (
+            <button
+              key={filter}
+              onClick={() => setStatusFilter(filter as any)}
+              className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap border ${
+                statusFilter === filter
+                  ? 'bg-white/5 border-white/10 text-white shadow-md'
+                  : 'border-transparent text-zinc-500 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              {filter.replace('-', ' ')}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredProjects.map((project) => {
+          const { totalTasks, completedTasks, progress, totalSeconds } =
+            getProjectStats(project.id);
+          const isOverdue = Date.now() > project.dueDate && progress < 100;
+
+          return (
+            <div
+              key={project.id}
+              draggable={!showArchived}
+              onDragStart={(e) => handleDragStart(e, project.id)}
+              onDragOver={handleDragOver}
+              onDrop={(e) => handleDrop(e, project.id)}
+              onClick={() => setViewingProjectId(project.id)}
+              className={`bg-[#12121a] border rounded-2xl p-6 shadow-sm hover:shadow-2xl hover:border-violet-500/30 transition-all duration-300 group cursor-pointer relative overflow-hidden flex flex-col justify-between h-[320px]
+                ${
+                  project.isPinned
+                    ? 'border-violet-500/50 shadow-lg shadow-violet-500/5'
+                    : 'border-white/5'
+                }
+              `}
+            >
+              <div
+                className="absolute top-0 left-0 w-1.5 h-full"
+                style={{ backgroundColor: project.color }}
+              />
+              <div className="flex flex-col h-full justify-between">
+                <div>
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h3 className="text-lg font-bold text-white leading-tight mb-2 flex items-center gap-2 group-hover:text-violet-300 transition-colors">
+                        {project.title}
+                        <div
+                          className={`w-2 h-2 rounded-full ${getPriorityColor(
+                            project.priority
+                          )}`}
+                          title={`Priority: ${project.priority}`}
+                        />
+                      </h3>
+                      <button
+                        onClick={(e) => handleCycleStatus(e, project)}
+                        className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border flex items-center gap-1 transition-all hover:opacity-80 active:scale-95 font-mono
+                          ${
+                            project.status === 'completed'
+                              ? 'bg-green-500/10 text-green-400 border-green-500/20'
+                              : project.status === 'on-hold'
+                              ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                              : 'bg-white/5 text-zinc-400 border-white/5'
+                          }
+                        `}
+                        title="Click to cycle status"
+                      >
+                        {project.status === 'completed' && <CheckCircle2 size={10} />}
+                        {project.status === 'on-hold' && <PauseCircle size={10} />}
+                        {project.status === 'active' && <PlayCircle size={10} />}
+                        {project.status}
+                      </button>
+                    </div>
+
+                    <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={(e) => handleTogglePin(e, project)}
+                        className={`p-1.5 rounded-lg transition-all ${
+                          project.isPinned
+                            ? 'text-white bg-white/10'
+                            : 'text-zinc-500 hover:text-white hover:bg-white/5'
+                        }`}
+                      >
+                        <Pin
+                          size={12}
+                          fill={project.isPinned ? 'currentColor' : 'none'}
+                        />
+                      </button>
+                      {showArchived ? (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onUnarchiveProject(project.id);
+                          }}
+                          className="p-1.5 text-zinc-500 hover:text-white hover:bg-white/5 rounded-lg transition-all"
+                        >
+                          <RefreshCcw size={12} />
+                        </button>
+                      ) : (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onArchiveProject(project.id);
+                          }}
+                          className="p-1.5 text-zinc-500 hover:text-white hover:bg-white/5 rounded-lg transition-all"
+                        >
+                          <Archive size={12} />
+                        </button>
+                      )}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openModal(project);
+                        }}
+                        className="p-1.5 text-zinc-500 hover:text-white hover:bg-white/5 rounded-lg transition-all"
+                      >
+                        <Edit2 size={12} />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onDeleteProject(project.id);
+                        }}
+                        className="p-1.5 hover:bg-rose-500/10 rounded-lg text-zinc-500 hover:text-rose-400 transition-all"
+                      >
+                        <Trash2 size={12} />
+                      </button>
+                    </div>
+                  </div>
+                  <p className="text-zinc-500 text-xs line-clamp-2 leading-relaxed mb-6">
+                    {project.description || 'No description provided.'}
+                  </p>
+                </div>
+
+                <div className="space-y-4 mt-auto">
+                  <div>
+                    <div className="flex justify-between items-end mb-1 font-mono text-[9px] font-bold uppercase tracking-wider text-zinc-500">
+                      <span>Progress</span>
+                      <span>
+                        {completedTasks}/{totalTasks} Tasks ({progress}%)
+                      </span>
+                    </div>
+                    <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+                      <div
+                        className="h-full rounded-full transition-all duration-500"
+                        style={{
+                          width: `${progress}%`,
+                          backgroundColor: project.color,
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 pt-2 border-t border-white/5">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-1.5 text-zinc-500 text-[9px] font-bold font-mono uppercase tracking-wider">
+                        <Calendar size={12} />
+                        <span>Due Date</span>
+                      </div>
+                      <span
+                        className={`text-xs font-bold ${
+                          isOverdue ? 'text-rose-500 animate-pulse' : 'text-zinc-300'
+                        }`}
+                      >
+                        {new Date(project.dueDate).toLocaleDateString(undefined, {
+                          month: 'short',
+                          day: 'numeric',
+                        })}
+                      </span>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-1.5 text-zinc-500 text-[9px] font-bold font-mono uppercase tracking-wider">
+                        <Clock size={12} />
+                        <span>Time Spent</span>
+                      </div>
+                      <span className="text-xs font-bold text-zinc-300">
+                        {formatDuration(totalSeconds)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+
+        {filteredProjects.length === 0 && (
+          <div className="col-span-full py-16 text-center border border-dashed border-white/10 rounded-3xl bg-[#12121a]/10 text-zinc-500 flex flex-col items-center justify-center">
+            <Filter size={40} className="mb-4 opacity-20 text-zinc-400" />
+            <p className="text-sm">No projects found in this view.</p>
+          </div>
+        )}
+      </div>
+
+      {isModalOpen && (
+        <Modal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          title={editingProjectId ? 'Edit Project' : 'New Project'}
+          className="max-w-lg"
+        >
+          <div className="space-y-4">
+            <div>
+              <label className="block text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1.5 font-mono">
+                Project Title
+              </label>
+              <input
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="w-full bg-[#12121a] border border-white/5 rounded-xl px-4 py-2.5 text-white placeholder-zinc-700 focus:border-violet-500/50 outline-none transition-all text-sm font-semibold"
+                placeholder="e.g. Website Redesign"
+              />
+            </div>
+            <div>
+              <label className="block text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1.5 font-mono">
+                Description
+              </label>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="w-full bg-[#12121a] border border-white/5 rounded-xl px-4 py-2.5 text-white placeholder-zinc-700 focus:border-violet-500/50 outline-none transition-all text-sm font-semibold min-h-[80px] resize-none"
+                placeholder="Project goals, scope, etc..."
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1.5 font-mono">
+                  Priority
+                </label>
+                <select
+                  value={priority}
+                  onChange={(e) => setPriority(e.target.value as Priority)}
+                  className="w-full bg-[#12121a] border border-white/5 rounded-xl px-4 py-2.5 text-white focus:border-violet-500/50 outline-none transition-all text-sm font-semibold"
+                >
+                  <option value="High" className="bg-[#12121a]">High</option>
+                  <option value="Medium" className="bg-[#12121a]">Medium</option>
+                  <option value="Low" className="bg-[#12121a]">Low</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1.5 font-mono">
+                  Status
+                </label>
+                <select
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value as any)}
+                  className="w-full bg-[#12121a] border border-white/5 rounded-xl px-4 py-2.5 text-white focus:border-violet-500/50 outline-none transition-all text-sm font-semibold"
+                >
+                  <option value="active" className="bg-[#12121a]">Active</option>
+                  <option value="on-hold" className="bg-[#12121a]">On Hold</option>
+                  <option value="completed" className="bg-[#12121a]">Completed</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1.5 font-mono">
+                  Start Date
+                </label>
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="w-full bg-[#12121a] border border-white/5 rounded-xl px-4 py-2.5 text-white focus:border-violet-500/50 outline-none transition-all text-sm font-semibold font-mono"
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1.5 font-mono">
+                  Due Date
+                </label>
+                <input
+                  type="date"
+                  value={dueDate}
+                  onChange={(e) => setDueDate(e.target.value)}
+                  className="w-full bg-[#12121a] border border-white/5 rounded-xl px-4 py-2.5 text-white focus:border-violet-500/50 outline-none transition-all text-sm font-semibold font-mono"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-2 font-mono">
+                Color Theme
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {PROJECT_COLORS.map((c) => (
+                  <button
+                    key={c}
+                    onClick={() => setColor(c)}
+                    className={`w-7 h-7 rounded-full transition-transform hover:scale-110 relative ${
+                      color === c ? 'ring-2 ring-violet-500 ring-offset-2 ring-offset-[#0a0a0f]' : ''
+                    }`}
+                    style={{ backgroundColor: c }}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-white/5 flex justify-end gap-2">
+              <Button onClick={closeModal} variant="ghost">
+                Cancel
+              </Button>
+              <Button onClick={handleSave} variant="primary">
+                Save Project
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      )}
+    </div>
+  );
+};
+
+const ProjectDetailView: React.FC<{
+  project: Project;
+  tasks: Task[];
+  stats: {
+    totalTasks: number;
+    completedTasks: number;
+    progress: number;
+    totalSeconds: number;
+  };
+  onBack: () => void;
+  onAddTask: (task: Task) => void;
+  onUpdateTask: (task: Task) => void;
+  onDeleteTask: (id: string) => void;
+  onStartTask: (task: Task) => void;
+  onToggleTask: (id: string) => void;
+  onUpdateProject: (project: Project) => void;
+}> = ({
+  project,
+  tasks,
+  stats,
+  onBack,
+  onAddTask,
+  onUpdateTask,
+  onDeleteTask,
+  onStartTask,
+  onToggleTask,
+  onUpdateProject,
+}) => {
+  const [activeTab, setActiveTab] = React.useState<'tasks' | 'notes'>('tasks');
+  const [newTaskTitle, setNewTaskTitle] = React.useState('');
+
+  // Note State
+  const [isNoteModalOpen, setIsNoteModalOpen] = React.useState(false);
+  const [editingNoteId, setEditingNoteId] = React.useState<string | null>(null);
+  const [initialNoteData, setInitialNoteData] = React.useState<
+    Partial<Note> | undefined
+  >(undefined);
+
+  const projectNotes = React.useMemo(() => {
+    return (project.notes || []).sort((a, b) => {
+      if (a.isPinned !== b.isPinned) return a.isPinned ? -1 : 1;
+      return b.updatedAt - a.updatedAt;
+    });
+  }, [project.notes]);
+
+  const handleQuickAddTask = () => {
+    if (!newTaskTitle.trim()) return;
+    const newTask: Task = {
+      id: Date.now().toString(),
+      title: newTaskTitle,
+      isCompleted: false,
+      priority: 'Medium',
+      category: 'Work',
+      projectId: project.id,
+      createdAt: Date.now(),
+      duration: 30,
+    };
+    onAddTask(newTask);
+    setNewTaskTitle('');
+  };
+
+  const handleSaveNote = (noteData: Partial<Note>) => {
+    let updatedNotes = project.notes ? [...project.notes] : [];
+
+    if (editingNoteId) {
+      updatedNotes = updatedNotes.map((n) =>
+        n.id === editingNoteId
+          ? { ...n, ...noteData, updatedAt: Date.now() }
+          : n
+      );
+    } else {
+      const newNote: Note = {
+        id: Date.now().toString(),
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        items: [],
+        images: [],
+        type: 'text',
+        isPinned: false,
+        color: 'transparent',
+        title: '',
+        content: '',
+        ...noteData,
+      };
+      updatedNotes.push(newNote);
+    }
+    onUpdateProject({ ...project, notes: updatedNotes });
+    closeNoteModal();
+  };
+
+  const handleDeleteNote = (noteId: string) => {
+    const updatedNotes = (project.notes || []).filter((n) => n.id !== noteId);
+    onUpdateProject({ ...project, notes: updatedNotes });
+  };
+
+  const handleToggleNoteItem = (noteId: string, itemId: string) => {
+    const note = project.notes?.find((n) => n.id === noteId);
+    if (note && note.items) {
+      const updatedItems = note.items.map((i) =>
+        i.id === itemId ? { ...i, isDone: !i.isDone } : i
+      );
+      const updatedNote = { ...note, items: updatedItems };
+      const updatedNotes = project.notes!.map((n) =>
+        n.id === noteId ? updatedNote : n
+      );
+      onUpdateProject({ ...project, notes: updatedNotes });
+    }
+  };
+
+  const handleToggleNotePin = (e: React.MouseEvent, note: Note) => {
+    e.stopPropagation();
+    const updatedNotes = (project.notes || []).map((n) =>
+      n.id === note.id ? { ...n, isPinned: !n.isPinned } : n
+    );
+    onUpdateProject({ ...project, notes: updatedNotes });
+  };
+
+  const openNoteModal = (note?: Note) => {
+    if (note) {
+      setEditingNoteId(note.id);
+      setInitialNoteData(note);
+    } else {
+      setEditingNoteId(null);
+      setInitialNoteData(undefined);
+    }
+    setIsNoteModalOpen(true);
+  };
+
+  const closeNoteModal = () => {
+    setIsNoteModalOpen(false);
+    setEditingNoteId(null);
+    setInitialNoteData(undefined);
+  };
+
+  const pendingTasks = tasks.filter((t) => !t.isCompleted);
+  const completedTasks = tasks.filter((t) => t.isCompleted);
+
+  return (
+    <div className="w-full h-full flex flex-col bg-[#0a0a0f] animate-fade-in pb-32">
+      {/* Detail Header */}
+      <div className="px-6 py-6 border-b border-white/5 bg-[#12121a]/30 flex-shrink-0">
+        <button
+          onClick={onBack}
+          className="flex items-center gap-2 text-zinc-400 hover:text-white mb-4 font-bold uppercase tracking-wider text-xs transition-colors"
+        >
+          <ArrowRight size={16} className="rotate-180" /> Back to Projects
+        </button>
+        <div className="flex flex-col md:flex-row justify-between md:items-end gap-6">
+          <div className="min-w-0">
+            <div className="flex items-center gap-3 mb-2 flex-wrap">
+              <h1 className="text-2xl md:text-3xl font-black text-white leading-tight">
+                {project.title}
+              </h1>
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border border-white/10 bg-white/5 text-zinc-300 font-mono">
+                {project.status}
+              </span>
+            </div>
+            <p className="text-zinc-500 text-sm max-w-2xl">{project.description}</p>
+            <div className="flex items-center gap-6 mt-6 text-xs font-bold text-zinc-400 font-mono uppercase tracking-wider">
+              <div className="flex items-center gap-2">
+                <Calendar size={16} className="text-violet-400" />
+                <span>
+                  {new Date(project.startDate).toLocaleDateString()} -{' '}
+                  {new Date(project.dueDate).toLocaleDateString()}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Clock size={16} className="text-violet-400" />
+                <span>{(stats.totalSeconds / 3600).toFixed(1)}h Spent</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="w-full md:w-64">
+            <div className="flex justify-between text-[9px] font-bold text-zinc-500 uppercase mb-2 font-mono">
+              <span>Progress</span>
+              <span>{stats.progress}%</span>
+            </div>
+            <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+              <div
+                className="h-full transition-all duration-500"
+                style={{
+                  width: `${stats.progress}%`,
+                  backgroundColor: project.color,
+                }}
+              />
+            </div>
+            <p className="text-right text-[10px] text-zinc-600 mt-1 font-mono">
+              {stats.completedTasks}/{stats.totalTasks} Tasks Completed
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex px-6 border-b border-white/5 shrink-0 bg-[#0a0a0f]">
+        <button
+          onClick={() => setActiveTab('tasks')}
+          className={`px-6 py-3 text-xs font-bold uppercase tracking-widest border-b-2 transition-colors font-mono ${
+            activeTab === 'tasks'
+              ? 'border-violet-500 text-violet-400'
+              : 'border-transparent text-zinc-500 hover:text-white'
+          }`}
+        >
+          Tasks
+        </button>
+        <button
+          onClick={() => setActiveTab('notes')}
+          className={`px-6 py-3 text-xs font-bold uppercase tracking-widest border-b-2 transition-colors font-mono ${
+            activeTab === 'notes'
+              ? 'border-violet-500 text-violet-400'
+              : 'border-transparent text-zinc-500 hover:text-white'
+          }`}
+        >
+          Project Notes
+        </button>
+      </div>
+
+      {/* Tab Contents */}
+      <div className="flex-1 overflow-y-auto no-scrollbar p-6 bg-[#0a0a0f]">
+        <div className="max-w-4xl mx-auto">
+          {activeTab === 'tasks' && (
+            <>
+              {/* Task Quick Input */}
+              <div className="flex gap-2 mb-8 bg-[#12121a] p-2 pr-3 rounded-xl border border-white/5 focus-within:border-violet-500/50 transition-all">
+                <input
+                  value={newTaskTitle}
+                  onChange={(e) => setNewTaskTitle(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleQuickAddTask()}
+                  placeholder="Add a task to this project..."
+                  className="flex-1 bg-transparent px-3 py-2 text-sm text-white focus:outline-none placeholder-zinc-700 font-semibold"
+                />
+                <button
+                  onClick={handleQuickAddTask}
+                  disabled={!newTaskTitle.trim()}
+                  className="bg-violet-600 hover:bg-violet-500 disabled:bg-white/5 disabled:text-zinc-700 text-white px-4 rounded-lg font-bold text-xs uppercase tracking-wider transition-colors"
+                >
+                  Add
+                </button>
+              </div>
+
+              {/* Active Tasks list */}
+              <div className="space-y-3 mb-8">
+                <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest font-mono mb-4 pl-1">
+                  Active Project Tasks
+                </h3>
+                {pendingTasks.map((task) => (
+                  <div
+                    key={task.id}
+                    className="flex items-center gap-4 p-4 border border-white/5 rounded-2xl bg-[#12121a] hover:border-violet-500/20 hover:shadow-lg transition-all group"
+                  >
+                    <button
+                      onClick={() => onToggleTask(task.id)}
+                      className="text-zinc-600 hover:text-violet-400 transition-colors shrink-0"
+                    >
+                      <div className="w-5 h-5 border border-white/10 rounded-md" />
+                    </button>
+                    <div className="flex-1 min-w-0">
+                      <span className="font-bold text-sm text-zinc-200 block truncate">
+                        {task.title}
+                      </span>
+                      <div className="flex items-center gap-3 mt-1 text-[10px] text-zinc-500 font-mono font-bold uppercase">
+                        <span className="text-violet-400">{task.priority} Priority</span>
+                        <span>•</span>
+                        <span>{task.duration || 30}m estimate</span>
+                      </div>
+                    </div>
+                    <div className="opacity-0 group-hover:opacity-100 flex gap-1.5 transition-opacity shrink-0">
+                      <button
+                        onClick={() => onStartTask(task)}
+                        className="p-2 hover:bg-white/5 rounded-lg text-zinc-500 hover:text-white transition-colors"
+                        title="Start Timer Focus"
+                      >
+                        <Play size={16} fill="currentColor" />
+                      </button>
+                      <button
+                        onClick={() => onDeleteTask(task.id)}
+                        className="p-2 hover:bg-rose-500/10 rounded-lg text-zinc-500 hover:text-rose-400 transition-colors"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                {pendingTasks.length === 0 && (
+                  <p className="text-zinc-600 italic text-xs pl-1">
+                    No active tasks left in this project.
+                  </p>
+                )}
+              </div>
+
+              {/* Completed tasks list */}
+              {completedTasks.length > 0 && (
+                <div className="space-y-3 opacity-60 hover:opacity-100 transition-all border-t border-white/5 pt-6">
+                  <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest font-mono mb-4 pl-1">
+                    Completed Tasks
+                  </h3>
+                  {completedTasks.map((task) => (
+                    <div
+                      key={task.id}
+                      className="flex items-center gap-4 p-3 border border-white/5 rounded-2xl bg-[#12121a]/50"
+                    >
+                      <button
+                        onClick={() => onToggleTask(task.id)}
+                        className="text-violet-400 shrink-0"
+                      >
+                        <CheckSquare size={18} />
+                      </button>
+                      <span className="font-medium text-xs text-zinc-500 line-through flex-1 truncate">
+                        {task.title}
+                      </span>
+                      <button
+                        onClick={() => onDeleteTask(task.id)}
+                        className="p-1.5 hover:bg-rose-500/10 rounded-lg text-zinc-600 hover:text-rose-400 transition-colors shrink-0"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+
+          {activeTab === 'notes' && (
+            <div className="space-y-6">
+              <button
+                onClick={() => openNoteModal()}
+                className="w-full border border-dashed border-white/10 hover:border-violet-500/30 rounded-2xl p-5 text-zinc-500 hover:text-white hover:bg-white/[0.02] transition-all flex items-center justify-center gap-2 active:scale-[0.98] font-bold uppercase tracking-wider text-xs font-mono"
+              >
+                <Plus size={16} /> Add Project Note
+              </button>
+              <div className="columns-1 sm:columns-2 gap-4 space-y-4">
+                {projectNotes.map((note) => (
+                  <div key={note.id} className="break-inside-avoid">
+                    <NoteCard
+                      note={note}
+                      onClick={() => openNoteModal(note)}
+                      onPin={(e) => handleToggleNotePin(e, note)}
+                      onDelete={(e) => {
+                        e.stopPropagation();
+                        handleDeleteNote(note.id);
+                      }}
+                      onToggleItem={handleToggleNoteItem}
+                    />
+                  </div>
+                ))}
+                {projectNotes.length === 0 && (
+                  <p className="text-center col-span-full text-zinc-600 py-10 italic text-xs">
+                    No notes associated with this project.
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {isNoteModalOpen && (
+        <NoteEditorModal
+          initialNote={initialNoteData}
+          onSave={handleSaveNote}
+          onClose={closeNoteModal}
+          titleLabel={editingNoteId ? 'Edit Project Note' : 'New Project Note'}
+        />
+      )}
+    </div>
+  );
+};
+
+export default ProjectModule;

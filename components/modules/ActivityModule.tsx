@@ -1,0 +1,500 @@
+'use client';
+
+import * as React from 'react';
+import { useRouter } from 'next/navigation';
+import { useAppStore } from '../../store/useAppStore';
+import { Mood } from '../../types';
+import {
+  Activity,
+  CheckCircle2,
+  Zap,
+  Smile,
+  Trash2,
+  Filter,
+  ArrowLeft,
+  X,
+  Calendar,
+  Clock,
+} from 'lucide-react';
+import Card from '../ui/Card';
+import Button from '../ui/Button';
+import Modal from '../ui/Modal';
+
+type FilterType = 'all' | 'task' | 'session' | 'journal';
+type TimeRange = 'day' | 'week' | 'month' | 'all';
+
+const MOOD_COLORS = {
+  awesome: '#10b981', // Emerald
+  good: '#3b82f6', // Blue
+  neutral: '#9ca3af', // Gray
+  bad: '#f97316', // Orange
+  awful: '#ef4444', // Red
+};
+
+export const ActivityModule: React.FC = () => {
+  const router = useRouter();
+  const [filter, setFilter] = React.useState<FilterType>('all');
+  const [range, setRange] = React.useState<TimeRange>('week');
+  const [selectedActivity, setSelectedActivity] = React.useState<{
+    id: string;
+    type: 'task' | 'session' | 'journal';
+    item: any;
+  } | null>(null);
+
+  // Zustand store
+  const tasks = useAppStore((state) => state.tasks);
+  const focusSessions = useAppStore((state) => state.focusSessions);
+  const journalEntries = useAppStore((state) => state.journalEntries);
+  const toggleTask = useAppStore((state) => state.toggleTask);
+  const setFocusSessions = useAppStore((state) => state.setFocusSessions);
+  const handleDeleteJournalEntry = useAppStore((state) => state.handleDeleteJournalEntry);
+
+  const getRangeStart = () => {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    if (range === 'day') return now.getTime();
+    if (range === 'week') {
+      const d = new Date(now);
+      const day = d.getDay();
+      const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+      d.setDate(diff);
+      return d.getTime();
+    }
+    if (range === 'month') {
+      const d = new Date(now);
+      d.setDate(1);
+      return d.getTime();
+    }
+    return 0;
+  };
+
+  const formatDurationShort = (seconds: number) => {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    if (h > 0) return `${h}h${m}m`;
+    return `${m}m`;
+  };
+
+  const filteredItems = React.useMemo(() => {
+    const start = getRangeStart();
+    const items: {
+      id: string;
+      type: 'task' | 'session' | 'journal';
+      timestamp: number;
+      title: string;
+      subtitle?: string;
+      icon: any;
+      color: string;
+      item: any;
+    }[] = [];
+
+    if (filter === 'all' || filter === 'task') {
+      tasks
+        .filter((t) => t.isCompleted && t.completedAt && t.completedAt >= start)
+        .forEach((t) => {
+          items.push({
+            id: t.id,
+            type: 'task',
+            timestamp: t.completedAt!,
+            title: t.title,
+            subtitle: 'Task Completed',
+            icon: CheckCircle2,
+            color: 'text-blue-400 bg-blue-500/10 border-blue-500/20',
+            item: t,
+          });
+        });
+    }
+
+    if (filter === 'all' || filter === 'session') {
+      focusSessions
+        .filter((s) => s.startTime >= start)
+        .forEach((s) => {
+          const duration = Math.round(s.durationSeconds / 60);
+          items.push({
+            id: s.id,
+            type: 'session',
+            timestamp: s.endTime,
+            title: s.routineTitle,
+            subtitle: `${duration}m Focus Session`,
+            icon: Zap,
+            color: 'text-amber-400 bg-amber-500/10 border-amber-500/20',
+            item: s,
+          });
+        });
+    }
+
+    if (filter === 'all' || filter === 'journal') {
+      journalEntries
+        .filter((j) => !j.deletedAt && j.createdAt >= start)
+        .forEach((j) => {
+          items.push({
+            id: j.id,
+            type: 'journal',
+            timestamp: j.createdAt,
+            title: j.title,
+            subtitle: `Mood: ${j.mood}`,
+            icon: Smile,
+            color: 'text-purple-400 bg-purple-500/10 border-purple-500/20',
+            item: j,
+          });
+        });
+    }
+
+    return items.sort((a, b) => b.timestamp - a.timestamp);
+  }, [tasks, focusSessions, journalEntries, filter, range]);
+
+  const handleDeleteActivity = (id: string, type: 'task' | 'session' | 'journal') => {
+    if (confirm(`Are you sure you want to remove this record from history?`)) {
+      if (type === 'task') {
+        toggleTask(id);
+      } else if (type === 'session') {
+        setFocusSessions((prev) => prev.filter((s) => s.id !== id));
+      } else if (type === 'journal') {
+        handleDeleteJournalEntry(id);
+      }
+      if (selectedActivity && selectedActivity.id === id) {
+        setSelectedActivity(null);
+      }
+    }
+  };
+
+  return (
+    <div className="w-full h-full flex flex-col bg-[#0a0a0f] animate-fade-in">
+      {/* Top sticky navbar */}
+      <div className="px-6 py-5 border-b border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-4 shrink-0 bg-[#0a0a0f] z-20">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => router.push('/dashboard')}
+            className="p-2.5 hover:bg-white/5 rounded-2xl text-zinc-400 hover:text-white transition-all border border-transparent hover:border-white/5 active:scale-95"
+            title="Go back to Dashboard"
+          >
+            <ArrowLeft size={20} />
+          </button>
+          <div>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
+              <Activity className="text-emerald-400" size={28} /> Activity History
+            </h2>
+            <p className="text-[var(--text-secondary)] text-xs font-medium mt-0.5 hidden md:block">
+              Audit trails of your completed tasks, routine player focus sessions, and logs.
+            </p>
+          </div>
+        </div>
+
+        {/* Filters and Ranges */}
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex bg-[#12121a] border border-white/5 p-1 rounded-2xl">
+            {(['all', 'task', 'session', 'journal'] as FilterType[]).map((f) => (
+              <button
+                key={f}
+                onClick={() => setFilter(f)}
+                className={`px-3 py-1.5 text-xs font-extrabold capitalize rounded-xl transition-all whitespace-nowrap
+                  ${
+                    filter === f
+                      ? 'bg-gradient-to-r from-violet-600 to-pink-600 text-white shadow-md'
+                      : 'text-[var(--text-secondary)] hover:text-white hover:bg-white/5'
+                  }`}
+              >
+                {f === 'all' ? 'All' : f === 'session' ? 'Focus' : f === 'journal' ? 'Logs' : 'Tasks'}
+              </button>
+            ))}
+          </div>
+
+          <div className="hidden md:block w-px h-6 bg-white/10" />
+
+          <div className="flex bg-[#12121a] border border-white/5 p-1 rounded-2xl">
+            {(['day', 'week', 'month', 'all'] as TimeRange[]).map((r) => (
+              <button
+                key={r}
+                onClick={() => setRange(r)}
+                className={`px-3 py-1.5 text-xs font-extrabold capitalize rounded-xl transition-all whitespace-nowrap
+                  ${
+                    range === r
+                      ? 'bg-gradient-to-r from-violet-600 to-pink-600 text-white shadow-md'
+                      : 'text-[var(--text-secondary)] hover:text-white hover:bg-white/5'
+                  }`}
+              >
+                {r}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Main List */}
+      <div className="flex-1 overflow-y-auto no-scrollbar p-4 md:p-8 pb-32">
+        <div className="max-w-4xl mx-auto space-y-4">
+          {filteredItems.map((item) => (
+            <Card
+              key={`${item.type}-${item.id}`}
+              variant="glass"
+              onClick={() =>
+                setSelectedActivity({
+                  id: item.id,
+                  type: item.type,
+                  item: item.item,
+                })
+              }
+              className="p-4 flex items-center justify-between gap-4 border border-white/5 hover:border-violet-500/30 transition-all duration-300 group cursor-pointer"
+            >
+              <div className="flex items-center gap-4 min-w-0">
+                <div
+                  className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 border ${item.color} group-hover:scale-105 transition-transform`}
+                >
+                  <item.icon size={20} strokeWidth={2.5} />
+                </div>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 mb-1 flex-wrap">
+                    <span className="text-[9px] font-bold text-[var(--text-secondary)] font-mono uppercase bg-white/5 px-2 py-0.5 rounded-md border border-white/5">
+                      {new Date(item.timestamp).toLocaleDateString()}
+                    </span>
+                    <span className="text-[9px] font-bold text-zinc-500 font-mono">
+                      {new Date(item.timestamp).toLocaleTimeString([], {
+                        hour: 'numeric',
+                        minute: '2-digit',
+                      })}
+                    </span>
+                  </div>
+                  <h4 className="text-base font-extrabold text-white truncate max-w-sm sm:max-w-md md:max-w-lg">
+                    {item.title}
+                  </h4>
+                  {item.subtitle && (
+                    <p className="text-xs text-[var(--text-secondary)] font-medium mt-0.5">
+                      {item.subtitle}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDeleteActivity(item.id, item.type);
+                }}
+                className="p-2 text-zinc-600 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-all border border-transparent hover:border-rose-500/20 opacity-0 group-hover:opacity-100"
+                title="Delete Record"
+              >
+                <Trash2 size={16} />
+              </button>
+            </Card>
+          ))}
+
+          {filteredItems.length === 0 && (
+            <div className="py-24 flex flex-col items-center justify-center text-center border border-dashed border-white/10 rounded-3xl bg-[#12121a]/10 text-zinc-500">
+              <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center shadow-lg border border-white/5 mb-6 text-zinc-400">
+                <Filter size={28} />
+              </div>
+              <h3 className="text-lg font-bold text-white mb-2">No activity found</h3>
+              <p className="text-zinc-500 text-xs max-w-sm px-4 leading-relaxed">
+                There are no actions logged within the selected range or filters. Keep completing tasks and tracking routines!
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Detail Modal */}
+      {selectedActivity && (
+        <Modal
+          isOpen={!!selectedActivity}
+          onClose={() => setSelectedActivity(null)}
+          title="Activity Details"
+          className="max-w-md"
+        >
+          <div className="space-y-6">
+            {selectedActivity.type === 'task' && (
+              <div className="space-y-4">
+                <div className="w-14 h-14 bg-blue-500/10 rounded-2xl flex items-center justify-center mx-auto text-blue-400 border border-blue-500/20">
+                  <CheckCircle2 size={28} />
+                </div>
+                <div>
+                  <h3 className="text-xl font-extrabold text-center text-white leading-tight">
+                    {selectedActivity.item.title}
+                  </h3>
+                  <p className="text-center text-xs text-[var(--text-secondary)] font-mono mt-1 flex items-center justify-center gap-1.5">
+                    <Calendar size={12} />
+                    Completed on {new Date(selectedActivity.item.completedAt).toLocaleString()}
+                  </p>
+                </div>
+
+                <div className="bg-[#12121a] border border-white/5 rounded-2xl p-4 space-y-3 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-[var(--text-secondary)] font-medium">Category</span>
+                    <span className="font-bold text-white bg-white/5 px-2 py-0.5 rounded-lg text-xs border border-white/5">
+                      {selectedActivity.item.category}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-[var(--text-secondary)] font-medium">Duration Estimate</span>
+                    <span className="font-bold text-white font-mono">{selectedActivity.item.duration}m</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-[var(--text-secondary)] font-medium">Priority</span>
+                    <span className={`font-bold px-2 py-0.5 rounded-lg text-xs font-mono border
+                      ${
+                        selectedActivity.item.priority === 'High'
+                          ? 'text-rose-400 bg-rose-500/10 border-rose-500/20'
+                          : selectedActivity.item.priority === 'Medium'
+                          ? 'text-amber-400 bg-amber-500/10 border-amber-500/20'
+                          : 'text-blue-400 bg-blue-500/10 border-blue-500/20'
+                      }`}>
+                      {selectedActivity.item.priority}
+                    </span>
+                  </div>
+                </div>
+
+                {selectedActivity.item.description && (
+                  <div>
+                    <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block mb-1.5 font-mono">
+                      Description
+                    </span>
+                    <p className="text-xs text-zinc-300 bg-[#12121a] border border-white/5 p-3 rounded-2xl whitespace-pre-wrap leading-relaxed">
+                      {selectedActivity.item.description}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {selectedActivity.type === 'session' && (
+              <div className="space-y-4">
+                <div className="w-14 h-14 bg-amber-500/10 rounded-2xl flex items-center justify-center mx-auto text-amber-400 border border-amber-500/20">
+                  <Zap size={28} fill="currentColor" className="opacity-20" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-extrabold text-center text-white leading-tight">
+                    {selectedActivity.item.routineTitle}
+                  </h3>
+                  <p className="text-center text-xs text-[var(--text-secondary)] font-mono mt-1 flex items-center justify-center gap-1.5">
+                    <Clock size={12} />
+                    Ended on {new Date(selectedActivity.item.endTime).toLocaleString()}
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-[#12121a] p-3 rounded-2xl text-center border border-white/5">
+                    <div className="text-[9px] text-[var(--text-secondary)] font-bold uppercase tracking-wider font-mono mb-0.5">
+                      Focus Duration
+                    </div>
+                    <div className="text-lg font-black text-white font-mono">
+                      {Math.round(selectedActivity.item.durationSeconds / 60)}m
+                    </div>
+                  </div>
+                  <div className="bg-[#12121a] p-3 rounded-2xl text-center border border-white/5">
+                    <div className="text-[9px] text-[var(--text-secondary)] font-bold uppercase tracking-wider font-mono mb-0.5">
+                      Steps Completed
+                    </div>
+                    <div className="text-lg font-black text-white font-mono">
+                      {selectedActivity.item.completedSteps} / {selectedActivity.item.totalSteps}
+                    </div>
+                  </div>
+                </div>
+
+                {selectedActivity.item.logs && selectedActivity.item.logs.length > 0 && (
+                  <div className="space-y-2">
+                    <h4 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest font-mono">
+                      Step breakdown
+                    </h4>
+                    <div className="space-y-2 max-h-[160px] overflow-y-auto no-scrollbar border border-white/5 rounded-2xl p-2 bg-[#12121a]/50">
+                      {selectedActivity.item.logs.map((log: any, i: number) => (
+                        <div
+                          key={i}
+                          className="flex justify-between items-center text-xs bg-[#12121a] p-2.5 rounded-xl border border-white/5"
+                        >
+                          <span className="text-zinc-200 font-bold truncate pr-2">
+                            {log.title}
+                          </span>
+                          <span className="text-[var(--text-secondary)] font-mono whitespace-nowrap font-bold shrink-0">
+                            {formatDurationShort(log.actualDuration)}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {selectedActivity.type === 'journal' && (
+              <div className="space-y-4">
+                <div className="w-14 h-14 bg-purple-500/10 rounded-2xl flex items-center justify-center mx-auto text-purple-400 border border-purple-500/20">
+                  <Smile size={28} />
+                </div>
+                <div>
+                  <h3 className="text-xl font-extrabold text-center text-white leading-tight">
+                    {selectedActivity.item.title || 'Untitled Journal Entry'}
+                  </h3>
+                  <p className="text-center text-xs text-[var(--text-secondary)] font-mono mt-1 flex items-center justify-center gap-1.5">
+                    <Calendar size={12} />
+                    Logged on {new Date(selectedActivity.item.createdAt).toLocaleString()}
+                  </p>
+                </div>
+
+                <div className="bg-[#12121a] border border-white/5 rounded-2xl p-4 space-y-3 text-sm">
+                  <div className="flex justify-between items-center">
+                    <span className="text-[var(--text-secondary)] font-medium">Logged Mood</span>
+                    <span
+                      className="font-bold capitalize px-3 py-1 rounded-xl text-xs border"
+                      style={{
+                        color: MOOD_COLORS[selectedActivity.item.mood as Mood] || '#fff',
+                        borderColor: (MOOD_COLORS[selectedActivity.item.mood as Mood] || '#fff') + '33',
+                        backgroundColor: (MOOD_COLORS[selectedActivity.item.mood as Mood] || '#fff') + '10',
+                      }}
+                    >
+                      {selectedActivity.item.mood}
+                    </span>
+                  </div>
+
+                  {selectedActivity.item.tags && selectedActivity.item.tags.length > 0 && (
+                    <div className="pt-2 border-t border-white/5">
+                      <span className="block text-[10px] text-zinc-500 font-bold uppercase tracking-widest mb-1.5 font-mono">
+                        Tags
+                      </span>
+                      <div className="flex flex-wrap gap-1">
+                        {selectedActivity.item.tags.map((tag: string) => (
+                          <span
+                            key={tag}
+                            className="px-2.5 py-0.5 rounded-lg bg-purple-500/10 text-purple-400 text-[10px] font-bold border border-purple-500/20 font-mono"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {selectedActivity.item.content && (
+                  <div>
+                    <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block mb-1.5 font-mono">
+                      Reflections
+                    </span>
+                    <div className="text-xs text-zinc-300 bg-[#12121a] border border-white/5 p-4 rounded-2xl whitespace-pre-wrap leading-relaxed max-h-[160px] overflow-y-auto no-scrollbar">
+                      {selectedActivity.item.content}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div className="pt-4 border-t border-white/5 flex justify-end gap-2">
+              <Button
+                variant="danger"
+                size="sm"
+                onClick={() => handleDeleteActivity(selectedActivity.id, selectedActivity.type)}
+                className="flex items-center gap-1.5"
+              >
+                <Trash2 size={14} />
+                <span>Delete Entry</span>
+              </Button>
+              <Button variant="secondary" size="sm" onClick={() => setSelectedActivity(null)}>
+                Close
+              </Button>
+            </div>
+          </div>
+        </Modal>
+      )}
+    </div>
+  );
+};
+
+export default ActivityModule;
