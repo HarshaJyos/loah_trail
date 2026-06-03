@@ -15,5 +15,5 @@ const HabitEditor = dynamic(
 );
 
 export default function EditHabitPage() {
-  return <HabitEditor mode="edit" />;
+  return <HabitEditor />;
 }
