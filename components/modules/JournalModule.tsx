@@ -69,7 +69,7 @@ const JournalCard: React.FC<{
 
         {/* Title + content */}
         <h4
-          style={{ fontSize: 13, fontWeight: 700, color: '#1E1E1E', marginBottom: 4 }}
+          style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}
           className="line-clamp-2"
         >
           {entry.title}
@@ -206,16 +206,16 @@ export const JournalModule: React.FC = () => {
       <div
         style={{
           padding: '16px 20px 12px',
-          borderBottom: '1px solid #E2E8F0',
+          borderBottom: '1px solid var(--border-subtle)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'flex-start',
           flexShrink: 0,
-          background: '#F5F7FA',
+          background: 'var(--bg-app)',
         }}
       >
         <div>
-          <div style={{ fontSize: 26, fontWeight: 700, color: '#1E1E1E', letterSpacing: '-0.03em' }}>
+          <div style={{ fontSize: 26, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.03em' }}>
             {showArchived ? 'Archive' : 'Journal'}
           </div>
           <div style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>
@@ -228,7 +228,7 @@ export const JournalModule: React.FC = () => {
             className="loah-icon-btn"
             style={{
               background: showArchived ? 'rgba(137,121,255,0.10)' : '#FFFFFF',
-              borderColor: showArchived ? '#8979FF' : '#E2E8F0',
+              borderColor: showArchived ? '#8979FF' : 'var(--border-subtle)',
               color: showArchived ? '#8979FF' : '#64748B',
             }}
           >
@@ -249,8 +249,8 @@ export const JournalModule: React.FC = () => {
         style={{
           padding: '10px 20px 6px',
           display: 'flex', gap: 6, overflowX: 'auto',
-          flexShrink: 0, background: '#F5F7FA',
-          borderBottom: '1px solid #E2E8F0',
+          flexShrink: 0, background: 'var(--bg-app)',
+          borderBottom: '1px solid var(--border-subtle)',
         }}
         className="no-scrollbar"
       >
@@ -260,7 +260,7 @@ export const JournalModule: React.FC = () => {
             padding: '4px 14px',
             borderRadius: 200,
             fontSize: 11, fontWeight: 700,
-            border: `1px solid ${moodFilter === 'all' ? '#8979FF' : '#E2E8F0'}`,
+            border: `1px solid ${moodFilter === 'all' ? '#8979FF' : 'var(--border-subtle)'}`,
             background: moodFilter === 'all' ? 'rgba(137,121,255,0.10)' : '#FFFFFF',
             color: moodFilter === 'all' ? '#8979FF' : '#64748B',
             cursor: 'pointer', whiteSpace: 'nowrap',
@@ -276,7 +276,7 @@ export const JournalModule: React.FC = () => {
               padding: '4px 12px',
               borderRadius: 200,
               fontSize: 11, fontWeight: 700,
-              border: `1px solid ${moodFilter === m.id ? m.color : '#E2E8F0'}`,
+              border: `1px solid ${moodFilter === m.id ? m.color : 'var(--border-subtle)'}`,
               background: moodFilter === m.id ? m.bg + '50' : '#FFFFFF',
               color: moodFilter === m.id ? m.color : '#64748B',
               cursor: 'pointer', whiteSpace: 'nowrap',
@@ -296,12 +296,12 @@ export const JournalModule: React.FC = () => {
             style={{
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
               padding: '60px 20px', textAlign: 'center',
-              border: '1px dashed #E2E8F0', borderRadius: 20,
+              border: '1px dashed var(--border-subtle)', borderRadius: 20,
               background: '#FAFBFC', marginTop: 8,
             }}
           >
             <BookOpen size={40} color="#D4D4D4" />
-            <p style={{ fontSize: 16, fontWeight: 700, color: '#1E1E1E', marginTop: 16, marginBottom: 6 }}>
+            <p style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', marginTop: 16, marginBottom: 6 }}>
               {showArchived ? 'No Archived Journal Entries' : 'No Journal Entries Yet!'}
             </p>
             <p style={{ fontSize: 13, color: '#64748B', maxWidth: 260, lineHeight: 1.5 }}>
@@ -343,7 +343,7 @@ export const JournalModule: React.FC = () => {
                   >
                     {group.date}
                   </span>
-                  <div style={{ flex: 1, height: 1, background: '#E2E8F0' }} />
+                  <div style={{ flex: 1, height: 1, background: 'var(--border-subtle)' }} />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -384,19 +384,19 @@ const JournalDetailView: React.FC<{
       <div
         style={{
           padding: '14px 20px',
-          borderBottom: '1px solid #E2E8F0',
+          borderBottom: '1px solid var(--border-subtle)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           flexShrink: 0,
-          background: '#F5F7FA',
+          background: 'var(--bg-app)',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <button onClick={onBack} className="loah-editor-back">
             <ArrowLeft size={17} />
           </button>
-          <span style={{ fontSize: 15, fontWeight: 700, color: '#1E1E1E' }}>Log</span>
+          <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>Log</span>
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
           {onArchive && (
@@ -456,7 +456,7 @@ const JournalDetailView: React.FC<{
         </div>
 
         {/* Title */}
-        <h1 style={{ fontSize: 24, fontWeight: 700, color: '#1E1E1E', letterSpacing: '-0.03em', marginBottom: 12 }}>
+        <h1 style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.03em', marginBottom: 12 }}>
           {entry.title}
         </h1>
 
@@ -468,7 +468,7 @@ const JournalDetailView: React.FC<{
                 key={i}
                 src={img}
                 alt={`img ${i}`}
-                style={{ width: '100%', borderRadius: 12, objectFit: 'cover', maxHeight: 200, border: '1px solid #E2E8F0' }}
+                style={{ width: '100%', borderRadius: 12, objectFit: 'cover', maxHeight: 200, border: '1px solid var(--border-subtle)' }}
               />
             ))}
           </div>

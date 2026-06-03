@@ -147,7 +147,7 @@ export const ActivityChart: React.FC<ActivityChartProps> = ({
         </div>
 
         {/* Bars Container */}
-        <div className="w-full h-full flex items-end justify-between gap-1 pt-6 pb-2">
+        <div className="absolute inset-0 flex items-end justify-between gap-1 pt-6 pb-2">
           {chartData.map((d, i) => {
             const ratio = d.value / maxVal;
             const barHeight = d.value === 0 ? 4 : Math.max(8, ratio * 100);
@@ -159,7 +159,7 @@ export const ActivityChart: React.FC<ActivityChartProps> = ({
                 <div
                   className="w-full rounded-md transition-all duration-500 relative gradient-primary"
                   style={{
-                    height: `${barHeight}%`,
+                    height: d.value === 0 ? '4px' : `${barHeight}%`,
                     opacity: d.value === 0 ? 0.1 : Math.max(0.4, ratio),
                   }}
                 >

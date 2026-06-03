@@ -247,7 +247,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({ mode }) => {
                 <img
                   src={img}
                   alt={`att ${i}`}
-                  style={{ width: 70, height: 70, objectFit: 'cover', borderRadius: 10, border: '1px solid #E2E8F0' }}
+                  style={{ width: 70, height: 70, objectFit: 'cover', borderRadius: 10, border: '1px solid var(--border-subtle)' }}
                 />
                 <button
                   onClick={() => setImages(images.filter((_, j) => j !== i))}
@@ -308,9 +308,9 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({ mode }) => {
                 onKeyDown={(e) => e.key === 'Enter' && addTag()}
                 placeholder="Add tag..."
                 style={{
-                  background: '#FFFFFF', border: '1px solid #E2E8F0',
+                  background: '#FFFFFF', border: '1px solid var(--border-subtle)',
                   borderRadius: 200, padding: '4px 12px',
-                  fontSize: 12, color: '#1E1E1E', outline: 'none',
+                  fontSize: 12, color: 'var(--text-primary)', outline: 'none',
                   width: 110,
                 }}
               />

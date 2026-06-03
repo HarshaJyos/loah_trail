@@ -295,7 +295,7 @@ export const ProjectModule: React.FC = () => {
                 <div>
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      <h3 className="text-lg font-bold text-slate-900 leading-tight mb-2 flex items-center gap-2 group-hover:text-[#8979FF] transition-colors">
+                      <h3 className="text-lg font-bold text-[var(--text-primary)] leading-tight mb-2 flex items-center gap-2 group-hover:text-[#8979FF] transition-colors">
                         {project.title}
                         <div
                           className={`w-2 h-2 rounded-full ${getPriorityColor(
@@ -312,7 +312,7 @@ export const ProjectModule: React.FC = () => {
                               ? 'bg-emerald-50 text-emerald-700 border-emerald-200/60'
                               : project.status === 'on-hold'
                               ? 'bg-amber-50 text-amber-850 text-amber-800 border-amber-200/60'
-                              : 'bg-slate-100 text-slate-700 border-slate-200/60'
+                              : 'bg-[var(--bg-surface-elevated)] text-[var(--text-secondary)] border-[var(--border-subtle)]'
                           }
                         `}
                         title="Click to cycle status"
@@ -384,20 +384,20 @@ export const ProjectModule: React.FC = () => {
                       </button>
                     </div>
                   </div>
-                  <p className="text-slate-400 text-xs line-clamp-2 leading-relaxed mb-6">
+                  <p className="text-[var(--text-tertiary)] text-xs line-clamp-2 leading-relaxed mb-6">
                     {project.description || 'No description provided.'}
                   </p>
                 </div>
 
                 <div className="space-y-4 mt-auto">
                   <div>
-                    <div className="flex justify-between items-end mb-1 font-mono text-[9px] font-bold uppercase tracking-wider text-slate-400">
+                    <div className="flex justify-between items-end mb-1 font-mono text-[9px] font-bold uppercase tracking-wider text-[var(--text-tertiary)]">
                       <span>Progress</span>
                       <span>
                         {completedTasks}/{totalTasks} Tasks ({progress}%)
                       </span>
                     </div>
-                    <div className="w-full h-1.5 bg-slate-100/50 rounded-full overflow-hidden">
+                    <div className="w-full h-1.5 bg-[var(--bg-surface-elevated)] rounded-full overflow-hidden">
                       <div
                         className="h-full rounded-full transition-all duration-500"
                         style={{
@@ -407,15 +407,15 @@ export const ProjectModule: React.FC = () => {
                       />
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-4 pt-2 border-t border-slate-200/60">
+                  <div className="grid grid-cols-2 gap-4 pt-2 border-t border-[var(--border-subtle)]">
                     <div className="space-y-1">
-                      <div className="flex items-center gap-1.5 text-slate-400 text-[9px] font-bold font-mono uppercase tracking-wider">
+                      <div className="flex items-center gap-1.5 text-[var(--text-tertiary)] text-[9px] font-bold font-mono uppercase tracking-wider">
                         <Calendar size={12} />
                         <span>Due Date</span>
                       </div>
                       <span
                         className={`text-xs font-bold ${
-                          isOverdue ? 'text-rose-500 animate-pulse' : 'text-slate-700'
+                          isOverdue ? 'text-rose-500 animate-pulse' : 'text-[var(--text-secondary)]'
                         }`}
                       >
                         {new Date(project.dueDate).toLocaleDateString(undefined, {
@@ -425,11 +425,11 @@ export const ProjectModule: React.FC = () => {
                       </span>
                     </div>
                     <div className="space-y-1">
-                      <div className="flex items-center gap-1.5 text-slate-400 text-[9px] font-bold font-mono uppercase tracking-wider">
+                      <div className="flex items-center gap-1.5 text-[var(--text-tertiary)] text-[9px] font-bold font-mono uppercase tracking-wider">
                         <Clock size={12} />
                         <span>Time Spent</span>
                       </div>
-                      <span className="text-xs font-bold text-slate-700">
+                      <span className="text-xs font-bold text-[var(--text-secondary)]">
                         {formatDuration(totalSeconds)}
                       </span>
                     </div>
@@ -441,8 +441,8 @@ export const ProjectModule: React.FC = () => {
         })}
 
         {filteredProjects.length === 0 && (
-          <div className="col-span-full py-16 text-center border border-dashed border-slate-200 rounded-3xl bg-slate-100 text-slate-400 flex flex-col items-center justify-center">
-            <Filter size={40} className="mb-4 opacity-20 text-slate-500" />
+          <div className="col-span-full py-16 text-center border border-dashed border-[var(--border-default)] rounded-3xl bg-[var(--bg-surface-elevated)] text-[var(--text-tertiary)] flex flex-col items-center justify-center">
+            <Filter size={40} className="mb-4 opacity-20 text-[var(--text-secondary)]" />
             <p className="text-sm">No projects found in this view.</p>
           </div>
         )}
@@ -591,27 +591,27 @@ const ProjectDetailView: React.FC<{
   const completedTasks = tasks.filter((t) => t.isCompleted);
 
   return (
-    <div className="w-full h-full flex flex-col bg-[#F5F7FA] animate-fade-in pb-32">
+    <div className="w-full h-full flex flex-col bg-[var(--bg-canvas)] animate-fade-in pb-32">
       {/* Detail Header */}
-      <div className="px-6 py-6 border-b border-slate-200/60 bg-white/30 flex-shrink-0">
+      <div className="px-6 py-6 border-b border-[var(--border-subtle)] bg-[var(--bg-surface)]/30 flex-shrink-0">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 text-slate-500 hover:text-slate-900 mb-4 font-bold uppercase tracking-wider text-xs transition-colors"
+          className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] mb-4 font-bold uppercase tracking-wider text-xs transition-colors"
         >
           <ArrowRight size={16} className="rotate-180" /> Back to Projects
         </button>
         <div className="flex flex-col md:flex-row justify-between md:items-end gap-6">
           <div className="min-w-0">
             <div className="flex items-center gap-3 mb-2 flex-wrap">
-              <h1 className="text-2xl md:text-3xl font-black text-slate-900 leading-tight">
+              <h1 className="text-2xl md:text-3xl font-black text-[var(--text-primary)] leading-tight">
                 {project.title}
               </h1>
-              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border border-slate-200 bg-slate-100/50 text-slate-700 font-mono">
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border border-[var(--border-default)] bg-[var(--bg-surface-elevated)] text-[var(--text-secondary)] font-mono">
                 {project.status}
               </span>
             </div>
-            <p className="text-slate-400 text-sm max-w-2xl">{project.description}</p>
-            <div className="flex items-center gap-6 mt-6 text-xs font-bold text-slate-500 font-mono uppercase tracking-wider">
+            <p className="text-[var(--text-tertiary)] text-sm max-w-2xl">{project.description}</p>
+            <div className="flex items-center gap-6 mt-6 text-xs font-bold text-[var(--text-secondary)] font-mono uppercase tracking-wider">
               <div className="flex items-center gap-2">
                 <Calendar size={16} className="text-violet-400" />
                 <span>
@@ -627,11 +627,11 @@ const ProjectDetailView: React.FC<{
           </div>
 
           <div className="w-full md:w-64">
-            <div className="flex justify-between text-[9px] font-bold text-slate-400 uppercase mb-2 font-mono">
+            <div className="flex justify-between text-[9px] font-bold text-[var(--text-tertiary)] uppercase mb-2 font-mono">
               <span>Progress</span>
               <span>{stats.progress}%</span>
             </div>
-            <div className="h-2 bg-slate-100/50 rounded-full overflow-hidden">
+            <div className="h-2 bg-[var(--bg-surface-elevated)] rounded-full overflow-hidden">
               <div
                 className="h-full transition-all duration-500"
                 style={{
@@ -640,7 +640,7 @@ const ProjectDetailView: React.FC<{
                 }}
               />
             </div>
-            <p className="text-right text-[10px] text-slate-500 mt-1 font-mono">
+            <p className="text-right text-[10px] text-[var(--text-secondary)] mt-1 font-mono">
               {stats.completedTasks}/{stats.totalTasks} Tasks Completed
             </p>
           </div>
@@ -648,13 +648,13 @@ const ProjectDetailView: React.FC<{
       </div>
 
       {/* Tabs */}
-      <div className="flex px-6 border-b border-slate-200/60 shrink-0 bg-[#F5F7FA]">
+      <div className="flex px-6 border-b border-[var(--border-subtle)] shrink-0 bg-[var(--bg-canvas)]">
         <button
           onClick={() => setActiveTab('tasks')}
           className={`px-6 py-3 text-xs font-bold uppercase tracking-widest border-b-2 transition-colors font-mono ${
             activeTab === 'tasks'
               ? 'border-violet-500 text-violet-400'
-              : 'border-transparent text-slate-400 hover:text-slate-900'
+              : 'border-transparent text-[var(--text-tertiary)] hover:text-[var(--text-primary)]'
           }`}
         >
           Tasks
@@ -664,7 +664,7 @@ const ProjectDetailView: React.FC<{
           className={`px-6 py-3 text-xs font-bold uppercase tracking-widest border-b-2 transition-colors font-mono ${
             activeTab === 'notes'
               ? 'border-violet-500 text-violet-400'
-              : 'border-transparent text-slate-400 hover:text-slate-900'
+              : 'border-transparent text-[var(--text-tertiary)] hover:text-[var(--text-primary)]'
           }`}
         >
           Project Notes
@@ -672,23 +672,23 @@ const ProjectDetailView: React.FC<{
       </div>
 
       {/* Tab Contents */}
-      <div className="flex-1 overflow-y-auto no-scrollbar p-6 bg-[#F5F7FA]">
+      <div className="flex-1 overflow-y-auto no-scrollbar p-6 bg-[var(--bg-canvas)]">
         <div className="max-w-4xl mx-auto">
           {activeTab === 'tasks' && (
             <>
               {/* Task Quick Input */}
-              <div className="flex gap-2 mb-8 bg-white p-2 pr-3 rounded-xl border border-slate-200/60 focus-within:border-violet-500/50 transition-all">
+              <div className="flex gap-2 mb-8 bg-[var(--bg-surface)] p-2 pr-3 rounded-xl border border-[var(--border-subtle)] focus-within:border-violet-500/50 transition-all">
                 <input
                   value={newTaskTitle}
                   onChange={(e) => setNewTaskTitle(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleQuickAddTask()}
                   placeholder="Add a task to this project..."
-                  className="flex-1 bg-transparent px-3 py-2 text-sm text-slate-900 focus:outline-none placeholder-zinc-700 font-semibold"
+                  className="flex-1 bg-transparent px-3 py-2 text-sm text-[var(--text-primary)] focus:outline-none placeholder-zinc-700 font-semibold"
                 />
                 <button
                   onClick={handleQuickAddTask}
                   disabled={!newTaskTitle.trim()}
-                  className="bg-violet-600 hover:bg-violet-500 disabled:bg-slate-100/50 disabled:text-slate-600 text-slate-900 px-4 rounded-lg font-bold text-xs uppercase tracking-wider transition-colors"
+                  className="bg-violet-600 hover:bg-violet-500 disabled:bg-[var(--bg-surface-elevated)] disabled:text-[var(--text-secondary)] text-[var(--text-primary)] px-4 rounded-lg font-bold text-xs uppercase tracking-wider transition-colors"
                 >
                   Add
                 </button>
@@ -696,25 +696,25 @@ const ProjectDetailView: React.FC<{
 
               {/* Active Tasks list */}
               <div className="space-y-3 mb-8">
-                <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono mb-4 pl-1">
+                <h3 className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest font-mono mb-4 pl-1">
                   Active Project Tasks
                 </h3>
                 {pendingTasks.map((task) => (
                   <div
                     key={task.id}
-                    className="flex items-center gap-4 p-4 border border-slate-200/60 rounded-2xl bg-white hover:border-violet-500/20 hover:shadow-lg transition-all group"
+                    className="flex items-center gap-4 p-4 border border-[var(--border-subtle)] rounded-2xl bg-[var(--bg-surface)] hover:border-violet-500/20 hover:shadow-lg transition-all group"
                   >
                     <button
                       onClick={() => onToggleTask(task.id)}
-                      className="text-slate-500 hover:text-violet-400 transition-colors shrink-0"
+                      className="text-[var(--text-secondary)] hover:text-violet-400 transition-colors shrink-0"
                     >
-                      <div className="w-5 h-5 border border-slate-200 rounded-md" />
+                      <div className="w-5 h-5 border border-[var(--border-default)] rounded-md" />
                     </button>
                     <div className="flex-1 min-w-0">
-                      <span className="font-bold text-sm text-slate-800 block truncate">
+                      <span className="font-bold text-sm text-[var(--text-primary)] block truncate">
                         {task.title}
                       </span>
-                      <div className="flex items-center gap-3 mt-1 text-[10px] text-slate-400 font-mono font-bold uppercase">
+                      <div className="flex items-center gap-3 mt-1 text-[10px] text-[var(--text-tertiary)] font-mono font-bold uppercase">
                         <span className="text-violet-400">{task.priority} Priority</span>
                         <span>•</span>
                         <span>{task.duration || 30}m estimate</span>
@@ -723,14 +723,14 @@ const ProjectDetailView: React.FC<{
                     <div className="opacity-0 group-hover:opacity-100 flex gap-1.5 transition-opacity shrink-0">
                       <button
                         onClick={() => onStartTask(task)}
-                        className="p-2 hover:bg-slate-100/50 rounded-lg text-slate-400 hover:text-slate-900 transition-colors"
+                        className="p-2 hover:bg-[var(--bg-surface-elevated)] rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors"
                         title="Start Timer Focus"
                       >
                         <Play size={16} fill="currentColor" />
                       </button>
                       <button
                         onClick={() => onDeleteTask(task.id)}
-                        className="p-2 hover:bg-rose-500/10 rounded-lg text-slate-400 hover:text-rose-400 transition-colors"
+                        className="p-2 hover:bg-rose-500/10 rounded-lg text-[var(--text-tertiary)] hover:text-rose-400 transition-colors"
                       >
                         <Trash2 size={16} />
                       </button>
@@ -738,7 +738,7 @@ const ProjectDetailView: React.FC<{
                   </div>
                 ))}
                 {pendingTasks.length === 0 && (
-                  <p className="text-slate-500 italic text-xs pl-1">
+                  <p className="text-[var(--text-secondary)] italic text-xs pl-1">
                     No active tasks left in this project.
                   </p>
                 )}
@@ -746,14 +746,14 @@ const ProjectDetailView: React.FC<{
 
               {/* Completed tasks list */}
               {completedTasks.length > 0 && (
-                <div className="space-y-3 opacity-60 hover:opacity-100 transition-all border-t border-slate-200/60 pt-6">
-                  <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono mb-4 pl-1">
+                <div className="space-y-3 opacity-60 hover:opacity-100 transition-all border-t border-[var(--border-subtle)] pt-6">
+                  <h3 className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest font-mono mb-4 pl-1">
                     Completed Tasks
                   </h3>
                   {completedTasks.map((task) => (
                     <div
                       key={task.id}
-                      className="flex items-center gap-4 p-3 border border-slate-200/60 rounded-2xl bg-slate-100/500"
+                      className="flex items-center gap-4 p-3 border border-[var(--border-subtle)] rounded-2xl bg-[var(--bg-surface-elevated)]0"
                     >
                       <button
                         onClick={() => onToggleTask(task.id)}
@@ -761,12 +761,12 @@ const ProjectDetailView: React.FC<{
                       >
                         <CheckSquare size={18} />
                       </button>
-                      <span className="font-medium text-xs text-slate-400 line-through flex-1 truncate">
+                      <span className="font-medium text-xs text-[var(--text-tertiary)] line-through flex-1 truncate">
                         {task.title}
                       </span>
                       <button
                         onClick={() => onDeleteTask(task.id)}
-                        className="p-1.5 hover:bg-rose-500/10 rounded-lg text-slate-500 hover:text-rose-400 transition-colors shrink-0"
+                        className="p-1.5 hover:bg-rose-500/10 rounded-lg text-[var(--text-secondary)] hover:text-rose-400 transition-colors shrink-0"
                       >
                         <Trash2 size={14} />
                       </button>
@@ -781,7 +781,7 @@ const ProjectDetailView: React.FC<{
             <div className="space-y-6">
               <button
                 onClick={() => openNoteModal()}
-                className="w-full border border-dashed border-slate-200 hover:border-violet-500/30 rounded-2xl p-5 text-slate-400 hover:text-slate-900 hover:bg-white/[0.02] transition-all flex items-center justify-center gap-2 active:scale-[0.98] font-bold uppercase tracking-wider text-xs font-mono"
+                className="w-full border border-dashed border-[var(--border-default)] hover:border-violet-500/30 rounded-2xl p-5 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)]/[0.02] transition-all flex items-center justify-center gap-2 active:scale-[0.98] font-bold uppercase tracking-wider text-xs font-mono"
               >
                 <Plus size={16} /> Add Project Note
               </button>
@@ -801,7 +801,7 @@ const ProjectDetailView: React.FC<{
                   </div>
                 ))}
                 {projectNotes.length === 0 && (
-                  <p className="text-center col-span-full text-slate-500 py-10 italic text-xs">
+                  <p className="text-center col-span-full text-[var(--text-secondary)] py-10 italic text-xs">
                     No notes associated with this project.
                   </p>
                 )}
@@ -826,7 +826,7 @@ const ProjectDetailView: React.FC<{
             onClick={(e) => e.stopPropagation()}
             style={{
               background: '#FFFFFF', borderRadius: 20,
-              border: '1px solid #E2E8F0',
+              border: '1px solid var(--border-subtle)',
               boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
               width: '100%', maxWidth: 480,
               padding: 24,
@@ -834,7 +834,7 @@ const ProjectDetailView: React.FC<{
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: 15, fontWeight: 700, color: '#1E1E1E' }}>
+              <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>
                 {editingNoteId ? 'Edit Note' : 'Add Project Note'}
               </span>
               <button onClick={closeNoteModal} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9CA3AF' }}>
@@ -846,9 +846,9 @@ const ProjectDetailView: React.FC<{
               onChange={(e) => setInitialNoteData((prev) => ({ ...prev, title: e.target.value }))}
               placeholder="Note title..."
               style={{
-                width: '100%', background: '#F5F7FA', border: '1px solid #E2E8F0',
+                width: '100%', background: 'var(--bg-app)', border: '1px solid var(--border-subtle)',
                 borderRadius: 10, padding: '10px 14px',
-                fontSize: 14, fontWeight: 600, color: '#1E1E1E', outline: 'none',
+                fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', outline: 'none',
               }}
             />
             <textarea
@@ -856,9 +856,9 @@ const ProjectDetailView: React.FC<{
               onChange={(e) => setInitialNoteData((prev) => ({ ...prev, content: e.target.value }))}
               placeholder="Note content..."
               style={{
-                width: '100%', background: '#F5F7FA', border: '1px solid #E2E8F0',
+                width: '100%', background: 'var(--bg-app)', border: '1px solid var(--border-subtle)',
                 borderRadius: 10, padding: '10px 14px',
-                fontSize: 13, color: '#1E1E1E', outline: 'none',
+                fontSize: 13, color: 'var(--text-primary)', outline: 'none',
                 minHeight: 120, resize: 'vertical',
               }}
             />
@@ -867,7 +867,7 @@ const ProjectDetailView: React.FC<{
                 onClick={closeNoteModal}
                 style={{
                   padding: '8px 16px', borderRadius: 200,
-                  border: '1px solid #E2E8F0', background: 'transparent',
+                  border: '1px solid var(--border-subtle)', background: 'transparent',
                   fontSize: 12, fontWeight: 700, color: '#64748B', cursor: 'pointer',
                 }}
               >

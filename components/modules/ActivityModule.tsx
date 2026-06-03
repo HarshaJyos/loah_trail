@@ -159,14 +159,14 @@ export const ActivityModule: React.FC = () => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col bg-[#F5F7FA] animate-fade-in">
+    <div className="w-full h-full flex flex-col bg-[var(--bg-canvas)] animate-fade-in">
       {/* Top sticky navbar matching Frame132 header-notes */}
       <div
         style={{
           padding: '16px 20px 12px',
-          borderBottom: '1px solid #E2E8F0',
+          borderBottom: '1px solid var(--border-subtle)',
           display: 'flex', flexDirection: 'column', gap: 16,
-          flexShrink: 0, background: '#F5F7FA', zIndex: 20
+          flexShrink: 0, background: 'var(--bg-app)', zIndex: 20
         }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -174,15 +174,15 @@ export const ActivityModule: React.FC = () => {
             <button
               onClick={() => router.push('/dashboard')}
               style={{
-                width: 32, height: 32, borderRadius: 8, border: '1px solid #E2E8F0',
+                width: 32, height: 32, borderRadius: 8, border: '1px solid var(--border-subtle)',
                 background: '#FFFFFF', color: '#64748B', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'
               }}
-              className="hover:bg-slate-100 hover:text-slate-900 transition-colors"
+              className="hover:bg-[var(--bg-surface-elevated)] hover:text-[var(--text-primary)] transition-colors"
             >
               <ArrowLeft size={16} />
             </button>
             <div>
-              <div style={{ fontSize: 26, fontWeight: 700, color: '#1E1E1E', letterSpacing: '-0.03em', display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ fontSize: 26, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.03em', display: 'flex', alignItems: 'center', gap: 8 }}>
                 <Activity className="text-emerald-500" size={24} /> Activity History
               </div>
               <div style={{ fontSize: 12, color: '#64748B', marginTop: 8 }}>
@@ -194,7 +194,7 @@ export const ActivityModule: React.FC = () => {
 
         {/* Filters and Ranges */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
-          <div style={{ display: 'flex', background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 8, padding: 3, alignItems: 'center', gap: 4 }}>
+          <div style={{ display: 'flex', background: '#FFFFFF', border: '1px solid var(--border-subtle)', borderRadius: 8, padding: 3, alignItems: 'center', gap: 4 }}>
             {(['all', 'task', 'session', 'journal'] as FilterType[]).map((f) => (
               <button
                 key={f}
@@ -202,7 +202,7 @@ export const ActivityModule: React.FC = () => {
                 style={{
                   padding: '4px 12px', borderRadius: 6, fontSize: 11, fontWeight: 700, textTransform: 'uppercase',
                   background: filter === f ? '#F1F5F9' : 'transparent',
-                  color: filter === f ? '#1E1E1E' : '#64748B',
+                  color: filter === f ? 'var(--text-primary)' : '#64748B',
                   border: 'none', cursor: 'pointer'
                 }}
               >
@@ -211,7 +211,7 @@ export const ActivityModule: React.FC = () => {
             ))}
           </div>
 
-          <div style={{ display: 'flex', background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 8, padding: 3, alignItems: 'center', gap: 4 }}>
+          <div style={{ display: 'flex', background: '#FFFFFF', border: '1px solid var(--border-subtle)', borderRadius: 8, padding: 3, alignItems: 'center', gap: 4 }}>
             {(['day', 'week', 'month', 'all'] as TimeRange[]).map((r) => (
               <button
                 key={r}
@@ -219,7 +219,7 @@ export const ActivityModule: React.FC = () => {
                 style={{
                   padding: '4px 12px', borderRadius: 6, fontSize: 11, fontWeight: 700, textTransform: 'uppercase',
                   background: range === r ? '#F1F5F9' : 'transparent',
-                  color: range === r ? '#1E1E1E' : '#64748B',
+                  color: range === r ? 'var(--text-primary)' : '#64748B',
                   border: 'none', cursor: 'pointer'
                 }}
               >
@@ -267,7 +267,7 @@ export const ActivityModule: React.FC = () => {
                       })}
                     </span>
                   </div>
-                  <h4 style={{ fontSize: 15, fontWeight: 700, color: '#1E1E1E', lineHeight: 1.3 }} className="truncate max-w-sm sm:max-w-md md:max-w-lg">
+                  <h4 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.3 }} className="truncate max-w-sm sm:max-w-md md:max-w-lg">
                     {item.title}
                   </h4>
                   {item.subtitle && (
@@ -296,12 +296,12 @@ export const ActivityModule: React.FC = () => {
           ))}
 
           {filteredItems.length === 0 && (
-            <div className="py-24 flex flex-col items-center justify-center text-center border border-dashed border-slate-200 rounded-3xl bg-slate-100 text-slate-400">
-              <div className="w-16 h-16 bg-slate-100/50 rounded-full flex items-center justify-center shadow-lg border border-slate-200/60 mb-6 text-slate-500">
+            <div className="py-24 flex flex-col items-center justify-center text-center border border-dashed border-[var(--border-default)] rounded-3xl bg-[var(--bg-surface-elevated)] text-[var(--text-tertiary)]">
+              <div className="w-16 h-16 bg-[var(--bg-surface-elevated)] rounded-full flex items-center justify-center shadow-lg border border-[var(--border-subtle)] mb-6 text-[var(--text-secondary)]">
                 <Filter size={28} />
               </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">No activity found</h3>
-              <p className="text-slate-400 text-xs max-w-sm px-4 leading-relaxed">
+              <h3 className="text-lg font-bold text-[var(--text-primary)] mb-2">No activity found</h3>
+              <p className="text-[var(--text-tertiary)] text-xs max-w-sm px-4 leading-relaxed">
                 There are no actions logged within the selected range or filters. Keep completing tasks and tracking routines!
               </p>
             </div>
@@ -324,7 +324,7 @@ export const ActivityModule: React.FC = () => {
                   <CheckCircle2 size={28} />
                 </div>
                 <div>
-                  <h3 className="text-xl font-extrabold text-center text-slate-900 leading-tight">
+                  <h3 className="text-xl font-extrabold text-center text-[var(--text-primary)] leading-tight">
                     {selectedActivity.item.title}
                   </h3>
                   <p className="text-center text-xs text-[var(--text-secondary)] font-mono mt-1 flex items-center justify-center gap-1.5">
@@ -333,16 +333,16 @@ export const ActivityModule: React.FC = () => {
                   </p>
                 </div>
 
-                <div className="bg-white border border-slate-200/60 rounded-2xl p-4 space-y-3 text-sm">
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl p-4 space-y-3 text-sm">
                   <div className="flex justify-between">
                     <span className="text-[var(--text-secondary)] font-medium">Category</span>
-                    <span className="font-bold text-slate-900 bg-slate-100/50 px-2 py-0.5 rounded-lg text-xs border border-slate-200/60">
+                    <span className="font-bold text-[var(--text-primary)] bg-[var(--bg-surface-elevated)] px-2 py-0.5 rounded-lg text-xs border border-[var(--border-subtle)]">
                       {selectedActivity.item.category}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[var(--text-secondary)] font-medium">Duration Estimate</span>
-                    <span className="font-bold text-slate-900 font-mono">{selectedActivity.item.duration}m</span>
+                    <span className="font-bold text-[var(--text-primary)] font-mono">{selectedActivity.item.duration}m</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[var(--text-secondary)] font-medium">Priority</span>
@@ -361,10 +361,10 @@ export const ActivityModule: React.FC = () => {
 
                 {selectedActivity.item.description && (
                   <div>
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1.5 font-mono">
+                    <span className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest block mb-1.5 font-mono">
                       Description
                     </span>
-                    <p className="text-xs text-slate-700 bg-white border border-slate-200/60 p-3 rounded-2xl whitespace-pre-wrap leading-relaxed">
+                    <p className="text-xs text-[var(--text-secondary)] bg-[var(--bg-surface)] border border-[var(--border-subtle)] p-3 rounded-2xl whitespace-pre-wrap leading-relaxed">
                       {selectedActivity.item.description}
                     </p>
                   </div>
@@ -378,7 +378,7 @@ export const ActivityModule: React.FC = () => {
                   <Zap size={28} fill="currentColor" className="opacity-20" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-extrabold text-center text-slate-900 leading-tight">
+                  <h3 className="text-xl font-extrabold text-center text-[var(--text-primary)] leading-tight">
                     {selectedActivity.item.routineTitle}
                   </h3>
                   <p className="text-center text-xs text-[var(--text-secondary)] font-mono mt-1 flex items-center justify-center gap-1.5">
@@ -388,19 +388,19 @@ export const ActivityModule: React.FC = () => {
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-white p-3 rounded-2xl text-center border border-slate-200/60">
+                  <div className="bg-[var(--bg-surface)] p-3 rounded-2xl text-center border border-[var(--border-subtle)]">
                     <div className="text-[9px] text-[var(--text-secondary)] font-bold uppercase tracking-wider font-mono mb-0.5">
                       Focus Duration
                     </div>
-                    <div className="text-lg font-black text-slate-900 font-mono">
+                    <div className="text-lg font-black text-[var(--text-primary)] font-mono">
                       {Math.round(selectedActivity.item.durationSeconds / 60)}m
                     </div>
                   </div>
-                  <div className="bg-white p-3 rounded-2xl text-center border border-slate-200/60">
+                  <div className="bg-[var(--bg-surface)] p-3 rounded-2xl text-center border border-[var(--border-subtle)]">
                     <div className="text-[9px] text-[var(--text-secondary)] font-bold uppercase tracking-wider font-mono mb-0.5">
                       Steps Completed
                     </div>
-                    <div className="text-lg font-black text-slate-900 font-mono">
+                    <div className="text-lg font-black text-[var(--text-primary)] font-mono">
                       {selectedActivity.item.completedSteps} / {selectedActivity.item.totalSteps}
                     </div>
                   </div>
@@ -408,16 +408,16 @@ export const ActivityModule: React.FC = () => {
 
                 {selectedActivity.item.logs && selectedActivity.item.logs.length > 0 && (
                   <div className="space-y-2">
-                    <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">
+                    <h4 className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest font-mono">
                       Step breakdown
                     </h4>
-                    <div className="space-y-2 max-h-[160px] overflow-y-auto no-scrollbar border border-slate-200/60 rounded-2xl p-2 bg-slate-100/500">
+                    <div className="space-y-2 max-h-[160px] overflow-y-auto no-scrollbar border border-[var(--border-subtle)] rounded-2xl p-2 bg-[var(--bg-surface-elevated)]0">
                       {selectedActivity.item.logs.map((log: any, i: number) => (
                         <div
                           key={i}
-                          className="flex justify-between items-center text-xs bg-white p-2.5 rounded-xl border border-slate-200/60"
+                          className="flex justify-between items-center text-xs bg-[var(--bg-surface)] p-2.5 rounded-xl border border-[var(--border-subtle)]"
                         >
-                          <span className="text-slate-800 font-bold truncate pr-2">
+                          <span className="text-[var(--text-primary)] font-bold truncate pr-2">
                             {log.title}
                           </span>
                           <span className="text-[var(--text-secondary)] font-mono whitespace-nowrap font-bold shrink-0">
@@ -437,7 +437,7 @@ export const ActivityModule: React.FC = () => {
                   <Smile size={28} />
                 </div>
                 <div>
-                  <h3 className="text-xl font-extrabold text-center text-slate-900 leading-tight">
+                  <h3 className="text-xl font-extrabold text-center text-[var(--text-primary)] leading-tight">
                     {selectedActivity.item.title || 'Untitled Journal Entry'}
                   </h3>
                   <p className="text-center text-xs text-[var(--text-secondary)] font-mono mt-1 flex items-center justify-center gap-1.5">
@@ -446,7 +446,7 @@ export const ActivityModule: React.FC = () => {
                   </p>
                 </div>
 
-                <div className="bg-white border border-slate-200/60 rounded-2xl p-4 space-y-3 text-sm">
+                <div className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] rounded-2xl p-4 space-y-3 text-sm">
                   <div className="flex justify-between items-center">
                     <span className="text-[var(--text-secondary)] font-medium">Logged Mood</span>
                     <span
@@ -462,8 +462,8 @@ export const ActivityModule: React.FC = () => {
                   </div>
 
                   {selectedActivity.item.tags && selectedActivity.item.tags.length > 0 && (
-                    <div className="pt-2 border-t border-slate-200/60">
-                      <span className="block text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1.5 font-mono">
+                    <div className="pt-2 border-t border-[var(--border-subtle)]">
+                      <span className="block text-[10px] text-[var(--text-tertiary)] font-bold uppercase tracking-widest mb-1.5 font-mono">
                         Tags
                       </span>
                       <div className="flex flex-wrap gap-1">
@@ -482,10 +482,10 @@ export const ActivityModule: React.FC = () => {
 
                 {selectedActivity.item.content && (
                   <div>
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1.5 font-mono">
+                    <span className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest block mb-1.5 font-mono">
                       Reflections
                     </span>
-                    <div className="text-xs text-slate-700 bg-white border border-slate-200/60 p-4 rounded-2xl whitespace-pre-wrap leading-relaxed max-h-[160px] overflow-y-auto no-scrollbar">
+                    <div className="text-xs text-[var(--text-secondary)] bg-[var(--bg-surface)] border border-[var(--border-subtle)] p-4 rounded-2xl whitespace-pre-wrap leading-relaxed max-h-[160px] overflow-y-auto no-scrollbar">
                       {selectedActivity.item.content}
                     </div>
                   </div>
@@ -493,7 +493,7 @@ export const ActivityModule: React.FC = () => {
               </div>
             )}
 
-            <div className="pt-4 border-t border-slate-200/60 flex justify-end gap-2">
+            <div className="pt-4 border-t border-[var(--border-subtle)] flex justify-end gap-2">
               <Button
                 variant="danger"
                 size="sm"

@@ -319,10 +319,10 @@ export const RoutineModule: React.FC = () => {
                         <Timer size={20} />
                       </div>
                       <div className="min-w-0">
-                        <h4 className="font-bold text-slate-900 truncate text-sm">
+                        <h4 className="font-bold text-[var(--text-primary)] truncate text-sm">
                           {paused.routine.title}
                         </h4>
-                        <div className="flex items-center gap-2 text-[10px] text-slate-400 font-mono mt-0.5">
+                        <div className="flex items-center gap-2 text-[10px] text-[var(--text-tertiary)] font-mono mt-0.5">
                           <span>
                             Step {paused.currentStepIndex + 1}/
                             {paused.routine.steps.length}
@@ -343,7 +343,7 @@ export const RoutineModule: React.FC = () => {
                       </Button>
                       <button
                         onClick={() => onDiscardPaused(paused.id)}
-                        className="p-2 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors"
+                        className="p-2 text-[var(--text-tertiary)] hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors"
                         title="Discard"
                       >
                         <X size={16} />
@@ -442,10 +442,10 @@ export const RoutineModule: React.FC = () => {
 
                   {/* Routine Title */}
                   <div className="mb-4">
-                    <h3 className="text-lg font-bold text-slate-900 mb-2 leading-tight line-clamp-2">
+                    <h3 className="text-lg font-bold text-[var(--text-primary)] mb-2 leading-tight line-clamp-2">
                       {routine.title}
                     </h3>
-                    <div className="flex flex-wrap items-center gap-3 text-[9px] font-bold uppercase tracking-wider text-slate-400 font-mono">
+                    <div className="flex flex-wrap items-center gap-3 text-[9px] font-bold uppercase tracking-wider text-[var(--text-tertiary)] font-mono">
                       <span className="flex items-center gap-1">
                         <ListPlus size={12} /> {routine.steps.length} Steps
                       </span>
@@ -484,17 +484,17 @@ export const RoutineModule: React.FC = () => {
                             i === 0 ? 'bg-violet-500 shadow-[0_0_8px_rgba(124,58,237,0.3)]' : 'bg-slate-300'
                           }`}
                         />
-                        <span className="text-xs text-slate-500 font-medium truncate flex-1 leading-normal">
+                        <span className="text-xs text-[var(--text-secondary)] font-medium truncate flex-1 leading-normal">
                           {step.title}
                         </span>
-                        <span className="text-[10px] text-slate-400 font-mono">
+                        <span className="text-[10px] text-[var(--text-tertiary)] font-mono">
                           {Math.round(step.durationSeconds / 60)}m
                         </span>
                       </div>
                     ))}
                     {routine.steps.length > 3 && (
                       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white via-white/95 to-transparent h-12 flex items-end">
-                        <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider pl-5 pb-0.5">
+                        <span className="text-[10px] text-[var(--text-secondary)] font-bold uppercase tracking-wider pl-5 pb-0.5">
                           +{routine.steps.length - 3} more steps
                         </span>
                       </div>
@@ -502,11 +502,11 @@ export const RoutineModule: React.FC = () => {
                   </div>
 
                   {/* Hover bottom panel trigger start */}
-                  <div className="absolute inset-x-0 bottom-0 p-4 bg-slate-50 border-t border-slate-200/60 translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex items-center justify-between z-20">
-                    <span className="font-extrabold text-slate-900 text-sm">
+                  <div className="absolute inset-x-0 bottom-0 p-4 bg-[var(--bg-surface-elevated)] border-t border-[var(--border-subtle)] translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex items-center justify-between z-20">
+                    <span className="font-extrabold text-[var(--text-primary)] text-sm">
                       Start Session
                     </span>
-                    <div className="bg-gradient-to-r from-violet-600 to-pink-600 text-slate-900 p-2 rounded-full shadow-lg shadow-violet-500/20">
+                    <div className="bg-gradient-to-r from-violet-600 to-pink-600 text-[var(--text-primary)] p-2 rounded-full shadow-lg shadow-violet-500/20">
                       <Play size={14} fill="currentColor" />
                     </div>
                   </div>
@@ -518,9 +518,9 @@ export const RoutineModule: React.FC = () => {
           {/* Add Routine card trigger */}
           <button
             onClick={() => openEditor()}
-            className="border border-dashed border-slate-200 hover:border-violet-500/30 bg-slate-200 hover:bg-white/40 rounded-2xl flex flex-col items-center justify-center gap-4 text-slate-400 hover:text-slate-900 transition-all group h-[320px] active:scale-[0.98]"
+            className="border border-dashed border-[var(--border-default)] hover:border-violet-500/30 bg-[var(--border-subtle)] hover:bg-[var(--bg-surface)]/40 rounded-2xl flex flex-col items-center justify-center gap-4 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-all group h-[320px] active:scale-[0.98]"
           >
-            <div className="w-16 h-16 rounded-full bg-slate-100/50 border border-slate-200/60 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg group-hover:border-violet-500/20">
+            <div className="w-16 h-16 rounded-full bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg group-hover:border-violet-500/20">
               <Plus size={32} />
             </div>
             <span className="font-extrabold text-sm uppercase tracking-wider">Create New Routine</span>
@@ -538,19 +538,19 @@ export const RoutineModule: React.FC = () => {
         <div className="space-y-6">
           <div className="space-y-4">
             <input
-              className="w-full text-2xl font-bold text-slate-900 placeholder-zinc-700 border-none p-0 focus:ring-0 focus:outline-none bg-transparent"
+              className="w-full text-2xl font-bold text-[var(--text-primary)] placeholder-zinc-700 border-none p-0 focus:ring-0 focus:outline-none bg-transparent"
               placeholder="Routine Name..."
               value={newRoutineTitle}
               onChange={(e) => setNewRoutineTitle(e.target.value)}
               autoFocus
             />
-            <div className="flex p-1 bg-white rounded-xl w-fit border border-slate-200/60">
+            <div className="flex p-1 bg-[var(--bg-surface)] rounded-xl w-fit border border-[var(--border-subtle)]">
               <button
                 onClick={() => setRoutineType('repeatable')}
                 className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition-all ${
                   routineType === 'repeatable'
-                    ? 'bg-slate-100/50 text-slate-900 shadow-sm'
-                    : 'text-slate-400 hover:text-slate-700'
+                    ? 'bg-[var(--bg-surface-elevated)] text-[var(--text-primary)] shadow-sm'
+                    : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]'
                 }`}
               >
                 <Repeat size={14} /> Repeatable
@@ -559,8 +559,8 @@ export const RoutineModule: React.FC = () => {
                 onClick={() => setRoutineType('once')}
                 className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition-all ${
                   routineType === 'once'
-                    ? 'bg-slate-100/50 text-slate-900 shadow-sm'
-                    : 'text-slate-400 hover:text-slate-700'
+                    ? 'bg-[var(--bg-surface-elevated)] text-[var(--text-primary)] shadow-sm'
+                    : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]'
                 }`}
               >
                 <CalendarClock size={14} /> Run Once
@@ -569,17 +569,17 @@ export const RoutineModule: React.FC = () => {
           </div>
 
           {/* Reminders section */}
-          <div className="bg-white p-4 rounded-xl border border-slate-200/60 space-y-3">
-            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono flex items-center gap-1.5">
+          <div className="bg-[var(--bg-surface)] p-4 rounded-xl border border-[var(--border-subtle)] space-y-3">
+            <label className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest font-mono flex items-center gap-1.5">
               <Bell size={12} className="text-violet-400" /> Reminder Schedule
             </label>
             <div className="space-y-2">
               {reminders.map((r) => (
                 <div
                   key={r.id}
-                  className="flex items-center justify-between bg-slate-100/50 p-2 rounded-lg border border-slate-200/60 text-sm"
+                  className="flex items-center justify-between bg-[var(--bg-surface-elevated)] p-2 rounded-lg border border-[var(--border-subtle)] text-sm"
                 >
-                  <div className="flex items-center gap-2 text-slate-700">
+                  <div className="flex items-center gap-2 text-[var(--text-secondary)]">
                     <Clock size={14} />
                     <span>
                       {r.timeOffset === 0
@@ -589,7 +589,7 @@ export const RoutineModule: React.FC = () => {
                   </div>
                   <button
                     onClick={() => removeReminder(r.id)}
-                    className="text-slate-400 hover:text-rose-400 p-1 hover:bg-slate-100/50 rounded"
+                    className="text-[var(--text-tertiary)] hover:text-rose-400 p-1 hover:bg-[var(--bg-surface-elevated)] rounded"
                   >
                     <X size={14} />
                   </button>
@@ -601,12 +601,12 @@ export const RoutineModule: React.FC = () => {
                   onChange={(e) => setNewReminderOffset(parseInt(e.target.value))}
                   className="bg-[var(--bg-elevated)] border border-[var(--border)] rounded-xl px-3 py-2 text-sm text-[var(--text-primary)] focus:border-[var(--purple)] focus:ring-1 focus:ring-violet-500/30 outline-none flex-1"
                 >
-                  <option value={0} className="bg-white">At start time</option>
-                  <option value={5} className="bg-white">5 minutes before</option>
-                  <option value={10} className="bg-white">10 minutes before</option>
-                  <option value={15} className="bg-white">15 minutes before</option>
-                  <option value={30} className="bg-white">30 minutes before</option>
-                  <option value={60} className="bg-white">1 hour before</option>
+                  <option value={0} className="bg-[var(--bg-surface)]">At start time</option>
+                  <option value={5} className="bg-[var(--bg-surface)]">5 minutes before</option>
+                  <option value={10} className="bg-[var(--bg-surface)]">10 minutes before</option>
+                  <option value={15} className="bg-[var(--bg-surface)]">15 minutes before</option>
+                  <option value={30} className="bg-[var(--bg-surface)]">30 minutes before</option>
+                  <option value={60} className="bg-[var(--bg-surface)]">1 hour before</option>
                 </select>
                 <Button onClick={addReminder} variant="secondary" size="sm">
                   Add
@@ -617,11 +617,11 @@ export const RoutineModule: React.FC = () => {
 
           {/* Step Builder */}
           <div className="space-y-4">
-            <div className="flex justify-between items-end border-b border-slate-200/60 pb-2">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">
+            <div className="flex justify-between items-end border-b border-[var(--border-subtle)] pb-2">
+              <label className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest font-mono">
                 Steps sequence ({newSteps.length})
               </label>
-              <span className="text-xs text-slate-400 font-mono">
+              <span className="text-xs text-[var(--text-tertiary)] font-mono">
                 Total:{' '}
                 {Math.ceil(
                   newSteps.reduce((acc, s) => acc + s.durationSeconds, 0) / 60
@@ -631,45 +631,45 @@ export const RoutineModule: React.FC = () => {
             </div>
 
             {/* Input Row */}
-            <div className="flex gap-2 items-center bg-white p-2 pr-3 rounded-xl border border-slate-200/60 focus-within:border-violet-500/50 transition-all">
+            <div className="flex gap-2 items-center bg-[var(--bg-surface)] p-2 pr-3 rounded-xl border border-[var(--border-subtle)] focus-within:border-violet-500/50 transition-all">
               <div className="pl-3 py-2 flex-1">
                 <input
-                  className="w-full bg-transparent text-sm text-slate-900 placeholder-zinc-600 focus:outline-none"
+                  className="w-full bg-transparent text-sm text-[var(--text-primary)] placeholder-zinc-600 focus:outline-none"
                   placeholder="Enter step title..."
                   value={stepTitle}
                   onChange={(e) => setStepTitle(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && addStep()}
                 />
               </div>
-              <div className="h-6 w-px bg-slate-100/50" />
+              <div className="h-6 w-px bg-[var(--bg-surface-elevated)]" />
 
               {/* Habit linking */}
               <select
                 value={linkedHabitId}
                 onChange={(e) => handleHabitSelect(e.target.value)}
-                className="w-24 bg-transparent text-xs text-slate-400 focus:outline-none cursor-pointer truncate"
+                className="w-24 bg-transparent text-xs text-[var(--text-tertiary)] focus:outline-none cursor-pointer truncate"
               >
-                <option value="" className="bg-white">No Habit</option>
+                <option value="" className="bg-[var(--bg-surface)]">No Habit</option>
                 {habits.map((h) => (
-                  <option key={h.id} value={h.id} className="bg-white">
+                  <option key={h.id} value={h.id} className="bg-[var(--bg-surface)]">
                     {h.title}
                   </option>
                 ))}
               </select>
 
-              <div className="h-6 w-px bg-slate-100/50" />
+              <div className="h-6 w-px bg-[var(--bg-surface-elevated)]" />
               <input
                 type="number"
-                className="w-10 bg-transparent text-center font-mono text-sm text-slate-900 focus:outline-none placeholder-zinc-700"
+                className="w-10 bg-transparent text-center font-mono text-sm text-[var(--text-primary)] focus:outline-none placeholder-zinc-700"
                 placeholder="5"
                 value={stepMins}
                 onChange={(e) => setStepMins(e.target.value)}
               />
-              <span className="text-xs text-slate-400 mr-1 font-mono">m</span>
+              <span className="text-xs text-[var(--text-tertiary)] mr-1 font-mono">m</span>
               <button
                 onClick={addStep}
                 disabled={!stepTitle.trim()}
-                className="bg-violet-600 hover:bg-violet-500 disabled:bg-slate-100/50 disabled:text-slate-600 text-slate-900 p-2 rounded-lg transition-colors"
+                className="bg-violet-600 hover:bg-violet-500 disabled:bg-[var(--bg-surface-elevated)] disabled:text-[var(--text-secondary)] text-[var(--text-primary)] p-2 rounded-lg transition-colors"
               >
                 <Plus size={16} />
               </button>
@@ -682,7 +682,7 @@ export const RoutineModule: React.FC = () => {
                   <button
                     key={task.id}
                     onClick={() => addStepFromTask(task)}
-                    className="flex items-center gap-1.5 whitespace-nowrap text-[10px] font-bold uppercase tracking-wider text-slate-500 bg-slate-100/50 border border-slate-200/60 px-3 py-1.5 rounded-full hover:border-violet-500/30 hover:text-slate-900 transition-colors"
+                    className="flex items-center gap-1.5 whitespace-nowrap text-[10px] font-bold uppercase tracking-wider text-[var(--text-secondary)] bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] px-3 py-1.5 rounded-full hover:border-violet-500/30 hover:text-[var(--text-primary)] transition-colors"
                   >
                     <ListPlus size={10} /> {task.title}
                   </button>
@@ -695,13 +695,13 @@ export const RoutineModule: React.FC = () => {
               {newSteps.map((step, idx) => (
                 <div
                   key={step.id}
-                  className="group flex items-center justify-between bg-white/[0.02] p-3 rounded-xl border border-slate-200/60 hover:border-slate-200 transition-all"
+                  className="group flex items-center justify-between bg-[var(--bg-surface)]/[0.02] p-3 rounded-xl border border-[var(--border-subtle)] hover:border-[var(--border-default)] transition-all"
                 >
                   <div className="flex items-center gap-3 overflow-hidden">
-                    <span className="w-6 h-6 rounded-full bg-slate-100/50 flex items-center justify-center text-xs font-bold text-slate-400 shrink-0 font-mono">
+                    <span className="w-6 h-6 rounded-full bg-[var(--bg-surface-elevated)] flex items-center justify-center text-xs font-bold text-[var(--text-tertiary)] shrink-0 font-mono">
                       {idx + 1}
                     </span>
-                    <span className="text-sm font-medium text-slate-800 truncate">
+                    <span className="text-sm font-medium text-[var(--text-primary)] truncate">
                       {step.title}
                     </span>
                     {step.linkedHabitId && (
@@ -716,7 +716,7 @@ export const RoutineModule: React.FC = () => {
                     )}
                   </div>
                   <div className="flex items-center gap-3 shrink-0">
-                    <span className="text-xs text-slate-400 font-mono bg-slate-100/50 px-2 py-1 rounded-lg">
+                    <span className="text-xs text-[var(--text-tertiary)] font-mono bg-[var(--bg-surface-elevated)] px-2 py-1 rounded-lg">
                       {Math.round(step.durationSeconds / 60)}m
                     </span>
                     <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -724,21 +724,21 @@ export const RoutineModule: React.FC = () => {
                         <button
                           onClick={() => moveStep(idx, 'up')}
                           disabled={idx === 0}
-                          className="text-slate-500 hover:text-slate-900 disabled:opacity-0"
+                          className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] disabled:opacity-0"
                         >
                           <ChevronUp size={12} />
                         </button>
                         <button
                           onClick={() => moveStep(idx, 'down')}
                           disabled={idx === newSteps.length - 1}
-                          className="text-slate-500 hover:text-slate-900 disabled:opacity-0"
+                          className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] disabled:opacity-0"
                         >
                           <ChevronDown size={12} />
                         </button>
                       </div>
                       <button
                         onClick={() => removeStep(step.id)}
-                        className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded transition-colors"
+                        className="p-1.5 text-[var(--text-tertiary)] hover:text-rose-400 hover:bg-rose-500/10 rounded transition-colors"
                       >
                         <X size={14} />
                       </button>
@@ -747,14 +747,14 @@ export const RoutineModule: React.FC = () => {
                 </div>
               ))}
               {newSteps.length === 0 && (
-                <div className="text-center py-8 border border-dashed border-slate-200 rounded-xl">
-                  <p className="text-slate-400 text-sm">No steps added yet.</p>
+                <div className="text-center py-8 border border-dashed border-[var(--border-default)] rounded-xl">
+                  <p className="text-[var(--text-tertiary)] text-sm">No steps added yet.</p>
                 </div>
               )}
             </div>
           </div>
 
-          <div className="pt-5 border-t border-slate-200/60 flex justify-end gap-2">
+          <div className="pt-5 border-t border-[var(--border-subtle)] flex justify-end gap-2">
             <Button onClick={() => setIsModalOpen(false)} variant="ghost">
               Cancel
             </Button>

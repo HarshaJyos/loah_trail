@@ -21,43 +21,43 @@ export const FocusBreakdown: React.FC<FocusBreakdownProps> = ({
 }) => {
   const breakdownData = React.useMemo(() => {
     const counts: Record<string, { val: number; color: string }> = {
-      'Deep Work': { val: 0, color: 'var(--cat-deepwork)' },
-      'Meditation': { val: 0, color: 'var(--cat-meditation)' },
-      'Learning': { val: 0, color: 'var(--cat-learning)' },
-      'Journaling': { val: 0, color: 'var(--cat-journaling)' },
+      'Tasks': { val: 0, color: 'var(--cat-deepwork)' },
+      'Routines': { val: 0, color: 'var(--cat-meditation)' },
+      'Habits': { val: 0, color: 'var(--cat-learning)' },
+      'Journals': { val: 0, color: 'var(--cat-journaling)' },
     };
 
     let total = 0;
 
-    // Map tasks to Deep Work
+    // Map tasks
     const completedTasks = tasks.filter((t) => t.completedAt && t.completedAt >= rangeStart);
-    counts['Deep Work'].val += completedTasks.length;
+    counts['Tasks'].val += completedTasks.length;
     total += completedTasks.length;
 
-    // Map journals to Journaling
+    // Map journals
     const journals = journalEntries.filter((j) => j.createdAt >= rangeStart);
-    counts['Journaling'].val += journals.length;
+    counts['Journals'].val += journals.length;
     total += journals.length;
 
-    // Map focus sessions (which could be routines or habits) to Meditation & Learning
+    // Map focus sessions
     const sessions = focusSessions.filter((s) => s.startTime >= rangeStart);
     sessions.forEach((s) => {
       if (s.routineId.startsWith('habit-')) {
-        counts['Learning'].val += 1;
+        counts['Habits'].val += 1;
         total += 1;
       } else {
-        counts['Meditation'].val += 1;
+        counts['Routines'].val += 1;
         total += 1;
       }
     });
 
-    // Map habit check-ins to Learning
+    // Map habit check-ins
     habits.forEach(h => {
       Object.keys(h.history).forEach(dateStr => {
         // approximate comparison
         const d = new Date(dateStr);
         if (d.getTime() >= rangeStart && h.history[dateStr] > 0) {
-          counts['Learning'].val += 1;
+          counts['Habits'].val += 1;
           total += 1;
         }
       });

@@ -478,18 +478,18 @@ export const CalendarModule: React.FC = () => {
     }
 
     return (
-      <div className="flex flex-col flex-1 h-full overflow-hidden bg-[#F5F7FA]">
-        <div className="grid grid-cols-7 border-b border-slate-200/60 bg-white/30 flex-shrink-0">
+      <div className="flex flex-col flex-1 h-full overflow-hidden bg-[var(--bg-canvas)]">
+        <div className="grid grid-cols-7 border-b border-[var(--border-subtle)] bg-[var(--bg-surface)]/30 flex-shrink-0">
           {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((h) => (
             <div
               key={h}
-              className="py-2 text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono"
+              className="py-2 text-center text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest font-mono"
             >
               {h}
             </div>
           ))}
         </div>
-        <div className="flex-1 grid grid-cols-7 grid-rows-6 min-h-0 bg-[#F5F7FA]/50">
+        <div className="flex-1 grid grid-cols-7 grid-rows-6 min-h-0 bg-[var(--bg-canvas)]/50">
           {days.map((day) => {
             const isSameMonth = day.getMonth() === month;
             const isToday = isSameDay(day, now);
@@ -501,10 +501,10 @@ export const CalendarModule: React.FC = () => {
             return (
               <div
                 key={day.toISOString()}
-                className={`border-b border-r border-slate-200/60 p-1.5 relative flex flex-col gap-1.5 transition-colors ${
+                className={`border-b border-r border-[var(--border-subtle)] p-1.5 relative flex flex-col gap-1.5 transition-colors ${
                   !isSameMonth
-                    ? 'bg-transparent text-slate-600'
-                    : 'bg-slate-200 hover:bg-slate-50/40'
+                    ? 'bg-transparent text-[var(--text-secondary)]'
+                    : 'bg-[var(--border-subtle)] hover:bg-[var(--bg-surface-elevated)]/40'
                 }`}
                 onDragOver={handleDragOver}
                 onDrop={(e) => handleDropOnMonthCell(e, day)}
@@ -515,8 +515,8 @@ export const CalendarModule: React.FC = () => {
                       isToday
                         ? 'bg-rose-600 text-white shadow-[0_0_8px_#f43f5e]'
                         : isSameMonth
-                        ? 'text-slate-500'
-                        : 'text-slate-600'
+                        ? 'text-[var(--text-secondary)]'
+                        : 'text-[var(--text-secondary)]'
                     }`}
                   >
                     {day.getDate()}
@@ -529,7 +529,7 @@ export const CalendarModule: React.FC = () => {
                       draggable
                       onDragStart={(e) => handleDragStart(e, task.id, 'task', 'grid')}
                       onClick={(e) => handleBlockClick(e, task, 'task')}
-                      className={`flex items-center gap-1.5 text-[9px] px-1.5 py-0.5 rounded-lg border truncate cursor-pointer bg-white border-slate-200/60 hover:border-violet-500/20 shadow-sm transition-all ${
+                      className={`flex items-center gap-1.5 text-[9px] px-1.5 py-0.5 rounded-lg border truncate cursor-pointer bg-[var(--bg-surface)] border-[var(--border-subtle)] hover:border-violet-500/20 shadow-sm transition-all ${
                         selectedBlock?.id === task.id ? 'ring-2 ring-violet-500' : ''
                       }`}
                       style={{ borderLeftColor: task.color || '#3b82f6', borderLeftWidth: '3px' }}
@@ -538,7 +538,7 @@ export const CalendarModule: React.FC = () => {
                         <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${getPriorityColor(task.priority)}`} />
                       )}
                       <span
-                        className={`truncate text-slate-700 ${
+                        className={`truncate text-[var(--text-secondary)] ${
                           task.isCompleted ? 'line-through opacity-40' : ''
                         }`}
                       >
@@ -552,7 +552,7 @@ export const CalendarModule: React.FC = () => {
                       draggable={!routine.completedAt}
                       onDragStart={(e) => handleDragStart(e, routine.id, 'routine', 'grid')}
                       onClick={(e) => handleBlockClick(e, routine, 'routine')}
-                      className={`text-[9px] px-1.5 py-0.5 rounded-lg border truncate cursor-pointer bg-slate-50 border-violet-200 text-[#8979FF] font-bold ${
+                      className={`text-[9px] px-1.5 py-0.5 rounded-lg border truncate cursor-pointer bg-[var(--bg-surface-elevated)] border-violet-200 text-[#8979FF] font-bold ${
                         selectedBlock?.id === routine.id ? 'ring-2 ring-violet-500' : ''
                       }`}
                       style={{
@@ -581,10 +581,10 @@ export const CalendarModule: React.FC = () => {
     const gridMinWidth = view === 'week' ? 'min-w-[490px] md:min-w-0' : 'min-w-full';
 
     return (
-      <div className="flex flex-col flex-1 min-h-0 bg-[#F5F7FA] relative select-none">
+      <div className="flex flex-col flex-1 min-h-0 bg-[var(--bg-canvas)] relative select-none">
         {/* Days Header */}
-        <div className="flex border-b border-slate-200/60 bg-white/85 backdrop-blur-md z-20 shrink-0 shadow-md">
-          <div className="w-[50px] md:w-[60px] border-r border-slate-200/60 shrink-0 sticky left-0 z-30" />
+        <div className="flex border-b border-[var(--border-subtle)] bg-[var(--bg-surface)]/85 backdrop-blur-md z-20 shrink-0 shadow-md">
+          <div className="w-[50px] md:w-[60px] border-r border-[var(--border-subtle)] shrink-0 sticky left-0 z-30" />
           <div ref={headerContainerRef} className="flex-1 overflow-hidden">
             <div className="grid" style={{ gridTemplateColumns: `repeat(${days.length}, 1fr)` }}>
               {days.map((day) => {
@@ -592,11 +592,11 @@ export const CalendarModule: React.FC = () => {
                 return (
                   <div
                     key={day.toISOString()}
-                    className={`py-2 md:py-3 px-1 md:px-2 text-center border-r border-slate-200/60 last:border-0 group ${minColWidth}`}
+                    className={`py-2 md:py-3 px-1 md:px-2 text-center border-r border-[var(--border-subtle)] last:border-0 group ${minColWidth}`}
                   >
                     <div
                       className={`text-[9px] md:text-[10px] font-bold font-mono uppercase mb-1 ${
-                        isToday ? 'text-rose-500' : 'text-slate-400'
+                        isToday ? 'text-rose-500' : 'text-[var(--text-tertiary)]'
                       }`}
                     >
                       <span className="md:hidden">
@@ -610,7 +610,7 @@ export const CalendarModule: React.FC = () => {
                       className={`text-base md:text-lg font-bold w-7 h-7 md:w-8 md:h-8 flex items-center justify-center mx-auto rounded-full transition-all ${
                         isToday
                           ? 'bg-rose-600 text-white shadow-[0_0_8px_#f43f5e]'
-                          : 'text-slate-500 group-hover:text-slate-900'
+                          : 'text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]'
                       }`}
                     >
                       {day.getDate()}
@@ -630,14 +630,14 @@ export const CalendarModule: React.FC = () => {
         >
           <div className="flex" style={{ height: `${24 * hourHeight}px` }}>
             {/* Time labels column */}
-            <div className="w-[50px] md:w-[60px] border-r border-slate-200/60 bg-[#F5F7FA] shrink-0 sticky left-0 z-50">
+            <div className="w-[50px] md:w-[60px] border-r border-[var(--border-subtle)] bg-[var(--bg-canvas)] shrink-0 sticky left-0 z-50">
               {hours.map((hour) => (
                 <div
                   key={hour}
                   className="relative border-b border-transparent box-border"
                   style={{ height: `${hourHeight}px` }}
                 >
-                  <span className="absolute -top-2.5 right-1 md:right-2 text-[9px] md:text-[10px] text-slate-400 font-bold font-mono">
+                  <span className="absolute -top-2.5 right-1 md:right-2 text-[9px] md:text-[10px] text-[var(--text-tertiary)] font-bold font-mono">
                     {hour === 0
                       ? ''
                       : hour < 12
@@ -671,7 +671,7 @@ export const CalendarModule: React.FC = () => {
                 {hours.map((h) => (
                   <div
                     key={h}
-                    className="border-b border-slate-200/60 w-full box-border"
+                    className="border-b border-[var(--border-subtle)] w-full box-border"
                     style={{ height: `${hourHeight}px` }}
                   >
                     {hourHeight > 80 && (
@@ -696,7 +696,7 @@ export const CalendarModule: React.FC = () => {
               {days.map((day) => (
                 <div
                   key={day.toISOString()}
-                  className={`relative border-r border-slate-200/60 last:border-0 z-10 h-full ${minColWidth}`}
+                  className={`relative border-r border-[var(--border-subtle)] last:border-0 z-10 h-full ${minColWidth}`}
                   onDragOver={handleDragOver}
                   onDrop={(e) => handleDropOnDay(e, day)}
                 >
@@ -725,7 +725,7 @@ export const CalendarModule: React.FC = () => {
                               draggable={resizingTaskId !== task.id}
                               onDragStart={(e) => handleDragStart(e, task.id, 'task', 'grid')}
                               onClick={(e) => handleBlockClick(e, task, 'task')}
-                              className={`absolute left-0.5 right-0.5 md:left-1 md:right-1 rounded-xl p-2 text-xs transition-all z-20 overflow-hidden flex flex-col justify-between border border-slate-200 group shadow-md
+                              className={`absolute left-0.5 right-0.5 md:left-1 md:right-1 rounded-xl p-2 text-xs transition-all z-20 overflow-hidden flex flex-col justify-between border border-[var(--border-default)] group shadow-md
                                 ${
                                   resizingTaskId === task.id
                                     ? 'cursor-ns-resize !scale-100 z-30 shadow-2xl ring-2 ring-violet-500/50'
@@ -778,7 +778,7 @@ export const CalendarModule: React.FC = () => {
                                       {task.category}
                                     </span>
                                     {linkedProject && (
-                                      <span className="text-[7px] bg-slate-200 px-1 rounded flex items-center gap-0.5 truncate max-w-[50%]">
+                                      <span className="text-[7px] bg-[var(--border-subtle)] px-1 rounded flex items-center gap-0.5 truncate max-w-[50%]">
                                         <Briefcase size={8} /> {linkedProject.title}
                                       </span>
                                     )}
@@ -792,7 +792,7 @@ export const CalendarModule: React.FC = () => {
                                   onClick={(e) => e.stopPropagation()}
                                   className="absolute bottom-0 left-0 right-0 h-3 cursor-ns-resize flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-t from-black/20 to-transparent"
                                 >
-                                  <div className="w-8 h-1 bg-slate-100/500 rounded-full" />
+                                  <div className="w-8 h-1 bg-[var(--bg-surface-elevated)]0 rounded-full" />
                                 </div>
                               )}
                             </div>
@@ -818,7 +818,7 @@ export const CalendarModule: React.FC = () => {
                               draggable={!routine.completedAt}
                               onDragStart={(e) => handleDragStart(e, routine.id, 'routine', 'grid')}
                               onClick={(e) => handleBlockClick(e, routine, 'routine')}
-                              className={`absolute left-0.5 right-0.5 md:left-1 md:right-1 rounded-xl p-2 text-xs transition-all z-20 overflow-hidden flex flex-col justify-start border border-slate-200 cursor-pointer shadow-md
+                              className={`absolute left-0.5 right-0.5 md:left-1 md:right-1 rounded-xl p-2 text-xs transition-all z-20 overflow-hidden flex flex-col justify-start border border-[var(--border-default)] cursor-pointer shadow-md
                                 ${routine.completedAt ? 'opacity-40 border-dashed' : 'hover:brightness-95'}
                                 ${
                                   isSelected
@@ -835,7 +835,7 @@ export const CalendarModule: React.FC = () => {
                             >
                               <div className="flex flex-col h-full relative">
                                 <div className="flex items-start justify-between mb-0.5 opacity-90 text-[10px]">
-                                  <div className="font-bold truncate leading-tight text-[10px] md:text-[11px] flex-1 text-slate-900">
+                                  <div className="font-bold truncate leading-tight text-[10px] md:text-[11px] flex-1 text-[var(--text-primary)]">
                                     {routine.title}
                                   </div>
                                   {routine.completedAt && (
@@ -870,7 +870,7 @@ export const CalendarModule: React.FC = () => {
                           return (
                             <div
                               key={session.id}
-                              className="absolute left-1 right-1 rounded-xl p-2 text-xs shadow-md border border-slate-200 pointer-events-none text-slate-900"
+                              className="absolute left-1 right-1 rounded-xl p-2 text-xs shadow-md border border-[var(--border-default)] pointer-events-none text-[var(--text-primary)]"
                               style={{
                                 top: `${top}px`,
                                 height: `${Math.max(height, hourHeight * 0.45)}px`,
@@ -900,30 +900,30 @@ export const CalendarModule: React.FC = () => {
         {/* Mobile Floating Zoom/Scroll Controllers */}
         {!selectedBlock && (
           <div className="md:hidden absolute right-4 bottom-20 z-30 flex flex-col gap-3 pointer-events-none">
-            <div className="bg-white/90 border border-slate-200 backdrop-blur-md shadow-xl rounded-2xl flex flex-col pointer-events-auto overflow-hidden">
+            <div className="bg-[var(--bg-surface)]/90 border border-[var(--border-default)] backdrop-blur-md shadow-xl rounded-2xl flex flex-col pointer-events-auto overflow-hidden">
               <button
                 onClick={() => handleZoom(10)}
-                className="p-3 text-slate-500 active:bg-slate-100/50 border-b border-slate-200/60 flex items-center justify-center"
+                className="p-3 text-[var(--text-secondary)] active:bg-[var(--bg-surface-elevated)] border-b border-[var(--border-subtle)] flex items-center justify-center"
               >
                 <ZoomIn size={18} />
               </button>
               <button
                 onClick={() => handleZoom(-10)}
-                className="p-3 text-slate-500 active:bg-slate-100/50 flex items-center justify-center"
+                className="p-3 text-[var(--text-secondary)] active:bg-[var(--bg-surface-elevated)] flex items-center justify-center"
               >
                 <ZoomOut size={18} />
               </button>
             </div>
-            <div className="bg-white/95 border border-slate-200 backdrop-blur-md text-slate-900 shadow-xl rounded-2xl flex flex-col pointer-events-auto overflow-hidden">
+            <div className="bg-[var(--bg-surface)]/95 border border-[var(--border-default)] backdrop-blur-md text-[var(--text-primary)] shadow-xl rounded-2xl flex flex-col pointer-events-auto overflow-hidden">
               <button
                 onClick={() => handleScroll(-hourHeight * 3)}
-                className="p-3 active:bg-slate-100/50 border-b border-slate-200/60 flex items-center justify-center"
+                className="p-3 active:bg-[var(--bg-surface-elevated)] border-b border-[var(--border-subtle)] flex items-center justify-center"
               >
                 <ChevronUp size={18} />
               </button>
               <button
                 onClick={() => handleScroll(hourHeight * 3)}
-                className="p-3 active:bg-slate-100/50 flex items-center justify-center"
+                className="p-3 active:bg-[var(--bg-surface-elevated)] flex items-center justify-center"
               >
                 <ChevronDown size={18} />
               </button>
@@ -935,62 +935,62 @@ export const CalendarModule: React.FC = () => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col relative bg-[#F5F7FA]">
+    <div className="w-full h-full flex flex-col relative bg-[var(--bg-canvas)]">
       {/* Calendar Header Controls */}
       {/* ── Header matching Frame132 header-notes ──────────── */}
       <div
         style={{
           padding: '16px 20px 12px',
-          borderBottom: '1px solid #E2E8F0',
+          borderBottom: '1px solid var(--border-subtle)',
           display: 'flex', flexDirection: 'column', gap: 16,
-          flexShrink: 0, background: '#F5F7FA',
+          flexShrink: 0, background: 'var(--bg-app)',
         }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div style={{ display: 'flex', background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 8, padding: 2, alignItems: 'center' }}>
+            <div style={{ display: 'flex', background: '#FFFFFF', border: '1px solid var(--border-subtle)', borderRadius: 8, padding: 2, alignItems: 'center' }}>
               <button
                 onClick={() => navigate('prev')}
                 style={{ padding: 4, borderRadius: 6, color: '#64748B', background: 'transparent', border: 'none', cursor: 'pointer' }}
-                className="hover:bg-slate-100 hover:text-slate-900 transition-colors"
+                className="hover:bg-[var(--bg-surface-elevated)] hover:text-[var(--text-primary)] transition-colors"
               >
                 <ChevronLeft size={16} />
               </button>
               <button
                 onClick={() => setCurrentDate(new Date())}
-                style={{ padding: '4px 8px', fontSize: 10, fontWeight: 700, color: '#1E1E1E', background: 'transparent', border: 'none', cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.05em' }}
-                className="hover:bg-slate-100 transition-colors"
+                style={{ padding: '4px 8px', fontSize: 10, fontWeight: 700, color: 'var(--text-primary)', background: 'transparent', border: 'none', cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.05em' }}
+                className="hover:bg-[var(--bg-surface-elevated)] transition-colors"
               >
                 Today
               </button>
               <button
                 onClick={() => navigate('next')}
                 style={{ padding: 4, borderRadius: 6, color: '#64748B', background: 'transparent', border: 'none', cursor: 'pointer' }}
-                className="hover:bg-slate-100 hover:text-slate-900 transition-colors"
+                className="hover:bg-[var(--bg-surface-elevated)] hover:text-[var(--text-primary)] transition-colors"
               >
                 <ChevronRight size={16} />
               </button>
             </div>
-            <div style={{ fontSize: 22, fontWeight: 700, color: '#1E1E1E', letterSpacing: '-0.03em' }}>
+            <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.03em' }}>
               {currentDate.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}
             </div>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div className="hidden md:flex" style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 8, padding: 2, alignItems: 'center' }}>
+            <div className="hidden md:flex" style={{ background: '#FFFFFF', border: '1px solid var(--border-subtle)', borderRadius: 8, padding: 2, alignItems: 'center' }}>
               {view !== 'month' && (
                 <>
                   <button
                     onClick={() => setHourHeight(Math.max(40, hourHeight - 10))}
                     style={{ padding: 4, borderRadius: 6, color: '#64748B', background: 'transparent', border: 'none', cursor: 'pointer' }}
-                    className="hover:bg-slate-100 transition-colors"
+                    className="hover:bg-[var(--bg-surface-elevated)] transition-colors"
                   >
                     <ZoomOut size={16} />
                   </button>
                   <button
                     onClick={() => setHourHeight(Math.min(150, hourHeight + 10))}
                     style={{ padding: 4, borderRadius: 6, color: '#64748B', background: 'transparent', border: 'none', cursor: 'pointer' }}
-                    className="hover:bg-slate-100 transition-colors"
+                    className="hover:bg-[var(--bg-surface-elevated)] transition-colors"
                   >
                     <ZoomIn size={16} />
                   </button>
@@ -1003,7 +1003,7 @@ export const CalendarModule: React.FC = () => {
               className="loah-icon-btn"
               style={{
                 background: isDraggingOverLibrary ? 'rgba(239, 68, 68, 0.1)' : isSidebarOpen ? 'rgba(137,121,255,0.1)' : '#FFFFFF',
-                borderColor: isDraggingOverLibrary ? '#EF4444' : isSidebarOpen ? '#8979FF' : '#E2E8F0',
+                borderColor: isDraggingOverLibrary ? '#EF4444' : isSidebarOpen ? '#8979FF' : 'var(--border-subtle)',
                 color: isDraggingOverLibrary ? '#EF4444' : isSidebarOpen ? '#8979FF' : '#64748B',
                 width: 'auto', padding: '0 12px', gap: 6, display: 'flex', alignItems: 'center', justifyContent: 'center'
               }}
@@ -1021,13 +1021,13 @@ export const CalendarModule: React.FC = () => {
 
         {/* Filters/Tabs Row */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
-          <div style={{ display: 'flex', background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 8, padding: 3, alignItems: 'center', gap: 4 }}>
+          <div style={{ display: 'flex', background: '#FFFFFF', border: '1px solid var(--border-subtle)', borderRadius: 8, padding: 3, alignItems: 'center', gap: 4 }}>
             <button
               onClick={() => setMode('scheduled')}
               style={{
                 padding: '4px 12px', borderRadius: 6, fontSize: 11, fontWeight: 700,
                 background: mode === 'scheduled' ? '#F1F5F9' : 'transparent',
-                color: mode === 'scheduled' ? '#1E1E1E' : '#64748B',
+                color: mode === 'scheduled' ? 'var(--text-primary)' : '#64748B',
                 border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6
               }}
             >
@@ -1038,7 +1038,7 @@ export const CalendarModule: React.FC = () => {
               style={{
                 padding: '4px 12px', borderRadius: 6, fontSize: 11, fontWeight: 700,
                 background: mode === 'focus' ? '#F1F5F9' : 'transparent',
-                color: mode === 'focus' ? '#1E1E1E' : '#64748B',
+                color: mode === 'focus' ? 'var(--text-primary)' : '#64748B',
                 border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6
               }}
             >
@@ -1053,7 +1053,7 @@ export const CalendarModule: React.FC = () => {
                 padding: '4px 12px', borderRadius: 6, fontSize: 11, fontWeight: 700,
                 background: showCompleted ? 'rgba(16, 185, 129, 0.1)' : '#FFFFFF',
                 color: showCompleted ? '#10B981' : '#64748B',
-                border: `1px solid ${showCompleted ? '#10B981' : '#E2E8F0'}`,
+                border: `1px solid ${showCompleted ? '#10B981' : 'var(--border-subtle)'}`,
                 cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6
               }}
             >
@@ -1061,7 +1061,7 @@ export const CalendarModule: React.FC = () => {
               Done Tasks
             </button>
 
-            <div style={{ display: 'flex', background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 8, padding: 3, alignItems: 'center', gap: 4 }}>
+            <div style={{ display: 'flex', background: '#FFFFFF', border: '1px solid var(--border-subtle)', borderRadius: 8, padding: 3, alignItems: 'center', gap: 4 }}>
               {(['day', 'week', 'month'] as CalendarView[]).map((v) => (
                 <button
                   key={v}
@@ -1069,7 +1069,7 @@ export const CalendarModule: React.FC = () => {
                   style={{
                     padding: '4px 12px', borderRadius: 6, fontSize: 11, fontWeight: 700, textTransform: 'uppercase',
                     background: view === v ? '#F1F5F9' : 'transparent',
-                    color: view === v ? '#1E1E1E' : '#64748B',
+                    color: view === v ? 'var(--text-primary)' : '#64748B',
                     border: 'none', cursor: 'pointer'
                   }}
                 >
@@ -1081,21 +1081,21 @@ export const CalendarModule: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex-1 flex overflow-hidden relative min-h-0 bg-[#F5F7FA]">
+      <div className="flex-1 flex overflow-hidden relative min-h-0 bg-[var(--bg-canvas)]">
         {/* Sidebar Library */}
         <div
-          className={`border-r border-slate-200/60 bg-white/60 backdrop-blur-xl flex-shrink-0 transition-all duration-300 ease-in-out overflow-hidden flex flex-col absolute md:relative z-[60] h-full
+          className={`border-r border-[var(--border-subtle)] bg-[var(--bg-surface)]/60 backdrop-blur-xl flex-shrink-0 transition-all duration-300 ease-in-out overflow-hidden flex flex-col absolute md:relative z-[60] h-full
             ${isSidebarOpen ? 'w-72 opacity-100 shadow-2xl md:shadow-none' : 'w-0 border-r-0 opacity-0'}
           `}
         >
           <div className="w-72 flex flex-col h-full">
-            <div className="p-4 border-b border-slate-200/60 flex justify-between items-center bg-white/80">
-              <h3 className="font-extrabold text-slate-900 text-sm flex items-center gap-2">
+            <div className="p-4 border-b border-[var(--border-subtle)] flex justify-between items-center bg-[var(--bg-surface)]/80">
+              <h3 className="font-extrabold text-[var(--text-primary)] text-sm flex items-center gap-2">
                 <Book size={16} className="text-violet-400" /> Item Library
               </h3>
               <button
                 onClick={() => setIsSidebarOpen(false)}
-                className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100/50 rounded-lg transition-colors"
+                className="p-1.5 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)] rounded-lg transition-colors"
               >
                 <X size={16} />
               </button>
@@ -1105,10 +1105,10 @@ export const CalendarModule: React.FC = () => {
               {/* Tasks List */}
               <div className="space-y-3">
                 <div className="flex justify-between items-center px-1">
-                  <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">
+                  <h4 className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest font-mono">
                     Unscheduled Tasks
                   </h4>
-                  <span className="bg-slate-100/50 text-slate-500 px-2 py-0.5 rounded-full text-[9px] font-mono font-bold">
+                  <span className="bg-[var(--bg-surface-elevated)] text-[var(--text-secondary)] px-2 py-0.5 rounded-full text-[9px] font-mono font-bold">
                     {pendingTasks.length}
                   </span>
                 </div>
@@ -1118,17 +1118,17 @@ export const CalendarModule: React.FC = () => {
                       key={task.id}
                       draggable
                       onDragStart={(e) => handleDragStart(e, task.id, 'task', 'sidebar')}
-                      className="bg-white border border-slate-200/60 p-3 rounded-xl text-xs hover:border-violet-500/20 cursor-grab active:cursor-grabbing transition-all flex items-center justify-between shadow-sm"
+                      className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] p-3 rounded-xl text-xs hover:border-violet-500/20 cursor-grab active:cursor-grabbing transition-all flex items-center justify-between shadow-sm"
                       style={{ borderLeftColor: task.color || '#3b82f6', borderLeftWidth: '3.5px' }}
                     >
                       <div className="flex-1 min-w-0 pr-2">
-                        <div className="font-bold text-slate-900 truncate">{task.title}</div>
-                        <div className="flex items-center gap-2 mt-1 text-[9px] text-slate-400 font-mono">
+                        <div className="font-bold text-[var(--text-primary)] truncate">{task.title}</div>
+                        <div className="flex items-center gap-2 mt-1 text-[9px] text-[var(--text-tertiary)] font-mono">
                           <span className="flex items-center gap-1">
                             <Clock size={10} /> {task.duration || 30}m
                           </span>
                           {task.priority && (
-                            <span className="uppercase text-[8px] bg-slate-100/50 px-1.5 py-0.5 rounded text-slate-500">
+                            <span className="uppercase text-[8px] bg-[var(--bg-surface-elevated)] px-1.5 py-0.5 rounded text-[var(--text-secondary)]">
                               {task.priority}
                             </span>
                           )}
@@ -1136,7 +1136,7 @@ export const CalendarModule: React.FC = () => {
                       </div>
                       <button
                         onClick={() => handleQuickScheduleTask(task)}
-                        className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100/50 rounded-lg transition-colors shrink-0"
+                        className="p-1.5 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)] rounded-lg transition-colors shrink-0"
                         title="Quick Schedule (+1h)"
                       >
                         <CalendarPlus size={16} />
@@ -1144,7 +1144,7 @@ export const CalendarModule: React.FC = () => {
                     </div>
                   ))}
                   {pendingTasks.length === 0 && (
-                    <p className="text-[10px] text-slate-500 italic text-center py-4">
+                    <p className="text-[10px] text-[var(--text-secondary)] italic text-center py-4">
                       No pending tasks
                     </p>
                   )}
@@ -1154,7 +1154,7 @@ export const CalendarModule: React.FC = () => {
               {/* Routines List */}
               <div className="space-y-3">
                 <div className="flex justify-between items-center px-1">
-                  <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">
+                  <h4 className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest font-mono">
                     Flow Routines
                   </h4>
                   <span className="bg-violet-500/10 text-violet-400 px-2 py-0.5 rounded-full text-[9px] font-mono font-bold">
@@ -1167,17 +1167,17 @@ export const CalendarModule: React.FC = () => {
                       key={routine.id}
                       draggable
                       onDragStart={(e) => handleDragStart(e, routine.id, 'routine', 'sidebar')}
-                      className="bg-white border border-slate-200/60 p-3 rounded-xl text-xs hover:border-violet-500/20 cursor-grab active:cursor-grabbing transition-all flex items-center justify-between shadow-sm"
+                      className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] p-3 rounded-xl text-xs hover:border-violet-500/20 cursor-grab active:cursor-grabbing transition-all flex items-center justify-between shadow-sm"
                     >
                       <div className="flex-1 min-w-0 pr-2">
-                        <div className="font-bold text-slate-900 truncate">{routine.title}</div>
-                        <div className="flex items-center gap-1.5 mt-1 text-[9px] text-slate-400 font-mono">
+                        <div className="font-bold text-[var(--text-primary)] truncate">{routine.title}</div>
+                        <div className="flex items-center gap-1.5 mt-1 text-[9px] text-[var(--text-tertiary)] font-mono">
                           <Layers size={10} /> {routine.steps.length} Steps
                         </div>
                       </div>
                       <button
                         onClick={() => handleQuickScheduleRoutine(routine)}
-                        className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100/50 rounded-lg transition-colors shrink-0"
+                        className="p-1.5 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)] rounded-lg transition-colors shrink-0"
                         title="Quick Schedule (+1h)"
                       >
                         <CalendarPlus size={16} />
@@ -1190,10 +1190,10 @@ export const CalendarModule: React.FC = () => {
               {/* Habits List */}
               <div className="space-y-3">
                 <div className="flex justify-between items-center px-1">
-                  <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">
+                  <h4 className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest font-mono">
                     Habits Library
                   </h4>
-                  <span className="bg-slate-100/50 text-slate-500 px-2 py-0.5 rounded-full text-[9px] font-mono font-bold">
+                  <span className="bg-[var(--bg-surface-elevated)] text-[var(--text-secondary)] px-2 py-0.5 rounded-full text-[9px] font-mono font-bold">
                     {habits.length}
                   </span>
                 </div>
@@ -1203,18 +1203,18 @@ export const CalendarModule: React.FC = () => {
                       key={habit.id}
                       draggable
                       onDragStart={(e) => handleDragStart(e, habit.id, 'habit', 'sidebar')}
-                      className="bg-white border border-slate-200/60 p-3 rounded-xl text-xs hover:border-violet-500/20 cursor-grab active:cursor-grabbing transition-all flex items-center justify-between gap-3 shadow-sm"
+                      className="bg-[var(--bg-surface)] border border-[var(--border-subtle)] p-3 rounded-xl text-xs hover:border-violet-500/20 cursor-grab active:cursor-grabbing transition-all flex items-center justify-between gap-3 shadow-sm"
                     >
                       <div className="flex items-center gap-2.5 flex-1 min-w-0">
                         <div
                           className="w-2.5 h-2.5 rounded-full shadow shrink-0"
                           style={{ backgroundColor: habit.color }}
                         />
-                        <span className="truncate font-bold text-slate-700">{habit.title}</span>
+                        <span className="truncate font-bold text-[var(--text-secondary)]">{habit.title}</span>
                       </div>
                       <button
                         onClick={() => handleQuickScheduleHabit(habit)}
-                        className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100/50 rounded-lg transition-colors shrink-0"
+                        className="p-1.5 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)] rounded-lg transition-colors shrink-0"
                         title="Quick Schedule (+1h)"
                       >
                         <CalendarPlus size={16} />
@@ -1228,19 +1228,19 @@ export const CalendarModule: React.FC = () => {
         </div>
 
         {/* Main Grid View */}
-        <div className="flex-1 flex flex-col min-w-0 bg-[#F5F7FA] relative">
+        <div className="flex-1 flex flex-col min-w-0 bg-[var(--bg-canvas)] relative">
           {view === 'month' ? renderMonthGrid() : renderTimeGrid(getDaysToRender())}
         </div>
       </div>
 
       {/* Mobile Touch Control Panel */}
       {selectedBlock && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white/95 border-t border-slate-200 backdrop-blur-xl shadow-2xl z-[100] pb-safe animate-slide-in-up">
+        <div className="fixed bottom-0 left-0 right-0 bg-[var(--bg-surface)]/95 border-t border-[var(--border-default)] backdrop-blur-xl shadow-2xl z-[100] pb-safe animate-slide-in-up">
           <div className="p-4 space-y-4">
-            <div className="flex justify-between items-center border-b border-slate-200/60 pb-2">
+            <div className="flex justify-between items-center border-b border-[var(--border-subtle)] pb-2">
               <div className="flex items-center gap-2">
                 <Move size={16} className="text-violet-400" />
-                <span className="font-bold text-slate-900 truncate max-w-[200px] text-sm">
+                <span className="font-bold text-[var(--text-primary)] truncate max-w-[200px] text-sm">
                   {selectedBlock.type === 'task'
                     ? tasks.find((t) => t.id === selectedBlock.id)?.title
                     : routines.find((r) => r.id === selectedBlock.id)?.title}
@@ -1248,7 +1248,7 @@ export const CalendarModule: React.FC = () => {
               </div>
               <button
                 onClick={() => setSelectedBlock(null)}
-                className="p-1.5 hover:bg-slate-100/50 rounded-full text-slate-500 hover:text-slate-900"
+                className="p-1.5 hover:bg-[var(--bg-surface-elevated)] rounded-full text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
               >
                 <X size={16} />
               </button>
@@ -1256,10 +1256,10 @@ export const CalendarModule: React.FC = () => {
 
             <div className="grid grid-cols-2 gap-4">
               {/* Direction Pad */}
-              <div className="bg-[#F5F7FA] p-3 rounded-2xl border border-slate-200/60 flex flex-col items-center justify-center gap-2">
+              <div className="bg-[var(--bg-canvas)] p-3 rounded-2xl border border-[var(--border-subtle)] flex flex-col items-center justify-center gap-2">
                 <button
                   onClick={() => moveSelectedItem(-15)}
-                  className="p-2 bg-slate-100/50 border border-slate-200/60 rounded-lg hover:bg-slate-100 active:scale-95 text-slate-900"
+                  className="p-2 bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] rounded-lg hover:bg-[var(--bg-surface-elevated)] active:scale-95 text-[var(--text-primary)]"
                   title="Move Up 15m"
                 >
                   <ArrowUp size={18} />
@@ -1267,17 +1267,17 @@ export const CalendarModule: React.FC = () => {
                 <div className="flex gap-2">
                   <button
                     onClick={() => shiftSelectedItemDay(-1)}
-                    className="p-2 bg-slate-100/50 border border-slate-200/60 rounded-lg hover:bg-slate-100 active:scale-95 text-slate-900"
+                    className="p-2 bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] rounded-lg hover:bg-[var(--bg-surface-elevated)] active:scale-95 text-[var(--text-primary)]"
                     title="Move Back 1 Day"
                   >
                     <ArrowLeft size={18} />
                   </button>
-                  <div className="w-10 h-10 flex items-center justify-center text-xs font-bold text-slate-400 font-mono">
+                  <div className="w-10 h-10 flex items-center justify-center text-xs font-bold text-[var(--text-tertiary)] font-mono">
                     <Clock size={16} />
                   </div>
                   <button
                     onClick={() => shiftSelectedItemDay(1)}
-                    className="p-2 bg-slate-100/50 border border-slate-200/60 rounded-lg hover:bg-slate-100 active:scale-95 text-slate-900"
+                    className="p-2 bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] rounded-lg hover:bg-[var(--bg-surface-elevated)] active:scale-95 text-[var(--text-primary)]"
                     title="Move Forward 1 Day"
                   >
                     <ArrowRight size={18} />
@@ -1285,7 +1285,7 @@ export const CalendarModule: React.FC = () => {
                 </div>
                 <button
                   onClick={() => moveSelectedItem(15)}
-                  className="p-2 bg-slate-100/50 border border-slate-200/60 rounded-lg hover:bg-slate-100 active:scale-95 text-slate-900"
+                  className="p-2 bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] rounded-lg hover:bg-[var(--bg-surface-elevated)] active:scale-95 text-[var(--text-primary)]"
                   title="Move Down 15m"
                 >
                   <ArrowDown size={18} />
@@ -1295,25 +1295,25 @@ export const CalendarModule: React.FC = () => {
               <div className="flex flex-col gap-3">
                 {/* Duration Controls for Tasks */}
                 {selectedBlock.type === 'task' ? (
-                  <div className="bg-[#F5F7FA] border border-slate-200/60 p-3 rounded-2xl flex items-center justify-between h-[64px]">
+                  <div className="bg-[var(--bg-canvas)] border border-[var(--border-subtle)] p-3 rounded-2xl flex items-center justify-between h-[64px]">
                     <button
                       onClick={() => resizeSelectedItem(-15)}
-                      className="p-2 bg-slate-100/50 border border-slate-200/60 rounded-lg text-slate-900 active:scale-95 hover:bg-slate-100"
+                      className="p-2 bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] rounded-lg text-[var(--text-primary)] active:scale-95 hover:bg-[var(--bg-surface-elevated)]"
                     >
                       <Minus size={16} />
                     </button>
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">
+                    <span className="text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest font-mono">
                       Length
                     </span>
                     <button
                       onClick={() => resizeSelectedItem(15)}
-                      className="p-2 bg-slate-100/50 border border-slate-200/60 rounded-lg text-slate-900 active:scale-95 hover:bg-slate-100"
+                      className="p-2 bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] rounded-lg text-[var(--text-primary)] active:scale-95 hover:bg-[var(--bg-surface-elevated)]"
                     >
                       <Plus size={16} />
                     </button>
                   </div>
                 ) : (
-                  <div className="bg-[#F5F7FA] border border-slate-200/60 p-3 rounded-2xl flex items-center justify-center text-[10px] font-bold font-mono text-slate-500 uppercase tracking-widest h-[64px]">
+                  <div className="bg-[var(--bg-canvas)] border border-[var(--border-subtle)] p-3 rounded-2xl flex items-center justify-center text-[10px] font-bold font-mono text-[var(--text-secondary)] uppercase tracking-widest h-[64px]">
                     Fixed Flow Time
                   </div>
                 )}
@@ -1328,7 +1328,7 @@ export const CalendarModule: React.FC = () => {
                   </button>
                   <button
                     onClick={startSelectedItem}
-                    className="flex-1 bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 text-slate-900 rounded-xl flex flex-col items-center justify-center font-bold text-[10px] uppercase tracking-wider font-mono gap-1 active:scale-95 transition-all shadow-lg shadow-violet-500/10 border border-slate-200"
+                    className="flex-1 bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 text-[var(--text-primary)] rounded-xl flex flex-col items-center justify-center font-bold text-[10px] uppercase tracking-wider font-mono gap-1 active:scale-95 transition-all shadow-lg shadow-violet-500/10 border border-[var(--border-default)]"
                   >
                     <PlayCircle size={16} /> Focus
                   </button>

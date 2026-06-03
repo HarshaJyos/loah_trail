@@ -9,7 +9,7 @@ import QuillEditor from '../ui/QuillEditor';
 
 // Note background colors from Frame132
 const NOTE_BG_COLORS = [
-  { label: 'Default', bg: '#FFFFFF', border: '#E2E8F0' },
+  { label: 'Default', bg: '#FFFFFF', border: 'var(--border-subtle)' },
   { label: 'Yellow',  bg: '#FFFAC3', border: '#FEF08A' },
   { label: 'Red',     bg: '#FECACA', border: '#FCA5A5' },
   { label: 'Orange',  bg: '#FED7AA', border: '#FDBA74' },
@@ -179,7 +179,7 @@ export const NoteEditor: React.FC<NoteEditorProps> = ({ mode }) => {
                 style={{
                   position: 'absolute', top: 44, right: 0,
                   background: '#FFFFFF', borderRadius: 14,
-                  border: '1px solid #E2E8F0',
+                  border: '1px solid var(--border-subtle)',
                   boxShadow: '0 10px 30px rgba(0,0,0,0.12)',
                   padding: '10px 12px',
                   display: 'flex', gap: 8, flexWrap: 'wrap',
@@ -311,7 +311,7 @@ export const NoteEditor: React.FC<NoteEditorProps> = ({ mode }) => {
                   border: `1px solid ${selectedColor.border}`,
                   borderRadius: 10,
                   padding: '8px 12px',
-                  fontSize: 13, color: '#1E1E1E',
+                  fontSize: 13, color: 'var(--text-primary)',
                   outline: 'none',
                 }}
               />
@@ -349,7 +349,7 @@ export const NoteEditor: React.FC<NoteEditorProps> = ({ mode }) => {
                   />
                   <span
                     style={{
-                      flex: 1, fontSize: 13, color: it.isDone ? '#9CA3AF' : '#1E1E1E',
+                      flex: 1, fontSize: 13, color: it.isDone ? '#9CA3AF' : 'var(--text-primary)',
                       textDecoration: it.isDone ? 'line-through' : 'none',
                     }}
                   >

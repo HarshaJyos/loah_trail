@@ -181,7 +181,7 @@ const YearlyHeatmap: React.FC<{ habit: Habit }> = ({ habit }) => {
 
   return (
     <Card className="p-6">
-      <h3 className="text-sm font-bold text-slate-700 mb-4 font-mono uppercase tracking-wider">
+      <h3 className="text-sm font-bold text-[var(--text-secondary)] mb-4 font-mono uppercase tracking-wider">
         Consistency Map (Last Year)
       </h3>
       <div className="flex flex-wrap gap-1">
@@ -341,10 +341,10 @@ export const HabitModule: React.FC = () => {
         // DETAIL VIEW
         <div className="space-y-8 animate-fade-in">
           {/* Header */}
-          <div className="flex justify-between items-center border-b border-slate-200/60 pb-4">
+          <div className="flex justify-between items-center border-b border-[var(--border-subtle)] pb-4">
             <button
               onClick={() => setViewingHabitId(null)}
-              className="flex items-center gap-2 px-3 py-2 hover:bg-slate-100/50 rounded-xl transition-all text-slate-500 hover:text-slate-900 font-bold uppercase tracking-wider text-xs"
+              className="flex items-center gap-2 px-3 py-2 hover:bg-[var(--bg-surface-elevated)] rounded-xl transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] font-bold uppercase tracking-wider text-xs"
             >
               <ArrowLeft size={16} /> Back
             </button>
@@ -355,7 +355,7 @@ export const HabitModule: React.FC = () => {
                     onArchiveHabit(selectedHabit.id);
                     setViewingHabitId(null);
                   }}
-                  className="p-2.5 bg-slate-100/50 border border-slate-200/60 hover:border-slate-200 hover:text-slate-900 text-slate-500 rounded-xl transition-all"
+                  className="p-2.5 bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] hover:border-[var(--border-default)] hover:text-[var(--text-primary)] text-[var(--text-secondary)] rounded-xl transition-all"
                   title="Archive"
                 >
                   <Archive size={16} />
@@ -366,7 +366,7 @@ export const HabitModule: React.FC = () => {
                     onUnarchiveHabit(selectedHabit.id);
                     setViewingHabitId(null);
                   }}
-                  className="p-2.5 bg-slate-100/50 border border-slate-200/60 hover:border-slate-200 hover:text-slate-900 text-slate-500 rounded-xl transition-all"
+                  className="p-2.5 bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] hover:border-[var(--border-default)] hover:text-[var(--text-primary)] text-[var(--text-secondary)] rounded-xl transition-all"
                   title="Restore"
                 >
                   <RefreshCcw size={16} />
@@ -374,7 +374,7 @@ export const HabitModule: React.FC = () => {
               )}
               <button
                 onClick={(e) => handleEditHabit(e, selectedHabit)}
-                className="p-2.5 bg-slate-100/50 border border-slate-200/60 hover:border-violet-500/30 hover:text-slate-900 text-slate-500 rounded-xl transition-all"
+                className="p-2.5 bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] hover:border-violet-500/30 hover:text-[var(--text-primary)] text-[var(--text-secondary)] rounded-xl transition-all"
                 title="Edit Habit"
               >
                 <Edit2 size={16} />
@@ -384,7 +384,7 @@ export const HabitModule: React.FC = () => {
                   onDeleteHabit(selectedHabit.id);
                   setViewingHabitId(null);
                 }}
-                className="p-2.5 bg-slate-100/50 border border-slate-200/60 hover:bg-rose-500/10 hover:text-rose-400 text-slate-400 rounded-xl transition-all"
+                className="p-2.5 bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] hover:bg-rose-500/10 hover:text-rose-400 text-[var(--text-tertiary)] rounded-xl transition-all"
                 title="Delete"
               >
                 <Trash2 size={16} />
@@ -393,9 +393,9 @@ export const HabitModule: React.FC = () => {
           </div>
 
           {/* Details Overview */}
-          <div className="flex flex-col md:flex-row items-start gap-6 bg-white/30 border border-slate-200/60 rounded-3xl p-6 relative overflow-hidden">
+          <div className="flex flex-col md:flex-row items-start gap-6 bg-[var(--bg-surface)]/30 border border-[var(--border-subtle)] rounded-3xl p-6 relative overflow-hidden">
             <div
-              className="w-16 h-16 md:w-20 md:h-20 rounded-2xl flex items-center justify-center text-slate-900 shadow-lg shrink-0 shadow-violet-500/10"
+              className="w-16 h-16 md:w-20 md:h-20 rounded-2xl flex items-center justify-center text-[var(--text-primary)] shadow-lg shrink-0 shadow-violet-500/10"
               style={{ backgroundColor: selectedHabit.color }}
             >
               {selectedHabit.goal.type === 'duration' ? (
@@ -408,10 +408,10 @@ export const HabitModule: React.FC = () => {
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <h1 className="text-2xl md:text-3xl lg:text-4xl font-black text-slate-900 leading-tight mb-2">
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-black text-[var(--text-primary)] leading-tight mb-2">
                 {selectedHabit.title}
               </h1>
-              <div className="flex items-center gap-2 text-xs font-bold text-slate-500 font-mono uppercase tracking-wider mb-3">
+              <div className="flex items-center gap-2 text-xs font-bold text-[var(--text-secondary)] font-mono uppercase tracking-wider mb-3">
                 <Target size={14} className="text-violet-400" />
                 <span>
                   {selectedHabit.type === 'simple'
@@ -419,7 +419,7 @@ export const HabitModule: React.FC = () => {
                     : `Elastic: ${selectedHabit.elasticConfig?.mini.target} / ${selectedHabit.elasticConfig?.plus.target} / ${selectedHabit.elasticConfig?.elite.target} ${selectedHabit.elasticConfig?.unit}`}
                 </span>
               </div>
-              <p className="text-sm text-slate-400">
+              <p className="text-sm text-[var(--text-tertiary)]">
                 {selectedHabit.description || 'Building consistency, one day at a time.'}
               </p>
             </div>
@@ -438,47 +438,47 @@ export const HabitModule: React.FC = () => {
           {detailStats && (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
               <Card className="p-4 flex flex-col justify-between">
-                <div className="flex items-center gap-2 text-slate-400 mb-2">
+                <div className="flex items-center gap-2 text-[var(--text-tertiary)] mb-2">
                   <CheckCircle2 size={16} />
                   <span className="text-[9px] font-bold uppercase tracking-wider font-mono">This Month</span>
                 </div>
-                <div className="text-2xl font-black text-slate-900">{detailStats.monthlyCheckins}</div>
+                <div className="text-2xl font-black text-[var(--text-primary)]">{detailStats.monthlyCheckins}</div>
               </Card>
               <Card className="p-4 flex flex-col justify-between">
-                <div className="flex items-center gap-2 text-slate-400 mb-2">
+                <div className="flex items-center gap-2 text-[var(--text-tertiary)] mb-2">
                   <Layers size={16} />
                   <span className="text-[9px] font-bold uppercase tracking-wider font-mono">Total Checks</span>
                 </div>
-                <div className="text-2xl font-black text-slate-900">{detailStats.totalCheckins}</div>
+                <div className="text-2xl font-black text-[var(--text-primary)]">{detailStats.totalCheckins}</div>
               </Card>
               <Card className="p-4 flex flex-col justify-between border-orange-500/20 shadow-orange-500/5">
                 <div className="flex items-center gap-2 text-orange-500 mb-2">
                   <Flame size={16} />
                   <span className="text-[9px] font-bold uppercase tracking-wider font-mono">Streak</span>
                 </div>
-                <div className="text-2xl font-black text-slate-900">{selectedHabit.streak}</div>
+                <div className="text-2xl font-black text-[var(--text-primary)]">{selectedHabit.streak}</div>
               </Card>
               <Card className="p-4 flex flex-col justify-between border-yellow-500/20">
                 <div className="flex items-center gap-2 text-yellow-500 mb-2">
                   <Trophy size={16} />
                   <span className="text-[9px] font-bold uppercase tracking-wider font-mono">Best Streak</span>
                 </div>
-                <div className="text-2xl font-black text-slate-900">{detailStats.longestStreak}</div>
+                <div className="text-2xl font-black text-[var(--text-primary)]">{detailStats.longestStreak}</div>
               </Card>
               <Card className="p-4 flex flex-col justify-between border-rose-500/20">
                 <div className="flex items-center gap-2 text-rose-500 mb-2">
                   <Ban size={16} />
                   <span className="text-[9px] font-bold uppercase tracking-wider font-mono">Skipped</span>
                 </div>
-                <div className="text-2xl font-black text-slate-900">{detailStats.skippedDays}</div>
+                <div className="text-2xl font-black text-[var(--text-primary)]">{detailStats.skippedDays}</div>
               </Card>
               <Card className="p-4 flex flex-col justify-between border-blue-500/20">
                 <div className="flex items-center gap-2 text-blue-500 mb-2">
                   <BarChart2 size={16} />
                   <span className="text-[9px] font-bold uppercase tracking-wider font-mono">Total Volume</span>
                 </div>
-                <div className="text-2xl font-black text-slate-900">
-                  {detailStats.totalCompletion} <span className="text-[10px] text-slate-400 font-normal">{selectedHabit.goal.unit}</span>
+                <div className="text-2xl font-black text-[var(--text-primary)]">
+                  {detailStats.totalCompletion} <span className="text-[10px] text-[var(--text-tertiary)] font-normal">{selectedHabit.goal.unit}</span>
                 </div>
               </Card>
             </div>
@@ -491,7 +491,7 @@ export const HabitModule: React.FC = () => {
             {/* Monthly Calendar View */}
             <Card className="p-6 md:p-8">
               <div className="flex justify-between items-center mb-8">
-                <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
+                <h3 className="text-lg font-black text-[var(--text-primary)] flex items-center gap-2">
                   {viewDate.toLocaleDateString('en-US', {
                     month: 'long',
                     year: 'numeric',
@@ -500,19 +500,19 @@ export const HabitModule: React.FC = () => {
                 <div className="flex gap-2">
                   <button
                     onClick={() => setMonthOffset((o) => o - 1)}
-                    className="p-2 hover:bg-slate-100/50 rounded-lg text-slate-500 hover:text-slate-900 transition-colors"
+                    className="p-2 hover:bg-[var(--bg-surface-elevated)] rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
                   >
                     <ChevronLeft size={20} />
                   </button>
                   <button
                     onClick={() => setMonthOffset(0)}
-                    className="px-3 py-1 text-xs font-bold bg-slate-100/50 border border-slate-200/60 rounded-lg text-slate-700 hover:text-slate-900"
+                    className="px-3 py-1 text-xs font-bold bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                   >
                     Today
                   </button>
                   <button
                     onClick={() => setMonthOffset((o) => o + 1)}
-                    className="p-2 hover:bg-slate-100/50 rounded-lg text-slate-500 hover:text-slate-900 transition-colors"
+                    className="p-2 hover:bg-[var(--bg-surface-elevated)] rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
                   >
                     <ChevronRight size={20} />
                   </button>
@@ -522,7 +522,7 @@ export const HabitModule: React.FC = () => {
                 {WEEKDAYS.map((d) => (
                   <div
                     key={d}
-                    className="text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono"
+                    className="text-center text-[10px] font-bold text-[var(--text-tertiary)] uppercase tracking-widest font-mono"
                   >
                     {d}
                   </div>
@@ -575,15 +575,15 @@ export const HabitModule: React.FC = () => {
                           </div>
                         ) : ringPercentage > 0 && ringPercentage < 100 ? (
                           <ProgressRing percentage={ringPercentage} color={ringColor} size={32} strokeWidth={3}>
-                            <span className="text-[10px] font-bold text-slate-900 leading-none">{i + 1}</span>
+                            <span className="text-[10px] font-bold text-[var(--text-primary)] leading-none">{i + 1}</span>
                           </ProgressRing>
                         ) : (
                           <div
                             className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all
                               ${
                                 ringPercentage >= 100
-                                  ? 'text-slate-900'
-                                  : 'text-slate-500 hover:text-slate-900 bg-slate-100/50'
+                                  ? 'text-[var(--text-primary)]'
+                                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] bg-[var(--bg-surface-elevated)]'
                               }
                             `}
                             style={{ backgroundColor: ringPercentage >= 100 ? dotColor : undefined }}
@@ -675,7 +675,7 @@ export const HabitModule: React.FC = () => {
                     <div className="flex justify-between items-start">
                       <div className="flex items-center gap-4">
                         <div
-                          className="w-12 h-12 rounded-xl flex items-center justify-center text-slate-900 shadow-lg shadow-black/20"
+                          className="w-12 h-12 rounded-xl flex items-center justify-center text-[var(--text-primary)] shadow-lg shadow-black/20"
                           style={{ backgroundColor: habit.color }}
                         >
                           {habit.goal.type === 'duration' ? (
@@ -688,7 +688,7 @@ export const HabitModule: React.FC = () => {
                           )}
                         </div>
                         <div>
-                          <h3 className="font-bold text-slate-900 truncate max-w-[140px] text-base leading-tight group-hover:text-[#8979FF] transition-colors">
+                          <h3 className="font-bold text-[var(--text-primary)] truncate max-w-[140px] text-base leading-tight group-hover:text-[#8979FF] transition-colors">
                             {habit.title}
                           </h3>
                           <div className="flex items-center gap-1.5 mt-1 font-mono text-[9px] font-bold uppercase tracking-wider">
@@ -698,7 +698,7 @@ export const HabitModule: React.FC = () => {
                               </span>
                             )}
                             {habit.frequency.type === 'weekly' && (
-                              <span className="text-slate-400 bg-slate-100/50 border border-slate-200/60 px-1.5 py-0.5 rounded-md">
+                              <span className="text-[var(--text-tertiary)] bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] px-1.5 py-0.5 rounded-md">
                                 {habit.frequency.timesPerWeek}x/wk
                               </span>
                             )}
@@ -744,7 +744,7 @@ export const HabitModule: React.FC = () => {
                     </div>
 
                     {/* Target detail */}
-                    <div className="flex items-center gap-1.5 text-xs text-slate-400 pl-1">
+                    <div className="flex items-center gap-1.5 text-xs text-[var(--text-tertiary)] pl-1">
                       <Target size={12} className="text-violet-400" />
                       <span className="truncate">
                         {habit.type === 'simple'
@@ -754,14 +754,14 @@ export const HabitModule: React.FC = () => {
                     </div>
 
                     {habit.description && (
-                      <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                      <p className="text-xs text-[var(--text-tertiary)] line-clamp-2 leading-relaxed">
                         {habit.description}
                       </p>
                     )}
                   </div>
 
                   {/* 7 Days Row */}
-                  <div className="mt-auto border-t border-slate-200/60 pt-4">
+                  <div className="mt-auto border-t border-[var(--border-subtle)] pt-4">
                     <div className="flex justify-between items-center">
                       {days.map((date, idx) => {
                         const dateStr = getLocalDateStr(date);
@@ -776,7 +776,7 @@ export const HabitModule: React.FC = () => {
                             checkmarkNode = <X size={12} className="text-red-400" />;
                             dotColor = 'rgba(239,68,68,0.15)';
                           } else if (val > 0) {
-                            checkmarkNode = <Check size={12} className="text-slate-900" strokeWidth={3} />;
+                            checkmarkNode = <Check size={12} className="text-[var(--text-primary)]" strokeWidth={3} />;
                             if (val >= habit.elasticConfig.elite.target) dotColor = '#ec4899';
                             else if (val >= habit.elasticConfig.plus.target) dotColor = '#a855f7';
                             else dotColor = '#6366f1';
@@ -789,7 +789,7 @@ export const HabitModule: React.FC = () => {
                             dotColor = 'rgba(239,68,68,0.15)';
                           } else if (val > 0) {
                             if (pct >= 100) {
-                              checkmarkNode = <Check size={12} className="text-slate-900" strokeWidth={3} />;
+                              checkmarkNode = <Check size={12} className="text-[var(--text-primary)]" strokeWidth={3} />;
                               dotColor = habit.color;
                             } else {
                               ringPercentage = pct;
@@ -810,7 +810,7 @@ export const HabitModule: React.FC = () => {
                             >
                               {ringPercentage > 0 ? (
                                 <ProgressRing percentage={ringPercentage} color={habit.color} size={28} strokeWidth={3.5}>
-                                  <span className="text-[8px] font-bold text-slate-400 leading-none">
+                                  <span className="text-[8px] font-bold text-[var(--text-tertiary)] leading-none">
                                     {val}
                                   </span>
                                 </ProgressRing>
@@ -820,7 +820,7 @@ export const HabitModule: React.FC = () => {
                             </button>
                             <span
                               className={`text-[9px] font-bold uppercase tracking-wider font-mono ${
-                                isToday ? 'text-violet-400' : 'text-slate-500'
+                                isToday ? 'text-violet-400' : 'text-[var(--text-secondary)]'
                               }`}
                             >
                               {date.toLocaleDateString('en-US', { weekday: 'narrow' })}
@@ -834,8 +834,8 @@ export const HabitModule: React.FC = () => {
               );
             })}
             {sortedHabits.length === 0 && (
-              <div className="col-span-full py-16 text-center border border-dashed border-slate-200 rounded-3xl bg-slate-100">
-                <p className="text-slate-400 text-sm">No habits in this view.</p>
+              <div className="col-span-full py-16 text-center border border-dashed border-[var(--border-default)] rounded-3xl bg-[var(--bg-surface-elevated)]">
+                <p className="text-[var(--text-tertiary)] text-sm">No habits in this view.</p>
                 {!showArchived && (
                   <button
                     onClick={() => router.push('/habits/new' as any)}
@@ -893,15 +893,15 @@ const HabitInteractionModal: React.FC<{
       onClick={onClose}
     >
       <div
-        className="bg-white border border-slate-200 rounded-2xl w-full max-w-sm shadow-2xl p-6 flex flex-col gap-4"
+        className="bg-[var(--bg-surface)] border border-[var(--border-default)] rounded-2xl w-full max-w-sm shadow-2xl p-6 flex flex-col gap-4"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center">
           <div>
-            <h3 className="font-extrabold text-slate-900 text-lg">{habit.title}</h3>
-            <p className="text-[10px] text-slate-400 font-mono font-bold uppercase tracking-wider">{displayDate}</p>
+            <h3 className="font-extrabold text-[var(--text-primary)] text-lg">{habit.title}</h3>
+            <p className="text-[10px] text-[var(--text-tertiary)] font-mono font-bold uppercase tracking-wider">{displayDate}</p>
           </div>
-          <button onClick={onClose} className="p-1 hover:bg-slate-100/50 rounded-lg text-slate-400 hover:text-slate-900">
+          <button onClick={onClose} className="p-1 hover:bg-[var(--bg-surface-elevated)] rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)]">
             <X size={20} />
           </button>
         </div>
@@ -912,7 +912,7 @@ const HabitInteractionModal: React.FC<{
               setIsSkipped(false);
               setVal(Math.max(0, val - step));
             }}
-            className="w-12 h-12 rounded-full bg-slate-100/50 border border-slate-200/60 flex items-center justify-center hover:bg-slate-100 text-slate-900 font-bold text-xl disabled:opacity-50"
+            className="w-12 h-12 rounded-full bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] flex items-center justify-center hover:bg-[var(--bg-surface-elevated)] text-[var(--text-primary)] font-bold text-xl disabled:opacity-50"
             disabled={isSkipped || val <= 0}
           >
             <Minus size={20} />
@@ -925,8 +925,8 @@ const HabitInteractionModal: React.FC<{
               </span>
             ) : (
               <>
-                <div className="text-4xl font-extrabold text-slate-900">{val}</div>
-                <div className="text-[10px] text-slate-400 font-bold font-mono uppercase tracking-wider mt-1">
+                <div className="text-4xl font-extrabold text-[var(--text-primary)]">{val}</div>
+                <div className="text-[10px] text-[var(--text-tertiary)] font-bold font-mono uppercase tracking-wider mt-1">
                   {habit.type === 'elastic' ? habit.elasticConfig?.unit : habit.goal.unit}
                 </div>
               </>
@@ -938,21 +938,21 @@ const HabitInteractionModal: React.FC<{
               setIsSkipped(false);
               setVal(val + step);
             }}
-            className="w-12 h-12 rounded-full flex items-center justify-center text-slate-900 font-bold text-xl hover:scale-105 transition-transform"
+            className="w-12 h-12 rounded-full flex items-center justify-center text-[var(--text-primary)] font-bold text-xl hover:scale-105 transition-transform"
             style={{ backgroundColor: habit.color }}
           >
             <Plus size={22} />
           </button>
         </div>
 
-        <div className="flex flex-col gap-2 pt-2 border-t border-slate-200/60">
+        <div className="flex flex-col gap-2 pt-2 border-t border-[var(--border-subtle)]">
           <button
             onClick={() => setIsSkipped(!isSkipped)}
             className={`w-full py-2.5 rounded-xl text-xs font-bold border transition-colors flex items-center justify-center gap-2 uppercase tracking-wider font-mono
               ${
                 isSkipped
                   ? 'bg-rose-500/10 text-rose-400 border-rose-500/25'
-                  : 'bg-slate-100/50 text-slate-500 border-slate-200/60 hover:bg-slate-100 hover:text-slate-900'
+                  : 'bg-[var(--bg-surface-elevated)] text-[var(--text-secondary)] border-[var(--border-subtle)] hover:bg-[var(--bg-surface-elevated)] hover:text-[var(--text-primary)]'
               }
             `}
           >

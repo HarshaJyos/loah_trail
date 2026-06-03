@@ -28,7 +28,7 @@ export const COLORS = [
 ];
 
 const COLOR_HEX = [
-  '#E2E8F0',
+  'var(--border-subtle)',
   '#FECACA',
   '#FED7AA',
   '#FEF08A',
@@ -61,7 +61,7 @@ export const NoteCard: React.FC<{
           : '#FFFFFF',
         borderColor: note.color && note.color !== 'transparent'
           ? note.color.replace('0.12', '0.30')
-          : '#E2E8F0',
+          : 'var(--border-subtle)',
       }}
     >
       {/* Image Banner */}
@@ -116,7 +116,7 @@ export const NoteCard: React.FC<{
           {note.title && (
             <h3
               style={{
-                fontSize: 14, fontWeight: 700, color: '#1E1E1E',
+                fontSize: 14, fontWeight: 700, color: 'var(--text-primary)',
                 lineHeight: 1.3, marginBottom: 4,
               }}
               className="line-clamp-2"
@@ -285,16 +285,16 @@ export const NotesModule: React.FC = () => {
       <div
         style={{
           padding: '16px 20px 12px',
-          borderBottom: '1px solid #E2E8F0',
+          borderBottom: '1px solid var(--border-subtle)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'flex-start',
           flexShrink: 0,
-          background: '#F5F7FA',
+          background: 'var(--bg-app)',
         }}
       >
         <div>
-          <div style={{ fontSize: 26, fontWeight: 700, color: '#1E1E1E', letterSpacing: '-0.03em' }}>
+          <div style={{ fontSize: 26, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.03em' }}>
             {showArchived ? 'Archive' : 'Notes'}
           </div>
           <div style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>
@@ -309,7 +309,7 @@ export const NotesModule: React.FC = () => {
             title={showArchived ? 'View Active' : 'View Archive'}
             style={{
               background: showArchived ? 'rgba(137,121,255,0.10)' : '#FFFFFF',
-              borderColor: showArchived ? '#8979FF' : '#E2E8F0',
+              borderColor: showArchived ? '#8979FF' : 'var(--border-subtle)',
               color: showArchived ? '#8979FF' : '#64748B',
             }}
           >
@@ -333,12 +333,12 @@ export const NotesModule: React.FC = () => {
             style={{
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
               padding: '60px 20px', textAlign: 'center',
-              border: '1px dashed #E2E8F0', borderRadius: 20,
+              border: '1px dashed var(--border-subtle)', borderRadius: 20,
               background: '#FAFBFC', marginTop: 8,
             }}
           >
             <StickyNote size={40} color="#D4D4D4" />
-            <p style={{ fontSize: 16, fontWeight: 700, color: '#1E1E1E', marginTop: 16, marginBottom: 6 }}>
+            <p style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', marginTop: 16, marginBottom: 6 }}>
               {showArchived ? 'No Archived Notes' : 'No Notes Yet!'}
             </p>
             <p style={{ fontSize: 13, color: '#64748B', maxWidth: 240, lineHeight: 1.5 }}>

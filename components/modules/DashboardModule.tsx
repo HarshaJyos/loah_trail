@@ -12,6 +12,7 @@ import {
   X,
   Route,
   SmilePlus,
+  Sparkles,
 } from 'lucide-react';
 import ActivityChart from '../charts/ActivityChart';
 import MoodChart from '../charts/MoodChart';
@@ -24,10 +25,10 @@ type TimeRange = 'Day' | 'Week' | 'Month' | 'Year';
 
 const MOOD_COLORS: Record<Mood, string> = {
   awesome: '#059669',
-  good:    '#3366CC',
+  good: '#3366CC',
   neutral: '#64748B',
-  bad:     '#DB8A66',
-  awful:   '#9F3834',
+  bad: '#DB8A66',
+  awful: '#9F3834',
 };
 
 export const DashboardModule: React.FC = () => {
@@ -155,7 +156,7 @@ export const DashboardModule: React.FC = () => {
         ? new Date(d.getFullYear(), d.getMonth() + 1, 1).getTime()
         : ps + 86400000;
       sum += tasks.filter((t) => t.completedAt && t.completedAt >= ps && t.completedAt < pe).length
-           + focusSessions.filter((s) => s.startTime >= ps && s.startTime < pe).length;
+        + focusSessions.filter((s) => s.startTime >= ps && s.startTime < pe).length;
     }
     return sum;
   }, [range, tasks, focusSessions, rangeStart, now]);
@@ -190,22 +191,17 @@ export const DashboardModule: React.FC = () => {
             {now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
           </div>
         </div>
-        <div className="flex items-center gap-2 pt-1">
-          <div className="flex bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] p-1 rounded-xl">
+        <div className="flex items-center pt-1">
+          <select
+            value={range}
+            onChange={(e) => setRange(e.target.value as TimeRange)}
+            className="bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] text-[var(--text-primary)] text-sm font-bold rounded-xl px-3 py-2 outline-none appearance-none cursor-pointer"
+            style={{ minWidth: '100px' }}
+          >
             {(['Day', 'Week', 'Month', 'Year'] as TimeRange[]).map((r) => (
-              <button
-                key={r}
-                onClick={() => setRange(r)}
-                className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all ${
-                  range === r 
-                    ? 'bg-[var(--bg-surface-hover)] text-[var(--text-primary)] shadow-sm border border-[var(--border-default)]' 
-                    : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]'
-                }`}
-              >
-                {r}
-              </button>
+              <option key={r} value={r}>{r}</option>
             ))}
-          </div>
+          </select>
         </div>
       </div>
 
@@ -214,81 +210,81 @@ export const DashboardModule: React.FC = () => {
         <div className="grid grid-cols-2 gap-3">
           <Link
             href="/dump/new"
-            className="loah-quick-btn"
+            className="flex flex-col items-start p-4 gap-3 rounded-2xl border transition-all hover:-translate-y-1"
             style={{ background: 'var(--bg-surface-elevated)', borderColor: 'var(--border-subtle)' }}
           >
             <div
               style={{
-                width: 38, height: 38, borderRadius: 10,
+                width: 44, height: 44, borderRadius: 12,
                 background: 'rgba(77, 169, 255, 0.15)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}
             >
-              <Brain size={20} color="var(--cat-hydration)" />
+              <Brain size={22} color="var(--cat-hydration)" />
             </div>
             <div className="text-left">
-              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>Brain Dump</div>
-              <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 1 }}>Unload your mind</div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>Brain Dump</div>
+              <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>Unload your mind</div>
             </div>
           </Link>
 
           <Link
             href="/tasks/new"
-            className="loah-quick-btn"
+            className="flex flex-col items-start p-4 gap-3 rounded-2xl border transition-all hover:-translate-y-1"
             style={{ background: 'var(--bg-surface-elevated)', borderColor: 'var(--border-subtle)' }}
           >
             <div
               style={{
-                width: 38, height: 38, borderRadius: 10,
+                width: 44, height: 44, borderRadius: 12,
                 background: 'rgba(167, 200, 27, 0.15)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}
             >
-              <Plus size={20} color="var(--brand-primary)" />
+              <Plus size={22} color="var(--brand-primary)" />
             </div>
             <div className="text-left">
-              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>Quick Task</div>
-              <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 1 }}>Add to-do</div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>Quick Task</div>
+              <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>Add to-do</div>
             </div>
           </Link>
 
           <Link
             href="/routines/new"
-            className="loah-quick-btn"
+            className="flex flex-col items-start p-4 gap-3 rounded-2xl border transition-all hover:-translate-y-1"
             style={{ background: 'var(--bg-surface-elevated)', borderColor: 'var(--border-subtle)' }}
           >
             <div
               style={{
-                width: 38, height: 38, borderRadius: 10,
+                width: 44, height: 44, borderRadius: 12,
                 background: 'rgba(168, 112, 255, 0.15)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}
             >
-              <Route size={20} color="var(--cat-meditation)" />
+              <Route size={22} color="var(--cat-meditation)" />
             </div>
             <div className="text-left">
-              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>New Routine</div>
-              <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 1 }}>Habit flows</div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>New Routine</div>
+              <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>Habit flows</div>
             </div>
           </Link>
 
           <Link
             href="/journal/new"
-            className="loah-quick-btn"
+            className="flex flex-col items-start p-4 gap-3 rounded-2xl border transition-all hover:-translate-y-1"
             style={{ background: 'var(--bg-surface-elevated)', borderColor: 'var(--border-subtle)' }}
           >
             <div
               style={{
-                width: 38, height: 38, borderRadius: 10,
+                width: 44, height: 44, borderRadius: 12,
                 background: 'rgba(255, 127, 176, 0.15)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}
             >
-              <SmilePlus size={20} color="var(--cat-journaling)" />
+              <Sparkles size={22} color="var(--cat-journaling)" />
             </div>
             <div className="text-left">
-              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>Log Mood</div>
-              <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 1 }}>Track feelings</div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>Log Mood</div>
+              <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2 }}>Track feelings</div>
             </div>
           </Link>
         </div>
@@ -343,7 +339,7 @@ export const DashboardModule: React.FC = () => {
                 >
                   <Activity size={15} color="#059669" />
                 </div>
-                <span style={{ fontSize: 14, fontWeight: 700, color: '#1E1E1E' }}>
+                <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>
                   Activity Feed
                 </span>
               </div>
@@ -380,7 +376,7 @@ export const DashboardModule: React.FC = () => {
                     <item.icon size={12} color="#64748B" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div style={{ fontSize: 12, fontWeight: 700, color: '#1E1E1E' }} className="truncate">
+                    <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)' }} className="truncate">
                       {item.title}
                     </div>
                     {item.subtitle && (
@@ -429,7 +425,7 @@ export const DashboardModule: React.FC = () => {
             <div
               style={{
                 padding: '14px 20px',
-                borderBottom: '1px solid #E2E8F0',
+                borderBottom: '1px solid var(--border-subtle)',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
@@ -449,7 +445,7 @@ export const DashboardModule: React.FC = () => {
             <div style={{ padding: '20px' }}>
               {selectedActivity.type === 'task' && (
                 <div>
-                  <h3 style={{ fontSize: 18, fontWeight: 700, color: '#1E1E1E', marginBottom: 4 }}>
+                  <h3 style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>
                     {selectedActivity.item.title}
                   </h3>
                   <p style={{ fontSize: 11, color: '#808DA9', marginBottom: 12 }}>
@@ -465,13 +461,13 @@ export const DashboardModule: React.FC = () => {
                         key={row.label}
                         style={{
                           background: '#F8FAFC',
-                          border: '1px solid #E2E8F0',
+                          border: '1px solid var(--border-subtle)',
                           borderRadius: 10,
                           padding: '10px 12px',
                         }}
                       >
                         <div style={{ fontSize: 10, color: '#808DA9', marginBottom: 2 }}>{row.label}</div>
-                        <div style={{ fontSize: 13, fontWeight: 700, color: '#1E1E1E', textTransform: 'capitalize' }}>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', textTransform: 'capitalize' }}>
                           {row.value}
                         </div>
                       </div>
@@ -482,7 +478,7 @@ export const DashboardModule: React.FC = () => {
 
               {selectedActivity.type === 'session' && (
                 <div>
-                  <h3 style={{ fontSize: 18, fontWeight: 700, color: '#1E1E1E', marginBottom: 4 }}>
+                  <h3 style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>
                     {selectedActivity.item.routineTitle}
                   </h3>
                   <p style={{ fontSize: 11, color: '#808DA9', marginBottom: 12 }}>
@@ -493,7 +489,7 @@ export const DashboardModule: React.FC = () => {
 
               {selectedActivity.type === 'journal' && (
                 <div>
-                  <h3 style={{ fontSize: 18, fontWeight: 700, color: '#1E1E1E', marginBottom: 4 }}>
+                  <h3 style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>
                     {selectedActivity.item.title}
                   </h3>
                   <p style={{ fontSize: 11, color: '#808DA9', marginBottom: 4 }}>
@@ -512,7 +508,7 @@ export const DashboardModule: React.FC = () => {
               )}
             </div>
 
-            <div style={{ padding: '12px 20px', borderTop: '1px solid #E2E8F0', textAlign: 'right' }}>
+            <div style={{ padding: '12px 20px', borderTop: '1px solid var(--border-subtle)', textAlign: 'right' }}>
               <button
                 onClick={() => setSelectedActivity(null)}
                 className="loah-btn-ghost"
