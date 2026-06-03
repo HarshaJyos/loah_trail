@@ -16,6 +16,12 @@ import {
   SkipForward,
   X,
   ChevronDown,
+  Trash2,
+  Activity,
+  ListTodo,
+  Briefcase,
+  Target,
+  BookOpen,
 } from 'lucide-react';
 import useTimerWorker from '../../hooks/useTimerWorker';
 import useReminderSystem from '../../hooks/useReminderSystem';
@@ -29,28 +35,37 @@ interface AppShellProps {
 const NAV_ITEMS = [
   {
     id: 'dashboard',
-    icon: LayoutDashboard,
+    defaultIcon: LayoutDashboard,
     paths: ['/dashboard', '/activity'],
+    getIcon: (path: string) => path.includes('/activity') ? Activity : LayoutDashboard,
   },
   {
     id: 'dump',
-    icon: Brain,
+    defaultIcon: Brain,
     paths: ['/dump', '/trash'],
+    getIcon: (path: string) => path.includes('/trash') ? Trash2 : Brain,
   },
   {
     id: 'calendar',
-    icon: CalendarIcon,
+    defaultIcon: CalendarIcon,
     paths: ['/calendar', '/tasks', '/projects'],
+    getIcon: (path: string) => {
+      if (path.includes('/tasks')) return ListTodo;
+      if (path.includes('/projects')) return Briefcase;
+      return CalendarIcon;
+    },
   },
   {
     id: 'routines',
-    icon: CircleCheckBig,
+    defaultIcon: CircleCheckBig,
     paths: ['/routines', '/habits'],
+    getIcon: (path: string) => path.includes('/habits') ? Target : CircleCheckBig,
   },
   {
     id: 'notes',
-    icon: StickyNote,
+    defaultIcon: StickyNote,
     paths: ['/notes', '/journal'],
+    getIcon: (path: string) => path.includes('/journal') ? BookOpen : StickyNote,
   },
 ] as const;
 
@@ -270,6 +285,8 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
           >
             {NAV_ITEMS.map((item) => {
               const isActive = activeTabId === item.id;
+              // If active, use the icon for current pathname. If not active, use default icon.
+              const IconComponent = isActive ? item.getIcon(pathname) : item.defaultIcon;
               return (
                 <button
                   key={item.id}
@@ -289,7 +306,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
                     flexShrink: 0,
                   }}
                 >
-                  <item.icon
+                  <IconComponent
                     size={19}
                     color={isActive ? 'var(--bg-app)' : 'var(--text-tertiary)'}
                     strokeWidth={isActive ? 2.5 : 2}
