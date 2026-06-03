@@ -13,6 +13,7 @@ import {
   Route,
   SmilePlus,
   Sparkles,
+  ChevronDown,
 } from 'lucide-react';
 import ActivityChart from '../charts/ActivityChart';
 import MoodChart from '../charts/MoodChart';
@@ -44,6 +45,7 @@ export const DashboardModule: React.FC = () => {
   const habits = useAppStore((s) => s.habits);
 
   const [range, setRange] = React.useState<TimeRange>('Week');
+  const [isRangeOpen, setIsRangeOpen] = React.useState(false);
   const [now, setNow] = React.useState(new Date());
   const [selectedActivity, setSelectedActivity] = React.useState<{
     id: string;
@@ -191,17 +193,35 @@ export const DashboardModule: React.FC = () => {
             {now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
           </div>
         </div>
-        <div className="flex items-center pt-1">
-          <select
-            value={range}
-            onChange={(e) => setRange(e.target.value as TimeRange)}
-            className="bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] text-[var(--text-primary)] text-sm font-bold rounded-xl px-3 py-2 outline-none appearance-none cursor-pointer"
-            style={{ minWidth: '100px' }}
+        <div className="flex items-center pt-1 relative">
+          <button
+            onClick={() => setIsRangeOpen(!isRangeOpen)}
+            onBlur={() => setTimeout(() => setIsRangeOpen(false), 200)}
+            className="flex items-center gap-2 bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] hover:border-[var(--brand-primary)] text-[var(--text-primary)] text-sm font-bold rounded-xl px-4 py-2.5 outline-none cursor-pointer transition-all min-w-[110px] justify-between shadow-sm"
           >
-            {(['Day', 'Week', 'Month', 'Year'] as TimeRange[]).map((r) => (
-              <option key={r} value={r}>{r}</option>
-            ))}
-          </select>
+            {range}
+            <ChevronDown size={14} color="var(--text-secondary)" className={`transition-transform duration-200 ${isRangeOpen ? 'rotate-180' : ''}`} />
+          </button>
+          
+          {isRangeOpen && (
+            <div 
+              className="absolute top-full right-0 mt-2 w-32 bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] rounded-xl shadow-lg overflow-hidden z-50 py-1"
+              style={{ boxShadow: 'var(--shadow-nav)' }}
+            >
+              {(['Day', 'Week', 'Month', 'Year'] as TimeRange[]).map((r) => (
+                <button
+                  key={r}
+                  onClick={() => {
+                    setRange(r);
+                    setIsRangeOpen(false);
+                  }}
+                  className={`w-full text-left px-4 py-2.5 text-sm font-bold transition-colors hover:bg-[var(--bg-canvas)] ${range === r ? 'text-[var(--brand-primary)]' : 'text-[var(--text-primary)]'}`}
+                >
+                  {r}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
