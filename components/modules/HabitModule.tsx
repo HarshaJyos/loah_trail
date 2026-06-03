@@ -204,17 +204,16 @@ const YearlyHeatmap: React.FC<{ habit: Habit }> = ({ habit }) => {
               opacity = Math.max(0.3, pct);
             }
           }
-          const tooltip = `${day.toLocaleDateString()}: ${
-            isSkipped
+          const tooltip = `${day.toLocaleDateString()}: ${isSkipped
               ? 'Skipped'
               : val > 0
-              ? val +
+                ? val +
                 ' ' +
                 (habit.type === 'elastic'
                   ? habit.elasticConfig?.unit
                   : habit.goal.unit)
-              : 'No data'
-          }`;
+                : 'No data'
+            }`;
           return (
             <div
               key={dateStr}
@@ -580,10 +579,9 @@ export const HabitModule: React.FC = () => {
                         ) : (
                           <div
                             className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all
-                              ${
-                                ringPercentage >= 100
-                                  ? 'text-[var(--text-primary)]'
-                                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] bg-[var(--bg-surface-elevated)]'
+                              ${ringPercentage >= 100
+                                ? 'text-[var(--text-primary)]'
+                                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] bg-[var(--bg-surface-elevated)]'
                               }
                             `}
                             style={{ backgroundColor: ringPercentage >= 100 ? dotColor : undefined }}
@@ -710,11 +708,10 @@ export const HabitModule: React.FC = () => {
                         <button
                           onClick={(e) => handleTogglePin(e, habit)}
                           style={{ width: 28, height: 28, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                          className={`transition-all ${
-                            habit.isPinned
+                          className={`transition-all ${habit.isPinned
                               ? 'text-[var(--brand-primary)] bg-[var(--brand-primary-muted)]'
                               : 'text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)]'
-                          }`}
+                            }`}
                           title={habit.isPinned ? 'Unpin' : 'Pin'}
                         >
                           <Pin size={14} fill={habit.isPinned ? 'currentColor' : 'none'} />
@@ -855,9 +852,8 @@ export const HabitModule: React.FC = () => {
                               )}
                             </button>
                             <span
-                              className={`text-[9px] font-bold uppercase tracking-wider font-mono ${
-                                isToday ? 'text-violet-400' : 'text-[var(--text-secondary)]'
-                              }`}
+                              className={`text-[9px] font-bold uppercase tracking-wider font-mono ${isToday ? 'text-violet-400' : 'text-[var(--text-secondary)]'
+                                }`}
                             >
                               {date.toLocaleDateString('en-US', { weekday: 'narrow' })}
                             </span>
@@ -985,17 +981,16 @@ const HabitInteractionModal: React.FC<{
           <button
             onClick={() => setIsSkipped(!isSkipped)}
             className={`w-full py-2.5 rounded-xl text-xs font-bold border transition-colors flex items-center justify-center gap-2 uppercase tracking-wider font-mono
-              ${
-                isSkipped
-                  ? 'bg-rose-500/10 text-rose-400 border-rose-500/25'
-                  : 'bg-[var(--bg-surface-elevated)] text-[var(--text-secondary)] border-[var(--border-subtle)] hover:bg-[var(--bg-surface-elevated)] hover:text-[var(--text-primary)]'
+              ${isSkipped
+                ? 'bg-rose-500/10 text-rose-400 border-rose-500/25'
+                : 'bg-[var(--bg-surface-elevated)] text-[var(--text-secondary)] border-[var(--border-subtle)] hover:bg-[var(--bg-surface-elevated)] hover:text-[var(--text-primary)]'
               }
             `}
           >
             {isSkipped ? <RefreshCcw size={14} /> : <X size={14} />}
             {isSkipped ? 'Unmark Skipped' : 'Skip Habit'}
           </button>
-          <Button onClick={handleSave} variant="primary" className="w-full py-3 shadow-lg">
+          <Button onClick={handleSave} variant="primary" className="w-full py-3 shadow-lg gradient-primary">
             Save Progress
           </Button>
         </div>

@@ -118,7 +118,7 @@ export const TaskEditor: React.FC = () => {
             Discard
           </button>
           <button onClick={handleSave} className="loah-btn-primary">
-            Save Task
+            Save
           </button>
         </div>
       </div>

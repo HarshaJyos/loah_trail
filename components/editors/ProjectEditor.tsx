@@ -98,7 +98,7 @@ export const ProjectEditor: React.FC = () => {
             Discard
           </button>
           <button onClick={handleSave} className="loah-btn-primary">
-            Save Project
+            Save
           </button>
         </div>
       </div>

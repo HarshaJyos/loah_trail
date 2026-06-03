@@ -60,7 +60,7 @@ export const DumpEditor: React.FC = () => {
             Discard
           </button>
           <button onClick={handleSave} className="loah-btn-primary">
-            Save Idea
+            Save
           </button>
         </div>
       </div>

@@ -9,10 +9,10 @@ import QuillEditor from '../ui/QuillEditor';
 
 const MOODS: { type: Mood; emoji: string; label: string; color: string; bg: string }[] = [
   { type: 'awesome', emoji: '😁', label: 'Awesome', color: '#059669', bg: '#BBF7D0' },
-  { type: 'good',    emoji: '😊', label: 'Good',    color: '#3366CC', bg: '#BFDBFE' },
+  { type: 'good', emoji: '😊', label: 'Good', color: '#3366CC', bg: '#BFDBFE' },
   { type: 'neutral', emoji: '😐', label: 'Neutral', color: '#64748B', bg: '#E6E8EB' },
-  { type: 'bad',     emoji: '🙁', label: 'Bad',     color: '#DB8A66', bg: '#FED7AA' },
-  { type: 'awful',   emoji: '😒', label: 'Awful',   color: '#9F3834', bg: '#FECACA' },
+  { type: 'bad', emoji: '🙁', label: 'Bad', color: '#DB8A66', bg: '#FED7AA' },
+  { type: 'awful', emoji: '😒', label: 'Awful', color: '#9F3834', bg: '#FECACA' },
 ];
 
 interface JournalEditorProps {
@@ -190,7 +190,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({ mode }) => {
             onClick={handleSave}
             className="loah-btn-primary"
           >
-            Save Log
+            Save
           </button>
         </div>
       </div>

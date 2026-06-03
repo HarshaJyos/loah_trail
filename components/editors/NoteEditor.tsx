@@ -9,14 +9,14 @@ import QuillEditor from '../ui/QuillEditor';
 
 const NOTE_BG_COLORS = [
   { label: 'Default', bg: 'var(--bg-app)', border: 'var(--border-subtle)' },
-  { label: 'Red',     bg: 'rgba(239, 68, 68, 0.12)', border: 'rgba(239, 68, 68, 0.3)' },
-  { label: 'Orange',  bg: 'rgba(249, 115, 22, 0.12)', border: 'rgba(249, 115, 22, 0.3)' },
-  { label: 'Yellow',  bg: 'rgba(234, 179, 8, 0.12)', border: 'rgba(234, 179, 8, 0.3)' },
-  { label: 'Green',   bg: 'rgba(16, 185, 129, 0.12)', border: 'rgba(16, 185, 129, 0.3)' },
-  { label: 'Cyan',    bg: 'rgba(6, 182, 212, 0.12)', border: 'rgba(6, 182, 212, 0.3)' },
-  { label: 'Blue',    bg: 'rgba(59, 130, 246, 0.12)', border: 'rgba(59, 130, 246, 0.3)' },
-  { label: 'Purple',  bg: 'rgba(139, 92, 246, 0.12)', border: 'rgba(139, 92, 246, 0.3)' },
-  { label: 'Pink',    bg: 'rgba(236, 72, 153, 0.12)', border: 'rgba(236, 72, 153, 0.3)' },
+  { label: 'Red', bg: 'rgba(239, 68, 68, 0.12)', border: 'rgba(239, 68, 68, 0.3)' },
+  { label: 'Orange', bg: 'rgba(249, 115, 22, 0.12)', border: 'rgba(249, 115, 22, 0.3)' },
+  { label: 'Yellow', bg: 'rgba(234, 179, 8, 0.12)', border: 'rgba(234, 179, 8, 0.3)' },
+  { label: 'Green', bg: 'rgba(16, 185, 129, 0.12)', border: 'rgba(16, 185, 129, 0.3)' },
+  { label: 'Cyan', bg: 'rgba(6, 182, 212, 0.12)', border: 'rgba(6, 182, 212, 0.3)' },
+  { label: 'Blue', bg: 'rgba(59, 130, 246, 0.12)', border: 'rgba(59, 130, 246, 0.3)' },
+  { label: 'Purple', bg: 'rgba(139, 92, 246, 0.12)', border: 'rgba(139, 92, 246, 0.3)' },
+  { label: 'Pink', bg: 'rgba(236, 72, 153, 0.12)', border: 'rgba(236, 72, 153, 0.3)' },
 ];
 
 interface NoteEditorProps {
@@ -242,7 +242,7 @@ export const NoteEditor: React.FC<NoteEditorProps> = ({ mode }) => {
             onClick={handleSave}
             className="loah-btn-primary"
           >
-            Save Note
+            Save
           </button>
         </div>
       </div>

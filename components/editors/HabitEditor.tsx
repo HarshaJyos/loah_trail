@@ -120,7 +120,7 @@ export const HabitEditor: React.FC = () => {
             Discard
           </button>
           <button onClick={handleSave} className="loah-btn-primary">
-            Save Habit
+            Save
           </button>
         </div>
       </div>

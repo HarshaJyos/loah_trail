@@ -191,11 +191,11 @@ export const TaskModule: React.FC = () => {
 
     const recurrence: RecurrenceConfig | undefined = isRecurring
       ? {
-          type: recurrenceType,
-          interval: recurrenceInterval,
-          daysOfWeek: recurrenceType === 'specific_days' ? recurrenceDays : undefined,
-          instancesToGenerate: recurrenceInstances,
-        }
+        type: recurrenceType,
+        interval: recurrenceInterval,
+        daysOfWeek: recurrenceType === 'specific_days' ? recurrenceDays : undefined,
+        instancesToGenerate: recurrenceInstances,
+      }
       : undefined;
 
     const taskData: Partial<Task> = {
@@ -558,18 +558,16 @@ export const TaskModule: React.FC = () => {
                 className={`p-3 border-b border-[var(--border-subtle)] flex justify-between items-center rounded-t-2xl sticky top-0 z-10 bg-[var(--bg-surface)]/95`}
               >
                 <h3
-                  className={`font-black text-xs uppercase tracking-wider ${
-                    key === 'overdue' ? 'text-rose-400' : 'text-[var(--text-secondary)]'
-                  }`}
+                  className={`font-black text-xs uppercase tracking-wider ${key === 'overdue' ? 'text-rose-400' : 'text-[var(--text-secondary)]'
+                    }`}
                 >
                   {getGroupTitle(key)}
                 </h3>
                 <span
-                  className={`text-[10px] font-black px-2 py-0.5 rounded-full font-mono ${
-                    key === 'overdue'
+                  className={`text-[10px] font-black px-2 py-0.5 rounded-full font-mono ${key === 'overdue'
                       ? 'bg-rose-500/20 text-rose-300'
                       : 'bg-[var(--bg-surface-elevated)] text-[var(--text-secondary)]'
-                  }`}
+                    }`}
                 >
                   {groupedTasks[key].length}
                 </span>
@@ -586,8 +584,8 @@ export const TaskModule: React.FC = () => {
                         key === 'tomorrow'
                           ? new Date(Date.now() + 86400000).toISOString().split('T')[0]
                           : key === 'today'
-                          ? new Date().toISOString().split('T')[0]
-                          : undefined
+                            ? new Date().toISOString().split('T')[0]
+                            : undefined
                       )
                     }
                     className="w-full py-3 border border-dashed border-[var(--border-default)] hover:border-violet-500/30 rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)] text-xs font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
@@ -618,18 +616,16 @@ export const TaskModule: React.FC = () => {
                 <div key={key} className="animate-[fadeIn_0.2s_ease-out]">
                   <button
                     onClick={() => toggleGroup(key)}
-                    className={`flex items-center gap-2 w-full mb-3 group ${
-                      isOverdueGroup && count > 0 ? 'text-rose-400' : 'text-[var(--text-primary)]'
-                    }`}
+                    className={`flex items-center gap-2 w-full mb-3 group ${isOverdueGroup && count > 0 ? 'text-rose-400' : 'text-[var(--text-primary)]'
+                      }`}
                   >
                     <div
-                      className={`p-1 rounded-md transition-colors ${
-                        isExpanded
+                      className={`p-1 rounded-md transition-colors ${isExpanded
                           ? isOverdueGroup && count > 0
                             ? 'bg-rose-500/10 text-rose-400'
                             : 'bg-[var(--bg-surface-elevated)] text-[var(--text-primary)]'
                           : 'bg-[var(--bg-surface-elevated)] text-[var(--text-tertiary)] group-hover:bg-[var(--bg-surface-elevated)]'
-                      }`}
+                        }`}
                     >
                       {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                     </div>
@@ -637,16 +633,14 @@ export const TaskModule: React.FC = () => {
                       {getGroupTitle(key)}
                     </h3>
                     <div
-                      className={`h-px flex-1 ml-2 ${
-                        isOverdueGroup && count > 0 ? 'bg-rose-500/10' : 'bg-[var(--bg-surface-elevated)]'
-                      }`}
+                      className={`h-px flex-1 ml-2 ${isOverdueGroup && count > 0 ? 'bg-rose-500/10' : 'bg-[var(--bg-surface-elevated)]'
+                        }`}
                     />
                     <span
-                      className={`text-xs font-mono font-bold ${
-                        isOverdueGroup && count > 0
+                      className={`text-xs font-mono font-bold ${isOverdueGroup && count > 0
                           ? 'text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded-full'
                           : 'text-[var(--text-tertiary)]'
-                      }`}
+                        }`}
                     >
                       {count}
                     </span>
@@ -654,9 +648,8 @@ export const TaskModule: React.FC = () => {
 
                   {isExpanded && (
                     <div
-                      className={`space-y-3 pl-2 md:pl-4 border-l ${
-                        isOverdueGroup && count > 0 ? 'border-rose-500/10' : 'border-[var(--border-subtle)]'
-                      }`}
+                      className={`space-y-3 pl-2 md:pl-4 border-l ${isOverdueGroup && count > 0 ? 'border-rose-500/10' : 'border-[var(--border-subtle)]'
+                        }`}
                     >
                       {groupedTasks[key].map((task) => (
                         <TaskCard key={task.id} task={task} />
@@ -676,8 +669,8 @@ export const TaskModule: React.FC = () => {
                               key === 'tomorrow'
                                 ? new Date(Date.now() + 86400000).toISOString().split('T')[0]
                                 : key === 'today'
-                                ? new Date().toISOString().split('T')[0]
-                                : undefined
+                                  ? new Date().toISOString().split('T')[0]
+                                  : undefined
                             )
                           }
                           className="flex items-center gap-2 text-xs font-bold text-[var(--text-secondary)] hover:text-[var(--text-primary)] px-3 py-2 hover:bg-[var(--bg-surface-elevated)] rounded-lg transition-colors"
@@ -731,8 +724,8 @@ export const TaskModule: React.FC = () => {
               {showCompleted
                 ? 'Showing completed tasks'
                 : showArchived
-                ? 'Showing archived tasks'
-                : `${activeTasks.filter((t) => !t.isCompleted).length} pending`}
+                  ? 'Showing archived tasks'
+                  : `${activeTasks.filter((t) => !t.isCompleted).length} pending`}
             </div>
           </div>
           <button
@@ -766,22 +759,20 @@ export const TaskModule: React.FC = () => {
             <div className="flex bg-[var(--bg-surface)] p-1 rounded-xl border border-[var(--border-subtle)] shrink-0">
               <button
                 onClick={() => setViewMode('list')}
-                className={`p-2 rounded-lg transition-all ${
-                  viewMode === 'list'
+                className={`p-2 rounded-lg transition-all ${viewMode === 'list'
                     ? 'bg-[var(--bg-surface-elevated)] text-[var(--text-primary)]'
                     : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]'
-                }`}
+                  }`}
                 title="List View"
               >
                 <List size={16} />
               </button>
               <button
                 onClick={() => setViewMode('board')}
-                className={`p-2 rounded-lg transition-all ${
-                  viewMode === 'board'
+                className={`p-2 rounded-lg transition-all ${viewMode === 'board'
                     ? 'bg-[var(--bg-surface-elevated)] text-[var(--text-primary)]'
                     : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]'
-                }`}
+                  }`}
                 title="Board View"
               >
                 <LayoutGrid size={16} />
@@ -799,11 +790,10 @@ export const TaskModule: React.FC = () => {
                 <button
                   key={g}
                   onClick={() => setGrouping(g)}
-                  className={`px-3 py-1 text-xs font-bold capitalize transition-colors rounded-lg ${
-                    grouping === g
+                  className={`px-3 py-1 text-xs font-bold capitalize transition-colors rounded-lg ${grouping === g
                       ? 'bg-[var(--bg-surface-elevated)] text-[var(--text-primary)]'
                       : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]'
-                  }`}
+                    }`}
                 >
                   {g}
                 </button>
@@ -817,27 +807,24 @@ export const TaskModule: React.FC = () => {
               </span>
               <button
                 onClick={() => setSortBy('time')}
-                className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors ${
-                  sortBy === 'time' ? 'bg-[var(--bg-surface-elevated)] text-[var(--text-primary)]' : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]'
-                }`}
+                className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors ${sortBy === 'time' ? 'bg-[var(--bg-surface-elevated)] text-[var(--text-primary)]' : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]'
+                  }`}
                 title="Time"
               >
                 <Clock size={14} />
               </button>
               <button
                 onClick={() => setSortBy('priority')}
-                className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors ${
-                  sortBy === 'priority' ? 'bg-[var(--bg-surface-elevated)] text-[var(--text-primary)]' : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]'
-                }`}
+                className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors ${sortBy === 'priority' ? 'bg-[var(--bg-surface-elevated)] text-[var(--text-primary)]' : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]'
+                  }`}
                 title="Priority"
               >
                 <ArrowUpAZ size={14} />
               </button>
               <button
                 onClick={() => setSortBy('alpha')}
-                className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors ${
-                  sortBy === 'alpha' ? 'bg-[var(--bg-surface-elevated)] text-[var(--text-primary)]' : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]'
-                }`}
+                className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors ${sortBy === 'alpha' ? 'bg-[var(--bg-surface-elevated)] text-[var(--text-primary)]' : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]'
+                  }`}
                 title="A-Z"
               >
                 <ArrowDown01 size={14} />
@@ -850,11 +837,10 @@ export const TaskModule: React.FC = () => {
                 setShowCompleted(!showCompleted);
                 if (!showCompleted) setShowArchived(false);
               }}
-              className={`p-2 rounded-xl border transition-all shrink-0 ml-auto ${
-                showCompleted
+              className={`p-2 rounded-xl border transition-all shrink-0 ml-auto ${showCompleted
                   ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 shadow-lg shadow-emerald-500/5'
                   : 'border-[var(--border-subtle)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:border-[var(--border-default)] bg-[var(--bg-surface)]'
-              }`}
+                }`}
               title={showCompleted ? 'Hide Completed' : 'Show Completed'}
             >
               <CheckSquare size={16} />
@@ -865,11 +851,10 @@ export const TaskModule: React.FC = () => {
                 setShowArchived(!showArchived);
                 if (!showArchived) setShowCompleted(false);
               }}
-              className={`p-2 rounded-xl border transition-all shrink-0 ${
-                showArchived
+              className={`p-2 rounded-xl border transition-all shrink-0 ${showArchived
                   ? 'bg-amber-500/10 border-amber-500/20 text-amber-400 shadow-lg shadow-amber-500/5'
                   : 'border-[var(--border-subtle)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:border-[var(--border-default)] bg-[var(--bg-surface)]'
-              }`}
+                }`}
               title={showArchived ? 'Hide Archived' : 'Show Archived'}
             >
               <Archive size={16} />
@@ -915,11 +900,10 @@ export const TaskModule: React.FC = () => {
                   <button
                     key={p}
                     onClick={() => setPriority(p)}
-                    className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${
-                      priority === p
+                    className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${priority === p
                         ? 'bg-[var(--bg-surface-elevated)] text-[var(--text-primary)] shadow-sm'
                         : 'text-[var(--text-tertiary)] hover:text-[var(--text-primary)]'
-                    }`}
+                      }`}
                   >
                     {p}
                   </button>
@@ -1013,9 +997,8 @@ export const TaskModule: React.FC = () => {
                     )}
                   </button>
                   <span
-                    className={`flex-1 text-sm ${
-                      sub.isCompleted ? 'line-through text-[var(--text-tertiary)]' : 'text-[var(--text-secondary)]'
-                    }`}
+                    className={`flex-1 text-sm ${sub.isCompleted ? 'line-through text-[var(--text-tertiary)]' : 'text-[var(--text-secondary)]'
+                      }`}
                   >
                     {sub.title}
                   </span>
@@ -1059,9 +1042,8 @@ export const TaskModule: React.FC = () => {
                         setSelectedColor(c);
                         setShowColorPicker(false);
                       }}
-                      className={`w-6 h-6 rounded-full border border-[var(--border-default)] hover:scale-110 transition-transform ${
-                        selectedColor === c ? 'ring-2 ring-offset-2 ring-violet-500 scale-110' : ''
-                      }`}
+                      className={`w-6 h-6 rounded-full border border-[var(--border-default)] hover:scale-110 transition-transform ${selectedColor === c ? 'ring-2 ring-offset-2 ring-violet-500 scale-110' : ''
+                        }`}
                       style={{ backgroundColor: c }}
                     />
                   ))}
@@ -1077,7 +1059,7 @@ export const TaskModule: React.FC = () => {
                 Cancel
               </Button>
               <Button onClick={handleSave} variant="primary">
-                Save Task
+                Save
               </Button>
             </div>
           </div>
