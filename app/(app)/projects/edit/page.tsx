@@ -15,5 +15,5 @@ const ProjectEditor = dynamic(
 );
 
 export default function EditProjectPage() {
-  return <ProjectEditor mode="edit" />;
+  return <ProjectEditor />;
 }

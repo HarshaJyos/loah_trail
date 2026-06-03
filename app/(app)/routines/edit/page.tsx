@@ -15,5 +15,5 @@ const RoutineEditor = dynamic(
 );
 
 export default function EditRoutinePage() {
-  return <RoutineEditor mode="edit" />;
+  return <RoutineEditor />;
 }

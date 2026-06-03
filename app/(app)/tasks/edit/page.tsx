@@ -15,5 +15,5 @@ const TaskEditor = dynamic(
 );
 
 export default function EditTaskPage() {
-  return <TaskEditor mode="edit" />;
+  return <TaskEditor />;
 }

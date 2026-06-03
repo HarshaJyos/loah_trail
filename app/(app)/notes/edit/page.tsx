@@ -15,5 +15,5 @@ const NoteEditor = dynamic(
 );
 
 export default function EditNotePage() {
-  return <NoteEditor mode="edit" />;
+  return <NoteEditor />;
 }

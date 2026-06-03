@@ -15,5 +15,5 @@ const JournalEditor = dynamic(
 );
 
 export default function EditJournalPage() {
-  return <JournalEditor mode="edit" />;
+  return <JournalEditor />;
 }
