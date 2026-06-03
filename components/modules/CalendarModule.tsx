@@ -373,8 +373,8 @@ export const CalendarModule: React.FC = () => {
           {days.map((day) => {
             const isSameMonth = day.getMonth() === month;
             const isToday = isSameDay(day, now);
-            const dayTasks = tasks.filter(t => t.startTime && isSameDay(new Date(t.startTime), day) && (showCompleted || !t.isCompleted));
-            const dayRoutines = routines.filter(r => r.startTime && isSameDay(new Date(r.startTime), day));
+            const dayTasks = tasks.filter(t => !t.deletedAt && !t.archivedAt && t.startTime && isSameDay(new Date(t.startTime), day) && (showCompleted || !t.isCompleted));
+            const dayRoutines = routines.filter(r => !r.deletedAt && !r.archivedAt && r.startTime && isSameDay(new Date(r.startTime), day));
             const totalScheduled = dayTasks.length + dayRoutines.length;
 
             return (
@@ -489,7 +489,7 @@ export const CalendarModule: React.FC = () => {
                 <DroppableDayCol key={day.toISOString()} dateStr={day.toISOString()} className={`relative border-r border-[var(--border-subtle)] last:border-0 z-10 h-full ${minColWidth}`}>
                   {mode === 'scheduled' && (
                     <>
-                      {tasks.filter(t => t.startTime && isSameDay(new Date(t.startTime!), day) && (showCompleted || !t.isCompleted)).map(task => {
+                      {tasks.filter(t => !t.deletedAt && !t.archivedAt && t.startTime && isSameDay(new Date(t.startTime!), day) && (showCompleted || !t.isCompleted)).map(task => {
                         const date = new Date(task.startTime!);
                         const top = (date.getHours() * 60 + date.getMinutes()) * pxPerMin;
                         const isResizing = resizingTaskId === task.id;
@@ -533,7 +533,7 @@ export const CalendarModule: React.FC = () => {
                         );
                       })}
 
-                      {routines.filter(r => r.startTime && isSameDay(new Date(r.startTime!), day)).map(routine => {
+                      {routines.filter(r => !r.deletedAt && !r.archivedAt && r.startTime && isSameDay(new Date(r.startTime!), day)).map(routine => {
                         const date = new Date(routine.startTime!);
                         const durationMins = Math.ceil(routine.steps.reduce((acc, s) => acc + s.durationSeconds, 0) / 60);
                         const top = (date.getHours() * 60 + date.getMinutes()) * pxPerMin;

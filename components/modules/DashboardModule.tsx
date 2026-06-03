@@ -94,7 +94,7 @@ export const DashboardModule: React.FC = () => {
     }[] = [];
 
     tasks
-      .filter((t) => t.isCompleted && t.completedAt)
+      .filter((t) => !t.deletedAt && !t.archivedAt && t.isCompleted && t.completedAt)
       .forEach((t) =>
         items.push({
           id: t.id,
@@ -155,7 +155,7 @@ export const DashboardModule: React.FC = () => {
       const pe = range === 'Day' ? ps + 3600000 : range === 'Year'
         ? new Date(d.getFullYear(), d.getMonth() + 1, 1).getTime()
         : ps + 86400000;
-      sum += tasks.filter((t) => t.completedAt && t.completedAt >= ps && t.completedAt < pe).length
+      sum += tasks.filter((t) => !t.deletedAt && !t.archivedAt && t.completedAt && t.completedAt >= ps && t.completedAt < pe).length
         + focusSessions.filter((s) => s.startTime >= ps && s.startTime < pe).length;
     }
     return sum;
