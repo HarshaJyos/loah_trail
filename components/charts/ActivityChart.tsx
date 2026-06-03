@@ -10,6 +10,7 @@ interface ActivityChartProps {
   habits?: Habit[];
   range: 'Day' | 'Week' | 'Month' | 'Year';
   rangeStart: number;
+  className?: string;
 }
 
 export const ActivityChart: React.FC<ActivityChartProps> = ({
@@ -18,6 +19,7 @@ export const ActivityChart: React.FC<ActivityChartProps> = ({
   habits = [],
   range,
   rangeStart,
+  className,
 }) => {
   const now = React.useMemo(() => new Date(), []);
 
@@ -118,7 +120,7 @@ export const ActivityChart: React.FC<ActivityChartProps> = ({
   }, [chartData]);
 
   return (
-    <div className="loah-card p-6 md:p-8 flex flex-col min-h-[300px]">
+    <div className={`loah-card p-6 md:p-8 flex flex-col min-h-[300px] ${className || ''}`}>
       <div className="flex justify-between items-center mb-2">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-xl" style={{ background: 'var(--brand-primary-muted)', color: 'var(--brand-primary)' }}>

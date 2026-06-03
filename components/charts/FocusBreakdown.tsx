@@ -10,6 +10,7 @@ interface FocusBreakdownProps {
   journalEntries?: JournalEntry[];
   habits?: Habit[];
   rangeStart: number;
+  className?: string;
 }
 
 export const FocusBreakdown: React.FC<FocusBreakdownProps> = ({
@@ -18,6 +19,7 @@ export const FocusBreakdown: React.FC<FocusBreakdownProps> = ({
   journalEntries = [],
   habits = [],
   rangeStart,
+  className,
 }) => {
   const breakdownData = React.useMemo(() => {
     const counts: Record<string, { val: number; color: string }> = {
@@ -75,7 +77,7 @@ export const FocusBreakdown: React.FC<FocusBreakdownProps> = ({
   }, [focusSessions, tasks, journalEntries, habits, rangeStart]);
 
   return (
-    <div className="loah-card p-6 md:p-8 flex flex-col min-h-[300px]">
+    <div className={`loah-card p-6 md:p-8 flex flex-col min-h-[300px] ${className || ''}`}>
       <div className="flex items-center gap-3 mb-6">
         <div className="p-2 rounded-xl" style={{ background: 'var(--bg-surface-elevated)', color: 'var(--brand-primary)' }}>
           <PieChart size={20} />

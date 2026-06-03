@@ -8,6 +8,7 @@ interface MoodChartProps {
   journalEntries: JournalEntry[];
   range: 'Day' | 'Week' | 'Month' | 'Year';
   rangeStart: number;
+  className?: string;
 }
 
 const MOOD_VALUES: Record<Mood, number> = {
@@ -30,6 +31,7 @@ export const MoodChart: React.FC<MoodChartProps> = ({
   journalEntries,
   range,
   rangeStart,
+  className,
 }) => {
   const now = React.useMemo(() => new Date(), []);
 
@@ -102,7 +104,7 @@ export const MoodChart: React.FC<MoodChartProps> = ({
   }, [range, journalEntries, rangeStart, now]);
 
   return (
-    <div className="loah-card p-6 md:p-8 flex flex-col min-h-[300px]">
+    <div className={`loah-card p-6 md:p-8 flex flex-col min-h-[300px] ${className || ''}`}>
       <div className="flex justify-between items-center mb-2">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-orange-500/10 rounded-xl text-orange-400">
