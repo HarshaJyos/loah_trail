@@ -31,7 +31,7 @@ import { useRouter } from 'next/navigation';
 const MOODS: { id: Mood; icon: any; color: string; val: number }[] = [
   { id: 'awesome', icon: Laugh, color: 'text-emerald-500 border-emerald-500/20 bg-emerald-500/10', val: 5 },
   { id: 'good', icon: Smile, color: 'text-blue-500 border-blue-500/20 bg-blue-500/10', val: 4 },
-  { id: 'neutral', icon: Meh, color: 'text-zinc-400 border-zinc-400/20 bg-zinc-400/10', val: 3 },
+  { id: 'neutral', icon: Meh, color: 'text-slate-500 border-zinc-400/20 bg-zinc-400/10', val: 3 },
   { id: 'bad', icon: Frown, color: 'text-amber-500 border-amber-500/20 bg-amber-500/10', val: 2 },
   { id: 'awful', icon: Annoyed, color: 'text-rose-500 border-rose-500/20 bg-rose-500/10', val: 1 },
 ];
@@ -170,9 +170,9 @@ export const JournalModule: React.FC = () => {
   return (
     <div className="w-full h-full p-4 md:p-8 overflow-y-auto no-scrollbar pb-32 max-w-7xl mx-auto flex flex-col space-y-8 animate-fade-in">
       {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/5 pb-4 gap-4 shrink-0">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-200/60 pb-4 gap-4 shrink-0">
         <div>
-          <h2 className="text-3xl font-black text-white tracking-tight flex items-center gap-3">
+          <h2 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
             Journal Feed
           </h2>
           {showArchived && (
@@ -186,13 +186,13 @@ export const JournalModule: React.FC = () => {
           <div className="relative flex-1 md:w-64">
             <Search
               size={16}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
             />
             <input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search journals..."
-              className="w-full bg-[#12121a] border border-white/5 pl-9 pr-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-violet-500/50 text-white transition-all font-semibold"
+              className="w-full bg-white border border-slate-200/60 pl-9 pr-4 py-2.5 rounded-xl text-xs focus:outline-none focus:border-violet-500/50 text-slate-900 transition-all font-semibold"
             />
           </div>
           <button
@@ -200,7 +200,7 @@ export const JournalModule: React.FC = () => {
             className={`p-2.5 rounded-xl border transition-all ${
               showArchived
                 ? 'bg-amber-500/15 border-amber-500/20 text-amber-400'
-                : 'border-white/5 text-zinc-500 hover:text-white hover:bg-white/5'
+                : 'border-slate-200/60 text-slate-400 hover:text-slate-900 hover:bg-slate-100/50'
             }`}
             title={showArchived ? 'View Active' : 'View Archive'}
           >
@@ -223,8 +223,8 @@ export const JournalModule: React.FC = () => {
           onClick={() => setActiveFilter('all')}
           className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-colors border ${
             activeFilter === 'all'
-              ? 'bg-white/5 border-white/10 text-white shadow-md'
-              : 'border-transparent text-zinc-500 hover:text-white hover:bg-white/5'
+              ? 'bg-slate-100/50 border-slate-200 text-slate-900 shadow-md'
+              : 'border-transparent text-slate-400 hover:text-slate-900 hover:bg-slate-100/50'
           }`}
         >
           All Moods
@@ -237,13 +237,13 @@ export const JournalModule: React.FC = () => {
               onClick={() => setActiveFilter(m.id)}
               className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all border ${
                 isSelected
-                  ? 'bg-white/5 border-white/10 text-white shadow-md'
-                  : 'border-white/5 bg-[#12121a] text-zinc-500 hover:text-white'
+                  ? 'bg-slate-100/50 border-slate-200 text-slate-900 shadow-md'
+                  : 'border-slate-200/60 bg-white text-slate-400 hover:text-slate-900'
               }`}
             >
               <m.icon
                 size={14}
-                className={isSelected ? 'text-white' : m.color.split(' ')[0]}
+                className={isSelected ? 'text-slate-900' : m.color.split(' ')[0]}
               />
               <span className="capitalize">{m.id}</span>
             </button>
@@ -257,10 +257,10 @@ export const JournalModule: React.FC = () => {
           groupedEntries.map((group) => (
             <div key={group.date} className="space-y-4">
               <div className="flex items-center gap-4">
-                <span className="bg-white/5 border border-white/5 text-violet-400 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest font-mono">
+                <span className="bg-slate-100/50 border border-slate-200/60 text-violet-400 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest font-mono">
                   {group.date}
                 </span>
-                <div className="h-px bg-white/5 flex-1" />
+                <div className="h-px bg-slate-100/50 flex-1" />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -276,21 +276,21 @@ export const JournalModule: React.FC = () => {
                     <div key={entry.id} className="group relative h-[320px]">
                       <div
                         onClick={() => setViewingEntryId(entry.id)}
-                        className="h-full flex flex-col rounded-2xl border border-white/5 hover:border-violet-500/30 bg-[#12121a] hover:shadow-2xl cursor-pointer transition-all duration-300 overflow-hidden relative"
+                        className="h-full flex flex-col rounded-2xl border border-slate-200/60 hover:border-violet-500/30 bg-white hover:shadow-2xl cursor-pointer transition-all duration-300 overflow-hidden relative"
                         style={{
                           boxShadow: bgColor !== 'transparent' ? `0 0 25px -5px ${bgColor}` : undefined,
                           borderColor: bgColor !== 'transparent' ? bgColor : undefined,
                         }}
                       >
                         {coverImage && (
-                          <div className="w-full h-36 overflow-hidden relative border-b border-white/5 shrink-0">
+                          <div className="w-full h-36 overflow-hidden relative border-b border-slate-200/60 shrink-0">
                             <img
                               src={coverImage}
                               alt="Cover"
                               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                             />
                             {displayImages.length > 1 && (
-                              <div className="absolute bottom-2 right-2 bg-black/70 text-white text-[9px] px-2 py-0.5 rounded-full font-mono font-bold">
+                              <div className="absolute bottom-2 right-2 bg-black/70 text-slate-900 text-[9px] px-2 py-0.5 rounded-full font-mono font-bold">
                                 +{displayImages.length - 1} photos
                               </div>
                             )}
@@ -300,7 +300,7 @@ export const JournalModule: React.FC = () => {
                         <div className="p-5 flex-1 flex flex-col justify-between min-w-0">
                           <div>
                             <div className="flex justify-between items-center mb-3">
-                              <span className="text-[10px] text-zinc-500 font-bold font-mono">
+                              <span className="text-[10px] text-slate-400 font-bold font-mono">
                                 {new Date(entry.createdAt).toLocaleTimeString([], {
                                   hour: 'numeric',
                                   minute: '2-digit',
@@ -311,10 +311,10 @@ export const JournalModule: React.FC = () => {
                               </div>
                             </div>
 
-                            <h4 className="text-base font-extrabold text-white leading-snug mb-2 truncate group-hover:text-violet-300 transition-colors">
+                            <h4 className="text-base font-extrabold text-slate-900 leading-snug mb-2 truncate group-hover:text-violet-300 transition-colors">
                               {entry.title}
                             </h4>
-                            <p className="text-xs text-zinc-400 line-clamp-3 leading-relaxed whitespace-pre-wrap">
+                            <p className="text-xs text-slate-500 line-clamp-3 leading-relaxed whitespace-pre-wrap">
                               {entry.content}
                             </p>
                           </div>
@@ -328,7 +328,7 @@ export const JournalModule: React.FC = () => {
                             ? onUnarchiveEntry(entry.id)
                             : onArchiveEntry(entry.id);
                         }}
-                        className="absolute top-2 right-2 p-2 rounded-lg bg-black/60 hover:bg-black/80 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity text-zinc-400 hover:text-white"
+                        className="absolute top-2 right-2 p-2 rounded-lg bg-black/60 hover:bg-black/80 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity text-slate-500 hover:text-slate-900"
                         title={showArchived ? 'Restore' : 'Archive'}
                       >
                         {showArchived ? <RefreshCcw size={14} /> : <Archive size={14} />}
@@ -340,7 +340,7 @@ export const JournalModule: React.FC = () => {
             </div>
           ))
         ) : (
-          <div className="text-center py-20 border border-dashed border-white/10 rounded-3xl bg-[#12121a]/10 text-zinc-500">
+          <div className="text-center py-20 border border-dashed border-slate-200 rounded-3xl bg-slate-100 text-slate-400">
             <p className="text-sm">
               {showArchived ? 'No archived logs.' : 'Your journal feed is empty.'}
             </p>
@@ -423,12 +423,12 @@ const JournalDetailView: React.FC<{
   const MoodIcon = moodConfig?.icon || Smile;
 
   return (
-    <div className="w-full bg-[#0a0a0f] min-h-full pb-32 animate-fade-in">
+    <div className="w-full bg-[#F5F7FA] min-h-full pb-32 animate-fade-in">
       {/* Sticky Header */}
-      <div className="sticky top-0 bg-[#0a0a0f]/90 backdrop-blur-md z-30 px-6 py-4 flex justify-between items-center border-b border-white/5">
+      <div className="sticky top-0 bg-[#F5F7FA]/90 backdrop-blur-md z-30 px-6 py-4 flex justify-between items-center border-b border-slate-200/60">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 px-3 py-2 hover:bg-white/5 rounded-xl transition-all text-zinc-400 hover:text-white font-bold uppercase tracking-wider text-xs"
+          className="flex items-center gap-2 px-3 py-2 hover:bg-slate-100/50 rounded-xl transition-all text-slate-500 hover:text-slate-900 font-bold uppercase tracking-wider text-xs"
         >
           <ArrowLeft size={16} /> Back
         </button>
@@ -438,7 +438,7 @@ const JournalDetailView: React.FC<{
             <>
               <button
                 onClick={() => setIsEditing(false)}
-                className="px-4 py-2 text-xs font-bold text-zinc-500 hover:text-white uppercase tracking-wider"
+                className="px-4 py-2 text-xs font-bold text-slate-400 hover:text-slate-900 uppercase tracking-wider"
               >
                 Cancel
               </button>
@@ -454,7 +454,7 @@ const JournalDetailView: React.FC<{
                     onArchive(entry.id);
                     onBack();
                   }}
-                  className="p-2.5 bg-white/5 border border-white/5 hover:border-white/10 text-zinc-400 hover:text-white rounded-xl transition-all"
+                  className="p-2.5 bg-slate-100/50 border border-slate-200/60 hover:border-slate-200 text-slate-500 hover:text-slate-900 rounded-xl transition-all"
                   title="Archive"
                 >
                   <Archive size={16} />
@@ -466,7 +466,7 @@ const JournalDetailView: React.FC<{
                     onUnarchive(entry.id);
                     onBack();
                   }}
-                  className="p-2.5 bg-white/5 border border-white/5 hover:border-white/10 text-zinc-400 hover:text-white rounded-xl transition-all"
+                  className="p-2.5 bg-slate-100/50 border border-slate-200/60 hover:border-slate-200 text-slate-500 hover:text-slate-900 rounded-xl transition-all"
                   title="Unarchive"
                 >
                   <RefreshCcw size={16} />
@@ -474,14 +474,14 @@ const JournalDetailView: React.FC<{
               )}
               <button
                 onClick={() => onDelete(entry.id)}
-                className="p-2.5 bg-white/5 border border-white/5 hover:bg-rose-500/10 hover:text-rose-400 text-zinc-500 rounded-xl transition-all"
+                className="p-2.5 bg-slate-100/50 border border-slate-200/60 hover:bg-rose-500/10 hover:text-rose-400 text-slate-400 rounded-xl transition-all"
                 title="Delete Entry"
               >
                 <Trash2 size={16} />
               </button>
               <button
                 onClick={() => router.push(`/journal/edit?id=${entry.id}` as any)}
-                className="bg-white/5 hover:bg-white/10 border border-white/5 text-white px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-1.5"
+                className="bg-slate-100/50 hover:bg-slate-100 border border-slate-200/60 text-slate-900 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-1.5"
               >
                 <Edit2 size={14} /> Edit
               </button>
@@ -496,17 +496,17 @@ const JournalDetailView: React.FC<{
             <input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full text-3xl font-black text-white bg-transparent border-none p-0 focus:ring-0 focus:outline-none placeholder-zinc-700"
+              className="w-full text-3xl font-black text-slate-900 bg-transparent border-none p-0 focus:ring-0 focus:outline-none placeholder-zinc-700"
               placeholder="Reflection Title..."
             />
           ) : (
-            <h1 className="text-3xl md:text-4xl font-black text-white leading-tight">
+            <h1 className="text-3xl md:text-4xl font-black text-slate-900 leading-tight">
               {title}
             </h1>
           )}
 
-          <div className="text-xs font-mono font-bold text-zinc-500 uppercase tracking-wider flex items-center gap-3 flex-wrap pt-1">
-            <span className="flex items-center gap-1.5 bg-white/5 px-3 py-1 rounded-full border border-white/5 text-zinc-300">
+          <div className="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider flex items-center gap-3 flex-wrap pt-1">
+            <span className="flex items-center gap-1.5 bg-slate-100/50 px-3 py-1 rounded-full border border-slate-200/60 text-slate-700">
               <Calendar size={14} className="text-violet-400" />
               {new Date(entry.createdAt).toLocaleString(undefined, {
                 weekday: 'short',
@@ -522,7 +522,7 @@ const JournalDetailView: React.FC<{
               })}
             </span>
             {!isEditing && (
-              <span className="flex items-center gap-1.5 bg-white/5 px-3 py-1 rounded-full border border-white/5 text-zinc-300">
+              <span className="flex items-center gap-1.5 bg-slate-100/50 px-3 py-1 rounded-full border border-slate-200/60 text-slate-700">
                 <MoodIcon size={14} className={moodConfig?.color.split(' ')[0]} />
                 <span className="capitalize">{entry.mood}</span>
               </span>
@@ -538,8 +538,8 @@ const JournalDetailView: React.FC<{
                 onClick={() => setMood(m.id)}
                 className={`p-2.5 rounded-xl transition-all border ${
                   mood === m.id
-                    ? 'bg-violet-600 border-violet-500 text-white scale-110 shadow-lg'
-                    : 'border-white/5 bg-white/5 text-zinc-500 hover:text-white'
+                    ? 'bg-violet-600 border-violet-500 text-slate-900 scale-110 shadow-lg'
+                    : 'border-slate-200/60 bg-slate-100/50 text-slate-400 hover:text-slate-900'
                 }`}
               >
                 <m.icon size={18} />
@@ -552,7 +552,7 @@ const JournalDetailView: React.FC<{
           <div className="space-y-4">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {images.map((img, idx) => (
-                <div key={idx} className="relative group aspect-square rounded-xl overflow-hidden border border-white/5">
+                <div key={idx} className="relative group aspect-square rounded-xl overflow-hidden border border-slate-200/60">
                   <img
                     src={img}
                     alt={`Attached ${idx}`}
@@ -568,7 +568,7 @@ const JournalDetailView: React.FC<{
               ))}
               <button
                 onClick={() => fileRef.current?.click()}
-                className="aspect-square bg-white/[0.02] border border-dashed border-white/10 rounded-xl flex flex-col items-center justify-center text-zinc-500 hover:text-white hover:border-violet-500/30 transition-colors"
+                className="aspect-square bg-white/[0.02] border border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center text-slate-400 hover:text-slate-900 hover:border-violet-500/30 transition-colors"
               >
                 <Plus size={24} />
                 <span className="text-[10px] font-bold uppercase tracking-wider font-mono mt-2">Add Image</span>
@@ -586,7 +586,7 @@ const JournalDetailView: React.FC<{
         )}
 
         {!isEditing && images.length > 0 && (
-          <div className="relative group rounded-2xl overflow-hidden bg-black/30 border border-white/5">
+          <div className="relative group rounded-2xl overflow-hidden bg-black/30 border border-slate-200/60">
             <div
               ref={scrollRef}
               onScroll={handleScroll}
@@ -626,11 +626,11 @@ const JournalDetailView: React.FC<{
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            className="w-full min-h-[40vh] resize-none bg-transparent text-sm leading-relaxed text-zinc-300 focus:outline-none no-scrollbar p-2"
+            className="w-full min-h-[40vh] resize-none bg-transparent text-sm leading-relaxed text-slate-700 focus:outline-none no-scrollbar p-2"
             placeholder="Type your notes here..."
           />
         ) : (
-          <div className="text-sm leading-relaxed text-zinc-300 whitespace-pre-wrap max-w-none prose prose-invert font-medium">
+          <div className="text-sm leading-relaxed text-slate-700 whitespace-pre-wrap max-w-none prose prose-invert font-medium">
             {content}
           </div>
         )}

@@ -237,37 +237,37 @@ export const RoutinePlayer: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 bg-[#0a0a0f] text-white z-[100] flex flex-col font-sans h-full w-full overflow-hidden">
+    <div className="fixed inset-0 bg-[#F5F7FA] text-slate-900 z-[100] flex flex-col font-sans h-full w-full overflow-hidden">
       {/* Top Bar */}
-      <div className="h-16 border-b border-white/5 flex items-center justify-between px-4 md:px-6 shrink-0 bg-[#12121a] z-20">
+      <div className="h-16 border-b border-slate-200/60 flex items-center justify-between px-4 md:px-6 shrink-0 bg-white z-20">
         <div className="flex items-center gap-3">
           <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]" />
-          <span className="text-xs font-bold tracking-widest uppercase text-zinc-400 hidden md:block">
+          <span className="text-xs font-bold tracking-widest uppercase text-slate-500 hidden md:block">
             Focus Session
           </span>
-          <span className="text-sm font-bold tracking-tight text-white md:hidden truncate max-w-[120px]">
+          <span className="text-sm font-bold tracking-tight text-slate-900 md:hidden truncate max-w-[120px]">
             {currentStep.title}
           </span>
         </div>
         <div className="flex gap-2">
           <button
             onClick={handleMinimizeInternal}
-            className="flex items-center gap-2 text-zinc-400 hover:text-white px-3 py-1.5 hover:bg-white/5 rounded-xl transition-all text-xs font-bold uppercase tracking-wider"
+            className="flex items-center gap-2 text-slate-500 hover:text-slate-900 px-3 py-1.5 hover:bg-slate-100/50 rounded-xl transition-all text-xs font-bold uppercase tracking-wider"
             title="Minimize"
           >
             <Minimize2 size={16} /> <span className="hidden md:inline">Minimize</span>
           </button>
-          <div className="w-px h-6 bg-white/5 mx-1 self-center hidden md:block" />
+          <div className="w-px h-6 bg-slate-100/50 mx-1 self-center hidden md:block" />
           <button
             onClick={savePausedRoutine}
-            className="flex items-center gap-2 text-zinc-400 hover:text-amber-400 px-3 py-1.5 hover:bg-white/5 rounded-xl transition-all text-xs font-bold uppercase tracking-wider"
+            className="flex items-center gap-2 text-slate-500 hover:text-amber-400 px-3 py-1.5 hover:bg-slate-100/50 rounded-xl transition-all text-xs font-bold uppercase tracking-wider"
             title="Save & Quit"
           >
             <PauseCircle size={16} /> <span className="hidden md:inline">Save & Quit</span>
           </button>
           <button
             onClick={exitPlayer}
-            className="flex items-center gap-2 text-zinc-400 hover:text-rose-400 px-3 py-1.5 hover:bg-white/5 rounded-xl transition-all text-xs font-bold uppercase tracking-wider"
+            className="flex items-center gap-2 text-slate-500 hover:text-rose-400 px-3 py-1.5 hover:bg-slate-100/50 rounded-xl transition-all text-xs font-bold uppercase tracking-wider"
             title="Cancel"
           >
             <X size={16} /> <span className="hidden md:inline">Cancel</span>
@@ -277,22 +277,22 @@ export const RoutinePlayer: React.FC = () => {
 
       <div className="flex-1 flex overflow-hidden relative">
         {/* LEFT PANEL: Library & Trash */}
-        <div className="hidden lg:flex flex-col w-72 border-r border-white/5 bg-[#12121a]/50">
-          <div className="p-4 border-b border-white/5">
-            <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-4 font-mono">
+        <div className="hidden lg:flex flex-col w-72 border-r border-slate-200/60 bg-slate-100/500">
+          <div className="p-4 border-b border-slate-200/60">
+            <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 font-mono">
               Trash Bin / Removal Zone
             </h3>
             <div
               className={`border border-dashed rounded-2xl p-4 text-center transition-all ${
                 isRemoveZoneActive
                   ? 'border-red-500 bg-red-500/10 text-red-400 shadow-[0_0_15px_rgba(239,68,68,0.1)]'
-                  : 'border-white/10 text-zinc-600 hover:border-white/20'
+                  : 'border-slate-200 text-slate-500 hover:border-slate-300'
               }`}
               onDragOver={handleRemoveZoneDragOver}
               onDragLeave={handleRemoveZoneDragLeave}
               onDrop={handleRemoveDrop}
             >
-              <Trash2 size={24} className="mx-auto mb-2 text-zinc-500" />
+              <Trash2 size={24} className="mx-auto mb-2 text-slate-400" />
               <span className="text-[9px] font-bold uppercase tracking-wider block">
                 Drag steps here to remove
               </span>
@@ -301,7 +301,7 @@ export const RoutinePlayer: React.FC = () => {
 
           <div className="flex-1 overflow-y-auto p-4 space-y-6 no-scrollbar">
             <div>
-              <h4 className="text-[10px] font-bold text-zinc-500 uppercase mb-3 font-mono tracking-wider">
+              <h4 className="text-[10px] font-bold text-slate-400 uppercase mb-3 font-mono tracking-wider">
                 Unscheduled Tasks
               </h4>
               <div className="space-y-2">
@@ -314,16 +314,16 @@ export const RoutinePlayer: React.FC = () => {
                       onDragStart={(e) =>
                         handleDragStart(e, -1, 'library', task.id, 'task')
                       }
-                      className="bg-[#12121a] border border-white/5 p-3 rounded-xl text-xs text-zinc-300 hover:bg-[#1a1a26] hover:border-violet-500/20 cursor-grab active:cursor-grabbing transition-all flex flex-col gap-1"
+                      className="bg-white border border-slate-200/60 p-3 rounded-xl text-xs text-slate-700 hover:bg-slate-50 hover:border-violet-500/20 cursor-grab active:cursor-grabbing transition-all flex flex-col gap-1"
                     >
-                      <div className="truncate font-bold text-white">{task.title}</div>
-                      <div className="text-[10px] text-zinc-500 flex items-center gap-1 font-mono">
+                      <div className="truncate font-bold text-slate-900">{task.title}</div>
+                      <div className="text-[10px] text-slate-400 flex items-center gap-1 font-mono">
                         <Clock size={12} /> {task.duration || 30}m
                       </div>
                     </div>
                   ))}
                 {tasks.filter((t) => !t.isCompleted && !t.deletedAt).length === 0 && (
-                  <div className="text-center py-6 text-zinc-600 text-xs italic">
+                  <div className="text-center py-6 text-slate-500 text-xs italic">
                     No active tasks
                   </div>
                 )}
@@ -331,7 +331,7 @@ export const RoutinePlayer: React.FC = () => {
             </div>
 
             <div>
-              <h4 className="text-[10px] font-bold text-zinc-500 uppercase mb-3 font-mono tracking-wider">
+              <h4 className="text-[10px] font-bold text-slate-400 uppercase mb-3 font-mono tracking-wider">
                 Habits Library
               </h4>
               <div className="space-y-2">
@@ -344,13 +344,13 @@ export const RoutinePlayer: React.FC = () => {
                       onDragStart={(e) =>
                         handleDragStart(e, -1, 'library', habit.id, 'habit')
                       }
-                      className="bg-[#12121a] border border-white/5 p-3 rounded-xl text-xs text-zinc-300 hover:bg-[#1a1a26] hover:border-violet-500/20 cursor-grab active:cursor-grabbing transition-all flex items-center gap-2.5"
+                      className="bg-white border border-slate-200/60 p-3 rounded-xl text-xs text-slate-700 hover:bg-slate-50 hover:border-violet-500/20 cursor-grab active:cursor-grabbing transition-all flex items-center gap-2.5"
                     >
                       <div
                         className="w-2 h-2 rounded-full shrink-0"
                         style={{ backgroundColor: habit.color }}
                       />
-                      <div className="truncate font-bold text-white flex-1">{habit.title}</div>
+                      <div className="truncate font-bold text-slate-900 flex-1">{habit.title}</div>
                     </div>
                   ))}
               </div>
@@ -359,11 +359,11 @@ export const RoutinePlayer: React.FC = () => {
         </div>
 
         {/* CENTER PANEL: Focus Area */}
-        <div className="flex-1 flex flex-col relative bg-[#0a0a0f] overflow-y-auto no-scrollbar">
+        <div className="flex-1 flex flex-col relative bg-[#F5F7FA] overflow-y-auto no-scrollbar">
           <div className="lg:hidden absolute top-4 right-4 z-20">
             <button
               onClick={() => setIsMobileSequenceOpen(true)}
-              className="flex items-center gap-2 bg-[#12121a] border border-white/15 px-4 py-2 rounded-full text-xs font-bold text-zinc-300 shadow-lg active:scale-95 transition-all"
+              className="flex items-center gap-2 bg-white border border-slate-200 px-4 py-2 rounded-full text-xs font-bold text-slate-700 shadow-lg active:scale-95 transition-all"
             >
               <List size={14} /> Up Next
             </button>
@@ -374,7 +374,7 @@ export const RoutinePlayer: React.FC = () => {
               <h3 className="text-[10px] font-bold text-violet-400 uppercase tracking-widest mb-3 font-mono">
                 {activeRoutine.title}
               </h3>
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight line-clamp-2">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-tight line-clamp-2">
                 {currentStep.title}
               </h1>
             </div>
@@ -408,7 +408,7 @@ export const RoutinePlayer: React.FC = () => {
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                 <span
                   className={`text-6xl md:text-7xl lg:text-8xl font-mono font-bold tracking-tighter tabular-nums ${
-                    isOvertime ? 'text-rose-500 animate-pulse' : 'text-white'
+                    isOvertime ? 'text-rose-500 animate-pulse' : 'text-slate-900'
                   }`}
                 >
                   {formatTime(timeLeft)}
@@ -425,7 +425,7 @@ export const RoutinePlayer: React.FC = () => {
             <div className="flex items-center gap-6 mb-8 shrink-0">
               <button
                 onClick={handlePlayClick}
-                className="w-14 h-14 rounded-full border border-white/10 flex items-center justify-center text-white bg-white/5 hover:bg-white/10 transition-all hover:scale-105 active:scale-95 shadow-lg"
+                className="w-14 h-14 rounded-full border border-slate-200 flex items-center justify-center text-slate-900 bg-slate-100/50 hover:bg-slate-100 transition-all hover:scale-105 active:scale-95 shadow-lg"
               >
                 {isPlaying ? (
                   <Pause size={22} fill="currentColor" />
@@ -436,7 +436,7 @@ export const RoutinePlayer: React.FC = () => {
 
               <button
                 onClick={handleStepCompleteInternal}
-                className="h-16 px-12 bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 text-white rounded-full font-bold text-lg flex items-center gap-2.5 transition-all hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(124,58,237,0.3)] border border-white/10"
+                className="h-16 px-12 bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 text-slate-900 rounded-full font-bold text-lg flex items-center gap-2.5 transition-all hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(124,58,237,0.3)] border border-slate-200"
               >
                 <Check size={24} strokeWidth={3} />
                 Done
@@ -445,14 +445,14 @@ export const RoutinePlayer: React.FC = () => {
               <div className="flex flex-col gap-2">
                 <button
                   onClick={() => handleTimeAdjustment(-60)}
-                  className="w-10 h-10 rounded-full bg-white/5 text-zinc-400 hover:text-white border border-white/5 flex items-center justify-center hover:bg-white/10 transition-colors"
+                  className="w-10 h-10 rounded-full bg-slate-100/50 text-slate-500 hover:text-slate-900 border border-slate-200/60 flex items-center justify-center hover:bg-slate-100 transition-colors"
                   title="Add 1 Minute"
                 >
                   <Plus size={16} />
                 </button>
                 <button
                   onClick={() => handleTimeAdjustment(60)}
-                  className="w-10 h-10 rounded-full bg-white/5 text-zinc-400 hover:text-white border border-white/5 flex items-center justify-center hover:bg-white/10 transition-colors"
+                  className="w-10 h-10 rounded-full bg-slate-100/50 text-slate-500 hover:text-slate-900 border border-slate-200/60 flex items-center justify-center hover:bg-slate-100 transition-colors"
                   title="Subtract 1 Minute"
                 >
                   <Minus size={16} />
@@ -460,11 +460,11 @@ export const RoutinePlayer: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex flex-col items-center gap-1 text-zinc-500 shrink-0 font-mono">
+            <div className="flex flex-col items-center gap-1 text-slate-400 shrink-0 font-mono">
               <span className="text-[9px] font-bold uppercase tracking-widest opacity-60">
                 Estimated Completion
               </span>
-              <span className="text-lg font-bold text-zinc-300">
+              <span className="text-lg font-bold text-slate-700">
                 {estimatedCompletionTime}
               </span>
             </div>
@@ -472,11 +472,11 @@ export const RoutinePlayer: React.FC = () => {
         </div>
 
         {/* RIGHT PANEL: Sequence */}
-        <div className="hidden lg:flex flex-col w-80 border-l border-white/5 bg-[#12121a]/30">
-          <div className="p-4 border-b border-white/5 bg-[#12121a]/50">
+        <div className="hidden lg:flex flex-col w-80 border-l border-slate-200/60 bg-white/30">
+          <div className="p-4 border-b border-slate-200/60 bg-slate-100/500">
             <div className="flex items-center gap-2 justify-center py-1">
-              <Layers size={14} className="text-zinc-400" />
-              <h3 className="text-xs font-bold text-zinc-300 uppercase tracking-widest font-mono">
+              <Layers size={14} className="text-slate-500" />
+              <h3 className="text-xs font-bold text-slate-700 uppercase tracking-widest font-mono">
                 Sequence list
               </h3>
             </div>
@@ -495,19 +495,19 @@ export const RoutinePlayer: React.FC = () => {
                 return (
                   <div key={step.id} className="relative">
                     <div className="absolute -left-4 top-1/2 -translate-y-1/2 w-1.5 h-12 bg-violet-500 rounded-r-full shadow-[0_0_8px_#8b5cf6]" />
-                    <div className="bg-[#1a1a26] border border-violet-500/30 p-4 rounded-2xl shadow-lg relative overflow-hidden group">
+                    <div className="bg-slate-50 border border-violet-500/30 p-4 rounded-2xl shadow-lg relative overflow-hidden group">
                       <div className="flex justify-between items-start mb-2">
-                        <span className="bg-violet-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-wider font-mono">
+                        <span className="bg-violet-500 text-slate-900 text-[9px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-wider font-mono">
                           Now Running
                         </span>
                         <div className="text-violet-400 animate-pulse">
                           <Clock size={14} />
                         </div>
                       </div>
-                      <h4 className="font-bold text-white text-base leading-tight mb-1">
+                      <h4 className="font-bold text-slate-900 text-base leading-tight mb-1">
                         {step.title}
                       </h4>
-                      <div className="text-[10px] font-mono text-zinc-400">
+                      <div className="text-[10px] font-mono text-slate-500">
                         {Math.round(step.durationSeconds / 60)} min
                       </div>
                     </div>
@@ -525,8 +525,8 @@ export const RoutinePlayer: React.FC = () => {
                   className={`p-4 rounded-2xl border transition-all flex items-center gap-3 group relative
                     ${
                       isPast
-                        ? 'bg-transparent border-white/5 text-zinc-600'
-                        : 'bg-[#12121a] border-white/5 text-zinc-400 hover:border-violet-500/25 hover:bg-[#1a1a26]'
+                        ? 'bg-transparent border-slate-200/60 text-slate-500'
+                        : 'bg-white border-slate-200/60 text-slate-500 hover:border-violet-500/25 hover:bg-slate-50'
                     }
                     ${
                       dragOverIndex === idx ? 'border-t-2 border-t-violet-500 mt-2' : ''
@@ -534,14 +534,14 @@ export const RoutinePlayer: React.FC = () => {
                   `}
                 >
                   {!isPast && (
-                    <div className="text-zinc-600 group-hover:text-zinc-400 cursor-grab active:cursor-grabbing shrink-0">
+                    <div className="text-slate-500 group-hover:text-slate-500 cursor-grab active:cursor-grabbing shrink-0">
                       <GripVertical size={16} />
                     </div>
                   )}
                   <div className="flex-1 min-w-0">
                     <div
                       className={`font-bold truncate text-sm ${
-                        isPast ? 'line-through decoration-zinc-700' : 'text-zinc-300'
+                        isPast ? 'line-through decoration-zinc-700' : 'text-slate-700'
                       }`}
                     >
                       {step.title}
@@ -550,12 +550,12 @@ export const RoutinePlayer: React.FC = () => {
                       {Math.round(step.durationSeconds / 60)} min
                     </div>
                   </div>
-                  {isPast && <CheckCircle2 size={18} className="text-zinc-700 shrink-0" />}
+                  {isPast && <CheckCircle2 size={18} className="text-slate-600 shrink-0" />}
                 </div>
               );
             })}
 
-            <div className="border-2 border-dashed border-white/5 rounded-2xl p-4 text-center text-[10px] font-bold text-zinc-600 uppercase tracking-widest mt-4 font-mono">
+            <div className="border-2 border-dashed border-slate-200/60 rounded-2xl p-4 text-center text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-4 font-mono">
               <PlusCircle className="mx-auto mb-2 opacity-30" size={20} />
               Drag here to append
             </div>
@@ -565,16 +565,16 @@ export const RoutinePlayer: React.FC = () => {
 
       {/* Mobile Bottom Sheet */}
       <div
-        className={`lg:hidden fixed inset-x-0 bottom-0 bg-[#12121a] border-t border-white/5 rounded-t-3xl transition-transform duration-300 z-50 flex flex-col max-h-[80vh] ${
+        className={`lg:hidden fixed inset-x-0 bottom-0 bg-white border-t border-slate-200/60 rounded-t-3xl transition-transform duration-300 z-50 flex flex-col max-h-[80vh] ${
           isMobileSequenceOpen ? 'translate-y-0 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]' : 'translate-y-full'
         }`}
       >
         <div
-          className="p-4 border-b border-white/5 flex justify-between items-center cursor-pointer"
+          className="p-4 border-b border-slate-200/60 flex justify-between items-center cursor-pointer"
           onClick={() => setIsMobileSequenceOpen(false)}
         >
-          <h3 className="font-bold text-white ml-2">Up Next</h3>
-          <button className="p-2 bg-white/5 hover:bg-white/10 rounded-full text-zinc-400">
+          <h3 className="font-bold text-slate-900 ml-2">Up Next</h3>
+          <button className="p-2 bg-slate-100/50 hover:bg-slate-100 rounded-full text-slate-500">
             <ChevronDown size={20} />
           </button>
         </div>
@@ -584,17 +584,17 @@ export const RoutinePlayer: React.FC = () => {
             return (
               <div
                 key={step.id}
-                className="bg-[#1a1a26] p-4 rounded-2xl border border-white/5 flex justify-between items-center"
+                className="bg-slate-50 p-4 rounded-2xl border border-slate-200/60 flex justify-between items-center"
               >
-                <div className="font-bold text-zinc-200 text-sm">{step.title}</div>
-                <div className="text-xs font-mono text-zinc-500">
+                <div className="font-bold text-slate-800 text-sm">{step.title}</div>
+                <div className="text-xs font-mono text-slate-400">
                   {Math.round(step.durationSeconds / 60)}m
                 </div>
               </div>
             );
           })}
           {steps.length <= currentStepIndex + 1 && (
-            <div className="text-center text-zinc-500 py-8 italic text-xs">
+            <div className="text-center text-slate-400 py-8 italic text-xs">
               No more steps in sequence
             </div>
           )}

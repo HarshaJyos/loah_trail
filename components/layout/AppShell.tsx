@@ -59,17 +59,65 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   const [isIslandExpanded, setIsIslandExpanded] = React.useState(false);
 
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'dump', label: 'Dump', icon: Brain },
-    { id: 'tasks', label: 'Tasks', icon: ListTodo },
-    { id: 'routines', label: 'Routines', icon: PlayCircle },
-    { id: 'habits', label: 'Habits', icon: CheckCircle },
-    { id: 'projects', label: 'Projects', icon: Briefcase },
-    { id: 'notes', label: 'Notes', icon: StickyNote },
-    { id: 'journal', label: 'Journal', icon: BookOpen },
-    { id: 'calendar', label: 'Calendar', icon: CalendarIcon },
-    { id: 'trash', label: 'Trash', icon: Trash2 },
+    {
+      id: 'dashboard',
+      label: 'Dashboard',
+      icon: LayoutDashboard,
+      paths: ['/dashboard', '/activity'],
+    },
+    {
+      id: 'dump',
+      label: 'Brain',
+      icon: Brain,
+      paths: ['/dump', '/tasks', '/projects'],
+    },
+    {
+      id: 'calendar',
+      label: 'Calendar',
+      icon: CalendarIcon,
+      paths: ['/calendar', '/trash'],
+    },
+    {
+      id: 'routines',
+      label: 'Focus',
+      icon: PlayCircle,
+      paths: ['/routines', '/habits'],
+    },
+    {
+      id: 'notes',
+      label: 'Notes',
+      icon: StickyNote,
+      paths: ['/notes', '/journal'],
+    },
   ];
+
+  const getActiveTabId = () => {
+    if (pathname.includes('/dashboard') || pathname.includes('/activity')) return 'dashboard';
+    if (pathname.includes('/dump') || pathname.includes('/tasks') || pathname.includes('/projects')) return 'dump';
+    if (pathname.includes('/calendar') || pathname.includes('/trash')) return 'calendar';
+    if (pathname.includes('/routines') || pathname.includes('/habits') || pathname.includes('/routine-player')) return 'routines';
+    if (pathname.includes('/notes') || pathname.includes('/journal')) return 'notes';
+    return '';
+  };
+
+  const activeTabId = getActiveTabId();
+
+  const handleNavClick = (item: typeof navItems[0]) => {
+    let matchedIdx = -1;
+    for (let i = 0; i < item.paths.length; i++) {
+      if (pathname === item.paths[i] || pathname.startsWith(item.paths[i] + '/')) {
+        matchedIdx = i;
+        break;
+      }
+    }
+    
+    if (matchedIdx !== -1) {
+      const nextIdx = (matchedIdx + 1) % item.paths.length;
+      router.push(item.paths[nextIdx] as any);
+    } else {
+      router.push(item.paths[0] as any);
+    }
+  };
 
   // Active step details for timer calculation
   const currentStep = playerSteps[currentStepIndex];
@@ -90,15 +138,20 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
 
   // Modules that are full-width container views
   const isFullWidthView =
-    currentView === 'calendar' ||
-    currentView === 'notes' ||
-    currentView === 'projects' ||
-    currentView === 'habits' ||
-    currentView === 'dump' ||
-    currentView === 'tasks' ||
-    currentView === 'routine-player';
+    pathname.startsWith('/calendar') ||
+    pathname.startsWith('/notes') ||
+    pathname.startsWith('/projects') ||
+    pathname.startsWith('/habits') ||
+    pathname.startsWith('/dump') ||
+    pathname.startsWith('/tasks') ||
+    pathname.startsWith('/routine-player');
 
   const isRoutinePlayer = currentView === 'routine-player';
+  const isQuillPage =
+    pathname.includes('/notes/new') ||
+    pathname.includes('/notes/edit') ||
+    pathname.includes('/journal/new') ||
+    pathname.includes('/journal/edit');
 
   return (
     <div
@@ -110,102 +163,89 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
       }}
     >
       {/* 🏝️ DYNAMIC ISLAND (TOP CENTER NAVIGATION & PLAYER STATUS) */}
-      {!isRoutinePlayer && (
+      {!isRoutinePlayer && activeRoutine && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] transition-all duration-500 ease-in-out">
-          {activeRoutine ? (
-            /* Focus Live Island */
-            <div
-              className={`bg-slate-900 text-white rounded-[28px] shadow-2xl border border-white/10 transition-all duration-500 ease-in-out overflow-hidden flex flex-col justify-center
-                ${isIslandExpanded ? 'w-[320px] p-5' : 'w-[240px] px-4 py-2.5 h-[48px]'}`}
-            >
-              {/* Compact Header View */}
-              <div className="flex items-center justify-between w-full">
-                <div
-                  className="flex items-center gap-2 cursor-pointer min-w-0"
-                  onClick={() => setIsIslandExpanded(!isIslandExpanded)}
-                >
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-                  <span className="text-xs font-black truncate max-w-[120px] tracking-tight">
-                    {currentStep ? currentStep.title : activeRoutine.title}
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono font-black text-violet-300 tabular-nums">
-                    {timeString}
-                  </span>
-                  <button
-                    onClick={() => router.push('/routine-player' as any)}
-                    className="p-1 hover:bg-white/10 rounded-lg text-zinc-400 hover:text-white transition-colors"
-                    title="Fullscreen Mode"
-                  >
-                    <ChevronDown size={14} className="rotate-180" />
-                  </button>
-                </div>
+          <div
+            className={`bg-slate-900 text-white rounded-[28px] shadow-2xl border border-white/10 transition-all duration-500 ease-in-out overflow-hidden flex flex-col justify-center
+              ${isIslandExpanded ? 'w-[320px] p-5' : 'w-[240px] px-4 py-2.5 h-[48px]'}`}
+          >
+            {/* Compact Header View */}
+            <div className="flex items-center justify-between w-full">
+              <div
+                className="flex items-center gap-2 cursor-pointer min-w-0"
+                onClick={() => setIsIslandExpanded(!isIslandExpanded)}
+              >
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                <span className="text-xs font-black truncate max-w-[120px] tracking-tight">
+                  {currentStep ? currentStep.title : activeRoutine.title}
+                </span>
               </div>
 
-              {/* Expanded Action & Status View */}
-              {isIslandExpanded && (
-                <div className="mt-4 space-y-4 animate-fade-in">
-                  {/* Progress Bar */}
-                  <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-gradient-to-r from-violet-400 to-pink-500 rounded-full transition-all duration-1000"
-                      style={{ width: `${progressPercent}%` }}
-                    />
-                  </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-mono font-black text-violet-300 tabular-nums">
+                  {timeString}
+                </span>
+                <button
+                  onClick={() => router.push('/routine-player' as any)}
+                  className="p-1 hover:bg-white/10 rounded-lg text-zinc-400 hover:text-white transition-colors"
+                  title="Fullscreen Mode"
+                >
+                  <ChevronDown size={14} className="rotate-180" />
+                </button>
+              </div>
+            </div>
 
-                  {/* Controller Buttons */}
-                  <div className="flex items-center justify-center gap-4">
-                    <button
-                      onClick={() => setPlayerState({ isPlaying: !isPlaying })}
-                      className="p-2.5 bg-white text-slate-900 rounded-full hover:scale-105 active:scale-95 transition-all"
-                      title={isPlaying ? 'Pause' : 'Play'}
-                    >
-                      {isPlaying ? <Pause size={14} fill="currentColor" /> : <Play size={14} fill="currentColor" />}
-                    </button>
-                    <button
-                      onClick={handleStepComplete}
-                      className="p-2.5 bg-white/10 rounded-full hover:bg-white/20 active:scale-95 transition-all text-white"
-                      title="Skip Step"
-                    >
-                      <SkipForward size={14} />
-                    </button>
-                    <button
-                      onClick={() => {
-                        if (confirm('End this focus session?')) {
-                          exitPlayer();
-                          setIsIslandExpanded(false);
-                        }
-                      }}
-                      className="p-2.5 bg-rose-500/20 text-rose-400 rounded-full hover:bg-rose-500/30 active:scale-95 transition-all"
-                      title="End Session"
-                    >
-                      <X size={14} />
-                    </button>
-                  </div>
+            {/* Expanded Action & Status View */}
+            {isIslandExpanded && (
+              <div className="mt-4 space-y-4 animate-fade-in">
+                {/* Progress Bar */}
+                <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-violet-400 to-pink-500 rounded-full transition-all duration-1000"
+                    style={{ width: `${progressPercent}%` }}
+                  />
+                </div>
 
-                  {/* Collapse Toggle */}
+                {/* Controller Buttons */}
+                <div className="flex items-center justify-center gap-4">
                   <button
-                    onClick={() => setIsIslandExpanded(false)}
-                    className="w-full text-center text-[10px] uppercase font-mono tracking-widest text-zinc-500 hover:text-zinc-300 pt-1"
+                    onClick={() => setPlayerState({ isPlaying: !isPlaying })}
+                    className="p-2.5 bg-white text-slate-900 rounded-full hover:scale-105 active:scale-95 transition-all"
+                    title={isPlaying ? 'Pause' : 'Play'}
                   >
-                    Collapse View
+                    {isPlaying ? <Pause size={14} fill="currentColor" /> : <Play size={14} fill="currentColor" />}
+                  </button>
+                  <button
+                    onClick={handleStepComplete}
+                    className="p-2.5 bg-white/10 rounded-full hover:bg-white/20 active:scale-95 transition-all text-white"
+                    title="Skip Step"
+                  >
+                    <SkipForward size={14} />
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (confirm('End this focus session?')) {
+                        exitPlayer();
+                        setIsIslandExpanded(false);
+                      }
+                    }}
+                    className="p-2.5 bg-rose-500/20 text-rose-400 rounded-full hover:bg-rose-500/30 active:scale-95 transition-all"
+                    title="End Session"
+                  >
+                    <X size={14} />
                   </button>
                 </div>
-              )}
-            </div>
-          ) : (
-            /* Idle Mind Island */
-            <button
-              onClick={() => router.push('/dump' as any)}
-              className="bg-slate-900 hover:bg-slate-800 text-white rounded-full px-5 py-2.5 shadow-lg flex items-center gap-2.5 border border-white/10 transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] h-[48px]"
-            >
-              <Brain size={16} className="text-violet-400 animate-pulse" />
-              <span className="text-xs font-extrabold tracking-tight">Capture thoughts</span>
-              <Sparkles size={12} className="text-amber-400" />
-            </button>
-          )}
+
+                {/* Collapse Toggle */}
+                <button
+                  onClick={() => setIsIslandExpanded(false)}
+                  className="w-full text-center text-[10px] uppercase font-mono tracking-widest text-zinc-500 hover:text-zinc-300 pt-1"
+                >
+                  Collapse View
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
@@ -223,17 +263,17 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
       </main>
 
       {/* 🏝️ FLOATING BOTTOM NAVIGATION BAR */}
-      {!isRoutinePlayer && (
+      {!isRoutinePlayer && !isQuillPage && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] w-[95%] max-w-[640px] px-2">
           <nav className="bg-white/85 backdrop-blur-xl border border-slate-200/80 shadow-2xl rounded-[28px] p-2 flex items-center gap-1 overflow-x-auto no-scrollbar justify-between">
             <div className="flex items-center gap-1 w-full justify-between">
               {navItems.map((item) => {
-                const isActive = currentView === item.id;
+                const isActive = activeTabId === item.id;
                 return (
                   <button
                     key={item.id}
-                    onClick={() => router.push(`/${item.id}` as any)}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-2xl transition-all duration-200 shrink-0 select-none
+                    onClick={() => handleNavClick(item)}
+                    className={`flex items-center gap-2 px-3.5 py-2.5 rounded-2xl transition-all duration-200 shrink-0 select-none
                       ${
                         isActive
                           ? 'bg-[#8979FF] text-white shadow-lg shadow-indigo-500/25 font-bold scale-[1.02]'

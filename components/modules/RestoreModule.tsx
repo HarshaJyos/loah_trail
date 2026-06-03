@@ -195,9 +195,9 @@ export const RestoreModule: React.FC = () => {
   return (
     <div className="w-full h-full p-4 md:p-8 space-y-6 pb-32 max-w-7xl mx-auto overflow-y-auto no-scrollbar animate-fade-in">
       {/* Header & Data Actions */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/5 pb-4 gap-4 shrink-0">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-200/60 pb-4 gap-4 shrink-0">
         <div>
-          <h2 className="text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
+          <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-3">
             <Trash2 className="text-violet-400" size={28} /> Trash & Data
           </h2>
           <p className="text-[var(--text-secondary)] mt-1 text-sm font-medium">
@@ -209,7 +209,7 @@ export const RestoreModule: React.FC = () => {
           <Button
             onClick={handleExport}
             variant="glass"
-            className="flex items-center gap-2 active:scale-95 text-zinc-300"
+            className="flex items-center gap-2 active:scale-95 text-slate-700"
             title="Export Backup"
           >
             <Download size={16} />
@@ -219,7 +219,7 @@ export const RestoreModule: React.FC = () => {
           <Button
             onClick={() => fileInputRef.current?.click()}
             variant="glass"
-            className="flex items-center gap-2 active:scale-95 text-zinc-300"
+            className="flex items-center gap-2 active:scale-95 text-slate-700"
             title="Import Backup"
           >
             <Upload size={16} />
@@ -264,14 +264,14 @@ export const RestoreModule: React.FC = () => {
             className={`px-4 py-2 rounded-2xl text-xs font-extrabold uppercase tracking-wider transition-all whitespace-nowrap flex items-center gap-2 border
               ${
                 activeTab === tab.id
-                  ? 'bg-gradient-to-r from-violet-600 to-pink-600 border-transparent text-white shadow-lg shadow-violet-500/25'
-                  : 'bg-[#12121a] border-white/5 text-[var(--text-secondary)] hover:text-white hover:border-white/15'
+                  ? 'bg-gradient-to-r from-violet-600 to-pink-600 border-transparent text-slate-900 shadow-lg shadow-violet-500/25'
+                  : 'bg-white border-slate-200/60 text-[var(--text-secondary)] hover:text-slate-900 hover:border-slate-200'
               }`}
           >
             <span>{tab.label}</span>
             {tab.count > 0 && (
               <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-mono font-bold
-                ${activeTab === tab.id ? 'bg-white/20 text-white' : 'bg-white/5 text-zinc-400'}`}>
+                ${activeTab === tab.id ? 'bg-slate-200 text-slate-900' : 'bg-slate-100/50 text-slate-500'}`}>
                 {tab.count}
               </span>
             )}
@@ -285,10 +285,10 @@ export const RestoreModule: React.FC = () => {
           <Card
             key={`${item.type}-${item.id}`}
             variant="glass"
-            className="p-4 flex items-center justify-between gap-4 border border-white/5 hover:border-violet-500/30 transition-all duration-300 group"
+            className="p-4 flex items-center justify-between gap-4 border border-slate-200/60 hover:border-violet-500/30 transition-all duration-300 group"
           >
             <div className="flex items-center gap-4 min-w-0">
-              <div className="p-3 rounded-2xl bg-white/5 text-zinc-400 group-hover:bg-violet-500/10 group-hover:text-violet-400 transition-colors border border-white/5">
+              <div className="p-3 rounded-2xl bg-slate-100/50 text-slate-500 group-hover:bg-violet-500/10 group-hover:text-violet-400 transition-colors border border-slate-200/60">
                 {getIcon(item.type)}
               </div>
 
@@ -297,15 +297,15 @@ export const RestoreModule: React.FC = () => {
                   <span className="text-[9px] font-bold font-mono uppercase tracking-wider bg-violet-500/10 text-violet-400 border border-violet-500/25 px-2 py-0.5 rounded-md">
                     {getLabel(item.type)}
                   </span>
-                  <span className="text-[10px] text-zinc-500 font-medium">
+                  <span className="text-[10px] text-slate-400 font-medium">
                     Deleted {new Date(item.deletedAt!).toLocaleDateString()}
                   </span>
                 </div>
-                <h3 className="font-extrabold text-white truncate max-w-md md:max-w-xl">
+                <h3 className="font-extrabold text-slate-900 truncate max-w-md md:max-w-xl">
                   {item.title || 'Untitled'}
                 </h3>
                 {item.content && (
-                  <p className="text-xs text-zinc-500 truncate max-w-md md:max-w-xl mt-0.5">
+                  <p className="text-xs text-slate-400 truncate max-w-md md:max-w-xl mt-0.5">
                     {item.content}
                   </p>
                 )}
@@ -317,7 +317,7 @@ export const RestoreModule: React.FC = () => {
                 size="sm"
                 variant="glass"
                 onClick={() => handleRestore(item.id, item.type)}
-                className="flex items-center gap-1.5 hover:border-emerald-500/30 hover:bg-emerald-500/10 text-zinc-400 hover:text-emerald-400"
+                className="flex items-center gap-1.5 hover:border-emerald-500/30 hover:bg-emerald-500/10 text-slate-500 hover:text-emerald-400"
                 title="Restore Item"
               >
                 <RotateCcw size={14} />
@@ -327,7 +327,7 @@ export const RestoreModule: React.FC = () => {
                 size="sm"
                 variant="ghost"
                 onClick={() => triggerHardDelete(item.id, item.type)}
-                className="flex items-center gap-1.5 hover:bg-rose-500/10 text-zinc-400 hover:text-rose-400"
+                className="flex items-center gap-1.5 hover:bg-rose-500/10 text-slate-500 hover:text-rose-400"
                 title="Delete Forever"
               >
                 <Trash2 size={14} />
@@ -338,12 +338,12 @@ export const RestoreModule: React.FC = () => {
         ))}
 
         {items.length === 0 && (
-          <div className="py-20 flex flex-col items-center justify-center text-center border border-dashed border-white/10 rounded-3xl bg-[#12121a]/10 text-zinc-500">
-            <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center shadow-lg border border-white/5 mb-6 text-zinc-400">
+          <div className="py-20 flex flex-col items-center justify-center text-center border border-dashed border-slate-200 rounded-3xl bg-slate-100 text-slate-400">
+            <div className="w-16 h-16 bg-slate-100/50 rounded-full flex items-center justify-center shadow-lg border border-slate-200/60 mb-6 text-slate-500">
               <Trash2 size={28} />
             </div>
-            <h3 className="text-lg font-bold text-white mb-2">Trash is empty</h3>
-            <p className="text-zinc-500 text-xs max-w-sm px-4 leading-relaxed">
+            <h3 className="text-lg font-bold text-slate-900 mb-2">Trash is empty</h3>
+            <p className="text-slate-400 text-xs max-w-sm px-4 leading-relaxed">
               Items you delete from other modules will show up here, allowing you to restore them or delete them permanently.
             </p>
           </div>
@@ -351,7 +351,7 @@ export const RestoreModule: React.FC = () => {
       </div>
 
       {/* Info Footer */}
-      <div className="flex items-center gap-2 text-xs text-zinc-500 justify-center pt-6 border-t border-white/5">
+      <div className="flex items-center gap-2 text-xs text-slate-400 justify-center pt-6 border-t border-slate-200/60">
         <Info size={14} className="text-violet-400" />
         <span>Deleted items are stored in your browser&apos;s local storage and won&apos;t be cleared until deleted permanently.</span>
       </div>

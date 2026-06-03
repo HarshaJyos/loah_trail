@@ -204,10 +204,10 @@ export const ProjectModule: React.FC = () => {
 
   return (
     <div className="w-full h-full p-4 md:p-8 overflow-y-auto no-scrollbar pb-32 max-w-7xl mx-auto flex flex-col">
-      <div className="flex flex-col gap-6 border-b border-white/5 pb-6 mb-8 shrink-0">
+      <div className="flex flex-col gap-6 border-b border-slate-200/60 pb-6 mb-8 shrink-0">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h2 className="text-3xl font-black text-white tracking-tight flex items-center gap-3">
+            <h2 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
               Projects
             </h2>
             {showArchived && (
@@ -223,7 +223,7 @@ export const ProjectModule: React.FC = () => {
               className={`p-2.5 rounded-xl border transition-all ${
                 showArchived
                   ? 'bg-amber-500/15 border-amber-500/20 text-amber-400'
-                  : 'border-white/5 text-zinc-500 hover:text-white hover:bg-white/5'
+                  : 'border-slate-200/60 text-slate-400 hover:text-slate-900 hover:bg-slate-100/50'
               }`}
               title={showArchived ? 'View Active' : 'View Archive'}
             >
@@ -248,8 +248,8 @@ export const ProjectModule: React.FC = () => {
               onClick={() => setStatusFilter(filter as any)}
               className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap border ${
                 statusFilter === filter
-                  ? 'bg-white/5 border-white/10 text-white shadow-md'
-                  : 'border-transparent text-zinc-500 hover:text-white hover:bg-white/5'
+                  ? 'bg-slate-100/50 border-slate-200 text-slate-900 shadow-md'
+                  : 'border-transparent text-slate-400 hover:text-slate-900 hover:bg-slate-100/50'
               }`}
             >
               {filter.replace('-', ' ')}
@@ -272,11 +272,11 @@ export const ProjectModule: React.FC = () => {
               onDragOver={handleDragOver}
               onDrop={(e) => handleDrop(e, project.id)}
               onClick={() => setViewingProjectId(project.id)}
-              className={`bg-[#12121a] border rounded-2xl p-6 shadow-sm hover:shadow-2xl hover:border-violet-500/30 transition-all duration-300 group cursor-pointer relative overflow-hidden flex flex-col justify-between h-[320px]
+              className={`bg-white border rounded-2xl p-6 shadow-sm hover:shadow-2xl hover:border-violet-500/30 transition-all duration-300 group cursor-pointer relative overflow-hidden flex flex-col justify-between h-[320px]
                 ${
                   project.isPinned
                     ? 'border-violet-500/50 shadow-lg shadow-violet-500/5'
-                    : 'border-white/5'
+                    : 'border-slate-200/60'
                 }
               `}
             >
@@ -288,7 +288,7 @@ export const ProjectModule: React.FC = () => {
                 <div>
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      <h3 className="text-lg font-bold text-white leading-tight mb-2 flex items-center gap-2 group-hover:text-violet-300 transition-colors">
+                      <h3 className="text-lg font-bold text-slate-900 leading-tight mb-2 flex items-center gap-2 group-hover:text-violet-300 transition-colors">
                         {project.title}
                         <div
                           className={`w-2 h-2 rounded-full ${getPriorityColor(
@@ -305,7 +305,7 @@ export const ProjectModule: React.FC = () => {
                               ? 'bg-green-500/10 text-green-400 border-green-500/20'
                               : project.status === 'on-hold'
                               ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
-                              : 'bg-white/5 text-zinc-400 border-white/5'
+                              : 'bg-slate-100/50 text-slate-500 border-slate-200/60'
                           }
                         `}
                         title="Click to cycle status"
@@ -322,8 +322,8 @@ export const ProjectModule: React.FC = () => {
                         onClick={(e) => handleTogglePin(e, project)}
                         className={`p-1.5 rounded-lg transition-all ${
                           project.isPinned
-                            ? 'text-white bg-white/10'
-                            : 'text-zinc-500 hover:text-white hover:bg-white/5'
+                            ? 'text-slate-900 bg-slate-100'
+                            : 'text-slate-400 hover:text-slate-900 hover:bg-slate-100/50'
                         }`}
                       >
                         <Pin
@@ -337,7 +337,7 @@ export const ProjectModule: React.FC = () => {
                             e.stopPropagation();
                             onUnarchiveProject(project.id);
                           }}
-                          className="p-1.5 text-zinc-500 hover:text-white hover:bg-white/5 rounded-lg transition-all"
+                          className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100/50 rounded-lg transition-all"
                         >
                           <RefreshCcw size={12} />
                         </button>
@@ -347,7 +347,7 @@ export const ProjectModule: React.FC = () => {
                             e.stopPropagation();
                             onArchiveProject(project.id);
                           }}
-                          className="p-1.5 text-zinc-500 hover:text-white hover:bg-white/5 rounded-lg transition-all"
+                          className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100/50 rounded-lg transition-all"
                         >
                           <Archive size={12} />
                         </button>
@@ -357,7 +357,7 @@ export const ProjectModule: React.FC = () => {
                           e.stopPropagation();
                           openModal(project);
                         }}
-                        className="p-1.5 text-zinc-500 hover:text-white hover:bg-white/5 rounded-lg transition-all"
+                        className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100/50 rounded-lg transition-all"
                       >
                         <Edit2 size={12} />
                       </button>
@@ -366,26 +366,26 @@ export const ProjectModule: React.FC = () => {
                           e.stopPropagation();
                           onDeleteProject(project.id);
                         }}
-                        className="p-1.5 hover:bg-rose-500/10 rounded-lg text-zinc-500 hover:text-rose-400 transition-all"
+                        className="p-1.5 hover:bg-rose-500/10 rounded-lg text-slate-400 hover:text-rose-400 transition-all"
                       >
                         <Trash2 size={12} />
                       </button>
                     </div>
                   </div>
-                  <p className="text-zinc-500 text-xs line-clamp-2 leading-relaxed mb-6">
+                  <p className="text-slate-400 text-xs line-clamp-2 leading-relaxed mb-6">
                     {project.description || 'No description provided.'}
                   </p>
                 </div>
 
                 <div className="space-y-4 mt-auto">
                   <div>
-                    <div className="flex justify-between items-end mb-1 font-mono text-[9px] font-bold uppercase tracking-wider text-zinc-500">
+                    <div className="flex justify-between items-end mb-1 font-mono text-[9px] font-bold uppercase tracking-wider text-slate-400">
                       <span>Progress</span>
                       <span>
                         {completedTasks}/{totalTasks} Tasks ({progress}%)
                       </span>
                     </div>
-                    <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+                    <div className="w-full h-1.5 bg-slate-100/50 rounded-full overflow-hidden">
                       <div
                         className="h-full rounded-full transition-all duration-500"
                         style={{
@@ -395,15 +395,15 @@ export const ProjectModule: React.FC = () => {
                       />
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-4 pt-2 border-t border-white/5">
+                  <div className="grid grid-cols-2 gap-4 pt-2 border-t border-slate-200/60">
                     <div className="space-y-1">
-                      <div className="flex items-center gap-1.5 text-zinc-500 text-[9px] font-bold font-mono uppercase tracking-wider">
+                      <div className="flex items-center gap-1.5 text-slate-400 text-[9px] font-bold font-mono uppercase tracking-wider">
                         <Calendar size={12} />
                         <span>Due Date</span>
                       </div>
                       <span
                         className={`text-xs font-bold ${
-                          isOverdue ? 'text-rose-500 animate-pulse' : 'text-zinc-300'
+                          isOverdue ? 'text-rose-500 animate-pulse' : 'text-slate-700'
                         }`}
                       >
                         {new Date(project.dueDate).toLocaleDateString(undefined, {
@@ -413,11 +413,11 @@ export const ProjectModule: React.FC = () => {
                       </span>
                     </div>
                     <div className="space-y-1">
-                      <div className="flex items-center gap-1.5 text-zinc-500 text-[9px] font-bold font-mono uppercase tracking-wider">
+                      <div className="flex items-center gap-1.5 text-slate-400 text-[9px] font-bold font-mono uppercase tracking-wider">
                         <Clock size={12} />
                         <span>Time Spent</span>
                       </div>
-                      <span className="text-xs font-bold text-zinc-300">
+                      <span className="text-xs font-bold text-slate-700">
                         {formatDuration(totalSeconds)}
                       </span>
                     </div>
@@ -429,8 +429,8 @@ export const ProjectModule: React.FC = () => {
         })}
 
         {filteredProjects.length === 0 && (
-          <div className="col-span-full py-16 text-center border border-dashed border-white/10 rounded-3xl bg-[#12121a]/10 text-zinc-500 flex flex-col items-center justify-center">
-            <Filter size={40} className="mb-4 opacity-20 text-zinc-400" />
+          <div className="col-span-full py-16 text-center border border-dashed border-slate-200 rounded-3xl bg-slate-100 text-slate-400 flex flex-col items-center justify-center">
+            <Filter size={40} className="mb-4 opacity-20 text-slate-500" />
             <p className="text-sm">No projects found in this view.</p>
           </div>
         )}
@@ -579,27 +579,27 @@ const ProjectDetailView: React.FC<{
   const completedTasks = tasks.filter((t) => t.isCompleted);
 
   return (
-    <div className="w-full h-full flex flex-col bg-[#0a0a0f] animate-fade-in pb-32">
+    <div className="w-full h-full flex flex-col bg-[#F5F7FA] animate-fade-in pb-32">
       {/* Detail Header */}
-      <div className="px-6 py-6 border-b border-white/5 bg-[#12121a]/30 flex-shrink-0">
+      <div className="px-6 py-6 border-b border-slate-200/60 bg-white/30 flex-shrink-0">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 text-zinc-400 hover:text-white mb-4 font-bold uppercase tracking-wider text-xs transition-colors"
+          className="flex items-center gap-2 text-slate-500 hover:text-slate-900 mb-4 font-bold uppercase tracking-wider text-xs transition-colors"
         >
           <ArrowRight size={16} className="rotate-180" /> Back to Projects
         </button>
         <div className="flex flex-col md:flex-row justify-between md:items-end gap-6">
           <div className="min-w-0">
             <div className="flex items-center gap-3 mb-2 flex-wrap">
-              <h1 className="text-2xl md:text-3xl font-black text-white leading-tight">
+              <h1 className="text-2xl md:text-3xl font-black text-slate-900 leading-tight">
                 {project.title}
               </h1>
-              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border border-white/10 bg-white/5 text-zinc-300 font-mono">
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border border-slate-200 bg-slate-100/50 text-slate-700 font-mono">
                 {project.status}
               </span>
             </div>
-            <p className="text-zinc-500 text-sm max-w-2xl">{project.description}</p>
-            <div className="flex items-center gap-6 mt-6 text-xs font-bold text-zinc-400 font-mono uppercase tracking-wider">
+            <p className="text-slate-400 text-sm max-w-2xl">{project.description}</p>
+            <div className="flex items-center gap-6 mt-6 text-xs font-bold text-slate-500 font-mono uppercase tracking-wider">
               <div className="flex items-center gap-2">
                 <Calendar size={16} className="text-violet-400" />
                 <span>
@@ -615,11 +615,11 @@ const ProjectDetailView: React.FC<{
           </div>
 
           <div className="w-full md:w-64">
-            <div className="flex justify-between text-[9px] font-bold text-zinc-500 uppercase mb-2 font-mono">
+            <div className="flex justify-between text-[9px] font-bold text-slate-400 uppercase mb-2 font-mono">
               <span>Progress</span>
               <span>{stats.progress}%</span>
             </div>
-            <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+            <div className="h-2 bg-slate-100/50 rounded-full overflow-hidden">
               <div
                 className="h-full transition-all duration-500"
                 style={{
@@ -628,7 +628,7 @@ const ProjectDetailView: React.FC<{
                 }}
               />
             </div>
-            <p className="text-right text-[10px] text-zinc-600 mt-1 font-mono">
+            <p className="text-right text-[10px] text-slate-500 mt-1 font-mono">
               {stats.completedTasks}/{stats.totalTasks} Tasks Completed
             </p>
           </div>
@@ -636,13 +636,13 @@ const ProjectDetailView: React.FC<{
       </div>
 
       {/* Tabs */}
-      <div className="flex px-6 border-b border-white/5 shrink-0 bg-[#0a0a0f]">
+      <div className="flex px-6 border-b border-slate-200/60 shrink-0 bg-[#F5F7FA]">
         <button
           onClick={() => setActiveTab('tasks')}
           className={`px-6 py-3 text-xs font-bold uppercase tracking-widest border-b-2 transition-colors font-mono ${
             activeTab === 'tasks'
               ? 'border-violet-500 text-violet-400'
-              : 'border-transparent text-zinc-500 hover:text-white'
+              : 'border-transparent text-slate-400 hover:text-slate-900'
           }`}
         >
           Tasks
@@ -652,7 +652,7 @@ const ProjectDetailView: React.FC<{
           className={`px-6 py-3 text-xs font-bold uppercase tracking-widest border-b-2 transition-colors font-mono ${
             activeTab === 'notes'
               ? 'border-violet-500 text-violet-400'
-              : 'border-transparent text-zinc-500 hover:text-white'
+              : 'border-transparent text-slate-400 hover:text-slate-900'
           }`}
         >
           Project Notes
@@ -660,23 +660,23 @@ const ProjectDetailView: React.FC<{
       </div>
 
       {/* Tab Contents */}
-      <div className="flex-1 overflow-y-auto no-scrollbar p-6 bg-[#0a0a0f]">
+      <div className="flex-1 overflow-y-auto no-scrollbar p-6 bg-[#F5F7FA]">
         <div className="max-w-4xl mx-auto">
           {activeTab === 'tasks' && (
             <>
               {/* Task Quick Input */}
-              <div className="flex gap-2 mb-8 bg-[#12121a] p-2 pr-3 rounded-xl border border-white/5 focus-within:border-violet-500/50 transition-all">
+              <div className="flex gap-2 mb-8 bg-white p-2 pr-3 rounded-xl border border-slate-200/60 focus-within:border-violet-500/50 transition-all">
                 <input
                   value={newTaskTitle}
                   onChange={(e) => setNewTaskTitle(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleQuickAddTask()}
                   placeholder="Add a task to this project..."
-                  className="flex-1 bg-transparent px-3 py-2 text-sm text-white focus:outline-none placeholder-zinc-700 font-semibold"
+                  className="flex-1 bg-transparent px-3 py-2 text-sm text-slate-900 focus:outline-none placeholder-zinc-700 font-semibold"
                 />
                 <button
                   onClick={handleQuickAddTask}
                   disabled={!newTaskTitle.trim()}
-                  className="bg-violet-600 hover:bg-violet-500 disabled:bg-white/5 disabled:text-zinc-700 text-white px-4 rounded-lg font-bold text-xs uppercase tracking-wider transition-colors"
+                  className="bg-violet-600 hover:bg-violet-500 disabled:bg-slate-100/50 disabled:text-slate-600 text-slate-900 px-4 rounded-lg font-bold text-xs uppercase tracking-wider transition-colors"
                 >
                   Add
                 </button>
@@ -684,25 +684,25 @@ const ProjectDetailView: React.FC<{
 
               {/* Active Tasks list */}
               <div className="space-y-3 mb-8">
-                <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest font-mono mb-4 pl-1">
+                <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono mb-4 pl-1">
                   Active Project Tasks
                 </h3>
                 {pendingTasks.map((task) => (
                   <div
                     key={task.id}
-                    className="flex items-center gap-4 p-4 border border-white/5 rounded-2xl bg-[#12121a] hover:border-violet-500/20 hover:shadow-lg transition-all group"
+                    className="flex items-center gap-4 p-4 border border-slate-200/60 rounded-2xl bg-white hover:border-violet-500/20 hover:shadow-lg transition-all group"
                   >
                     <button
                       onClick={() => onToggleTask(task.id)}
-                      className="text-zinc-600 hover:text-violet-400 transition-colors shrink-0"
+                      className="text-slate-500 hover:text-violet-400 transition-colors shrink-0"
                     >
-                      <div className="w-5 h-5 border border-white/10 rounded-md" />
+                      <div className="w-5 h-5 border border-slate-200 rounded-md" />
                     </button>
                     <div className="flex-1 min-w-0">
-                      <span className="font-bold text-sm text-zinc-200 block truncate">
+                      <span className="font-bold text-sm text-slate-800 block truncate">
                         {task.title}
                       </span>
-                      <div className="flex items-center gap-3 mt-1 text-[10px] text-zinc-500 font-mono font-bold uppercase">
+                      <div className="flex items-center gap-3 mt-1 text-[10px] text-slate-400 font-mono font-bold uppercase">
                         <span className="text-violet-400">{task.priority} Priority</span>
                         <span>•</span>
                         <span>{task.duration || 30}m estimate</span>
@@ -711,14 +711,14 @@ const ProjectDetailView: React.FC<{
                     <div className="opacity-0 group-hover:opacity-100 flex gap-1.5 transition-opacity shrink-0">
                       <button
                         onClick={() => onStartTask(task)}
-                        className="p-2 hover:bg-white/5 rounded-lg text-zinc-500 hover:text-white transition-colors"
+                        className="p-2 hover:bg-slate-100/50 rounded-lg text-slate-400 hover:text-slate-900 transition-colors"
                         title="Start Timer Focus"
                       >
                         <Play size={16} fill="currentColor" />
                       </button>
                       <button
                         onClick={() => onDeleteTask(task.id)}
-                        className="p-2 hover:bg-rose-500/10 rounded-lg text-zinc-500 hover:text-rose-400 transition-colors"
+                        className="p-2 hover:bg-rose-500/10 rounded-lg text-slate-400 hover:text-rose-400 transition-colors"
                       >
                         <Trash2 size={16} />
                       </button>
@@ -726,7 +726,7 @@ const ProjectDetailView: React.FC<{
                   </div>
                 ))}
                 {pendingTasks.length === 0 && (
-                  <p className="text-zinc-600 italic text-xs pl-1">
+                  <p className="text-slate-500 italic text-xs pl-1">
                     No active tasks left in this project.
                   </p>
                 )}
@@ -734,14 +734,14 @@ const ProjectDetailView: React.FC<{
 
               {/* Completed tasks list */}
               {completedTasks.length > 0 && (
-                <div className="space-y-3 opacity-60 hover:opacity-100 transition-all border-t border-white/5 pt-6">
-                  <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest font-mono mb-4 pl-1">
+                <div className="space-y-3 opacity-60 hover:opacity-100 transition-all border-t border-slate-200/60 pt-6">
+                  <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono mb-4 pl-1">
                     Completed Tasks
                   </h3>
                   {completedTasks.map((task) => (
                     <div
                       key={task.id}
-                      className="flex items-center gap-4 p-3 border border-white/5 rounded-2xl bg-[#12121a]/50"
+                      className="flex items-center gap-4 p-3 border border-slate-200/60 rounded-2xl bg-slate-100/500"
                     >
                       <button
                         onClick={() => onToggleTask(task.id)}
@@ -749,12 +749,12 @@ const ProjectDetailView: React.FC<{
                       >
                         <CheckSquare size={18} />
                       </button>
-                      <span className="font-medium text-xs text-zinc-500 line-through flex-1 truncate">
+                      <span className="font-medium text-xs text-slate-400 line-through flex-1 truncate">
                         {task.title}
                       </span>
                       <button
                         onClick={() => onDeleteTask(task.id)}
-                        className="p-1.5 hover:bg-rose-500/10 rounded-lg text-zinc-600 hover:text-rose-400 transition-colors shrink-0"
+                        className="p-1.5 hover:bg-rose-500/10 rounded-lg text-slate-500 hover:text-rose-400 transition-colors shrink-0"
                       >
                         <Trash2 size={14} />
                       </button>
@@ -769,7 +769,7 @@ const ProjectDetailView: React.FC<{
             <div className="space-y-6">
               <button
                 onClick={() => openNoteModal()}
-                className="w-full border border-dashed border-white/10 hover:border-violet-500/30 rounded-2xl p-5 text-zinc-500 hover:text-white hover:bg-white/[0.02] transition-all flex items-center justify-center gap-2 active:scale-[0.98] font-bold uppercase tracking-wider text-xs font-mono"
+                className="w-full border border-dashed border-slate-200 hover:border-violet-500/30 rounded-2xl p-5 text-slate-400 hover:text-slate-900 hover:bg-white/[0.02] transition-all flex items-center justify-center gap-2 active:scale-[0.98] font-bold uppercase tracking-wider text-xs font-mono"
               >
                 <Plus size={16} /> Add Project Note
               </button>
@@ -789,7 +789,7 @@ const ProjectDetailView: React.FC<{
                   </div>
                 ))}
                 {projectNotes.length === 0 && (
-                  <p className="text-center col-span-full text-zinc-600 py-10 italic text-xs">
+                  <p className="text-center col-span-full text-slate-500 py-10 italic text-xs">
                     No notes associated with this project.
                   </p>
                 )}

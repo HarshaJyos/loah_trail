@@ -232,7 +232,7 @@ export const DashboardModule: React.FC = () => {
         </div>
 
         {/* Range Selector */}
-        <div className="flex bg-[#12121a] border border-white/5 p-1 rounded-2xl shadow-lg shrink-0 overflow-x-auto no-scrollbar">
+        <div className="flex bg-white border border-slate-200/60 p-1 rounded-2xl shadow-lg shrink-0 overflow-x-auto no-scrollbar">
           {(['Day', 'Week', 'Month', 'Year'] as TimeRange[]).map((r) => (
             <button
               key={r}
@@ -240,8 +240,8 @@ export const DashboardModule: React.FC = () => {
               className={`px-4 py-2 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all whitespace-nowrap
                 ${
                   range === r
-                    ? 'bg-gradient-to-r from-violet-600 to-pink-600 text-white shadow-md'
-                    : 'text-[var(--text-secondary)] hover:text-white hover:bg-white/5'
+                    ? 'bg-gradient-to-r from-violet-600 to-pink-600 text-slate-900 shadow-md'
+                    : 'text-[var(--text-secondary)] hover:text-slate-900 hover:bg-slate-100/50'
                 }
               `}
             >
@@ -354,7 +354,7 @@ export const DashboardModule: React.FC = () => {
 
         {/* Activity Timeline Feed */}
         <div className="col-span-1">
-          <Card className="p-6 md:p-8 flex flex-col h-full bg-[#1a1a26]/30">
+          <Card className="p-6 md:p-8 flex flex-col h-full bg-slate-50/30">
             <div className="flex justify-between items-center mb-6 shrink-0">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-emerald-500/10 rounded-xl text-emerald-400">
@@ -375,7 +375,7 @@ export const DashboardModule: React.FC = () => {
             </div>
 
             <div className="flex-1 overflow-hidden relative pl-4 pr-1 min-h-[160px]">
-              <div className="absolute left-[27px] top-4 bottom-0 w-px bg-white/5" />
+              <div className="absolute left-[27px] top-4 bottom-0 w-px bg-slate-100/50" />
               <div className="space-y-6 pb-4">
                 {timelineData.map((item) => (
                   <button
@@ -387,7 +387,7 @@ export const DashboardModule: React.FC = () => {
                         item: item.item,
                       })
                     }
-                    className="relative flex items-start gap-4 group w-full text-left hover:bg-white/5 p-2 -ml-2 rounded-xl transition-all"
+                    className="relative flex items-start gap-4 group w-full text-left hover:bg-slate-100/50 p-2 -ml-2 rounded-xl transition-all"
                   >
                     <div
                       className={`w-6 h-6 rounded-full border border-zinc-950 shrink-0 z-10 flex items-center justify-center shadow-sm relative top-1 ${item.color}`}
@@ -409,7 +409,7 @@ export const DashboardModule: React.FC = () => {
                           )}
                         </span>
                       </div>
-                      <h4 className="text-sm font-bold text-[var(--text-primary)] leading-normal truncate group-hover:text-white">
+                      <h4 className="text-sm font-bold text-[var(--text-primary)] leading-normal truncate group-hover:text-slate-900">
                         {item.title}
                       </h4>
                       {item.subtitle && (
@@ -448,14 +448,14 @@ export const DashboardModule: React.FC = () => {
       {/* Activity Details Popup Card (Glassmorphic blur) */}
       {selectedActivity && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-md animate-[fadeIn_0.2s_ease-out]">
-          <div className="bg-[#12121a] border border-white/5 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-            <div className="px-6 py-4 border-b border-white/5 flex justify-between items-center bg-white/5">
+          <div className="bg-white border border-slate-200/60 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="px-6 py-4 border-b border-slate-200/60 flex justify-between items-center bg-slate-100/50">
               <h2 className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider font-mono">
                 Activity Details
               </h2>
               <button
                 onClick={() => setSelectedActivity(null)}
-                className="text-[var(--text-secondary)] hover:text-white p-1 rounded-full hover:bg-white/5 transition-colors"
+                className="text-[var(--text-secondary)] hover:text-slate-900 p-1 rounded-full hover:bg-slate-100/50 transition-colors"
               >
                 <X size={16} />
               </button>
@@ -475,7 +475,7 @@ export const DashboardModule: React.FC = () => {
                       selectedActivity.item.completedAt
                     ).toLocaleString()}
                   </p>
-                  <div className="bg-white/5 border border-white/5 rounded-2xl p-4 space-y-2 mt-4 text-sm">
+                  <div className="bg-slate-100/50 border border-slate-200/60 rounded-2xl p-4 space-y-2 mt-4 text-sm">
                     <div className="flex justify-between">
                       <span className="text-[var(--text-secondary)] font-medium">Category</span>
                       <span className="font-bold">{selectedActivity.item.category}</span>
@@ -504,7 +504,7 @@ export const DashboardModule: React.FC = () => {
                     {new Date(selectedActivity.item.endTime).toLocaleString()}
                   </p>
                   <div className="grid grid-cols-2 gap-3 mt-4">
-                    <div className="bg-white/5 p-3 rounded-2xl text-center border border-white/5">
+                    <div className="bg-slate-100/50 p-3 rounded-2xl text-center border border-slate-200/60">
                       <div className="text-[9px] text-[var(--text-secondary)] font-bold uppercase tracking-wider font-mono">
                         Duration
                       </div>
@@ -512,7 +512,7 @@ export const DashboardModule: React.FC = () => {
                         {Math.round(selectedActivity.item.durationSeconds / 60)}m
                       </div>
                     </div>
-                    <div className="bg-white/5 p-3 rounded-2xl text-center border border-white/5">
+                    <div className="bg-slate-100/50 p-3 rounded-2xl text-center border border-slate-200/60">
                       <div className="text-[9px] text-[var(--text-secondary)] font-bold uppercase tracking-wider font-mono">
                         Steps
                       </div>
@@ -533,7 +533,7 @@ export const DashboardModule: React.FC = () => {
                             (log: any, i: number) => (
                               <div
                                 key={i}
-                                className="flex justify-between text-xs bg-white/5 p-2 rounded-xl border border-white/5"
+                                className="flex justify-between text-xs bg-slate-100/50 p-2 rounded-xl border border-slate-200/60"
                               >
                                 <span className="text-[var(--text-primary)] font-medium">
                                   {log.title}
@@ -561,7 +561,7 @@ export const DashboardModule: React.FC = () => {
                     Logged on{' '}
                     {new Date(selectedActivity.item.createdAt).toLocaleString()}
                   </p>
-                  <div className="bg-white/5 border border-white/5 rounded-2xl p-4 space-y-2 mt-4 text-sm">
+                  <div className="bg-slate-100/50 border border-slate-200/60 rounded-2xl p-4 space-y-2 mt-4 text-sm">
                     <div className="flex justify-between">
                       <span className="text-[var(--text-secondary)] font-medium">Mood</span>
                       <span
@@ -598,7 +598,7 @@ export const DashboardModule: React.FC = () => {
                 </div>
               )}
             </div>
-            <div className="px-6 py-4 bg-white/5 border-t border-white/5 flex justify-end">
+            <div className="px-6 py-4 bg-slate-100/50 border-t border-slate-200/60 flex justify-end">
               <Button onClick={() => setSelectedActivity(null)} variant="secondary">
                 Close
               </Button>

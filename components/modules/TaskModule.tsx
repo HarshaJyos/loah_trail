@@ -399,8 +399,8 @@ export const TaskModule: React.FC = () => {
     return (
       <div
         onClick={() => openModal(task)}
-        className={`group relative bg-[#1a1a26]/40 hover:bg-[#1a1a26]/70 border rounded-2xl p-4 transition-all duration-300 cursor-pointer flex flex-col gap-3
-          ${isCompleted ? 'opacity-50 border-white/5 bg-white/[0.02]' : 'border-white/5 hover:border-violet-500/25'}
+        className={`group relative bg-slate-50/40 hover:bg-slate-50/70 border rounded-2xl p-4 transition-all duration-300 cursor-pointer flex flex-col gap-3
+          ${isCompleted ? 'opacity-50 border-slate-200/60 bg-white/[0.02]' : 'border-slate-200/60 hover:border-violet-500/25'}
           ${isOverdue && !isCompleted ? 'border-rose-500/30 bg-rose-500/5' : ''}`}
       >
         {/* Color accent vertical line */}
@@ -417,7 +417,7 @@ export const TaskModule: React.FC = () => {
               onToggleTask(task.id);
             }}
             className={`mt-1 shrink-0 transition-colors ${
-              isCompleted ? 'text-emerald-500' : 'text-zinc-500 hover:text-white'
+              isCompleted ? 'text-emerald-500' : 'text-slate-400 hover:text-slate-900'
             }`}
           >
             {isCompleted ? (
@@ -430,7 +430,7 @@ export const TaskModule: React.FC = () => {
           <div className="flex-1 min-w-0">
             <div className="flex justify-between items-start">
               <h4
-                className={`text-sm md:text-base font-bold text-[#f1f0ff] leading-snug group-hover:text-white ${
+                className={`text-sm md:text-base font-bold text-[#f1f0ff] leading-snug group-hover:text-slate-900 ${
                   isCompleted ? 'line-through opacity-50' : ''
                 }`}
               >
@@ -443,7 +443,7 @@ export const TaskModule: React.FC = () => {
                       e.stopPropagation();
                       onStartTask(task);
                     }}
-                    className="p-1.5 bg-violet-600/90 hover:bg-violet-500 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="p-1.5 bg-violet-600/90 hover:bg-violet-500 text-slate-900 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
                     title="Start Focus"
                   >
                     <Play size={12} fill="currentColor" />
@@ -455,7 +455,7 @@ export const TaskModule: React.FC = () => {
                       e.stopPropagation();
                       onUnarchiveTask(task.id);
                     }}
-                    className="p-1.5 hover:bg-white/5 text-zinc-500 hover:text-white rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                    className="p-1.5 hover:bg-slate-100/50 text-slate-400 hover:text-slate-900 rounded-lg transition-all opacity-0 group-hover:opacity-100"
                     title="Restore Task"
                   >
                     <Archive size={12} />
@@ -466,7 +466,7 @@ export const TaskModule: React.FC = () => {
                       e.stopPropagation();
                       onArchiveTask(task.id);
                     }}
-                    className="p-1.5 hover:bg-white/5 text-zinc-500 hover:text-white rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                    className="p-1.5 hover:bg-slate-100/50 text-slate-400 hover:text-slate-900 rounded-lg transition-all opacity-0 group-hover:opacity-100"
                     title="Archive Task"
                   >
                     <Archive size={12} />
@@ -477,7 +477,7 @@ export const TaskModule: React.FC = () => {
                     e.stopPropagation();
                     onDeleteTask(task.id);
                   }}
-                  className="p-1.5 hover:bg-rose-500/10 text-zinc-500 hover:text-rose-400 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                  className="p-1.5 hover:bg-rose-500/10 text-slate-400 hover:text-rose-400 rounded-lg transition-all opacity-0 group-hover:opacity-100"
                   title="Delete Task"
                 >
                   <Trash2 size={12} />
@@ -495,7 +495,7 @@ export const TaskModule: React.FC = () => {
               {task.startTime && (
                 <span
                   className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full flex items-center gap-1 font-mono
-                    ${isOverdue && !isCompleted ? 'bg-rose-500/15 text-rose-300' : 'bg-white/5 text-zinc-400'}`}
+                    ${isOverdue && !isCompleted ? 'bg-rose-500/15 text-rose-300' : 'bg-slate-100/50 text-slate-500'}`}
                 >
                   {isOverdue && !isCompleted && <AlertCircle size={10} />}
                   <Calendar size={10} />
@@ -531,7 +531,7 @@ export const TaskModule: React.FC = () => {
                 </span>
               )}
               {subtaskCount > 0 && (
-                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-white/5 text-zinc-400 flex items-center gap-1 border border-white/5">
+                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-slate-100/50 text-slate-500 flex items-center gap-1 border border-slate-200/60">
                   <ListTodo size={8} /> {subtaskDone}/{subtaskCount}
                 </span>
               )}
@@ -551,10 +551,10 @@ export const TaskModule: React.FC = () => {
           {activeKeys.map((key) => (
             <div
               key={key}
-              className="flex-shrink-0 w-[85vw] md:w-80 snap-center flex flex-col h-full max-h-full bg-[#12121a]/60 rounded-2xl border border-white/5"
+              className="flex-shrink-0 w-[85vw] md:w-80 snap-center flex flex-col h-full max-h-full bg-white/60 rounded-2xl border border-slate-200/60"
             >
               <div
-                className={`p-3 border-b border-white/5 flex justify-between items-center rounded-t-2xl sticky top-0 z-10 bg-[#12121a]/95`}
+                className={`p-3 border-b border-slate-200/60 flex justify-between items-center rounded-t-2xl sticky top-0 z-10 bg-white/95`}
               >
                 <h3
                   className={`font-black text-xs uppercase tracking-wider ${
@@ -567,7 +567,7 @@ export const TaskModule: React.FC = () => {
                   className={`text-[10px] font-black px-2 py-0.5 rounded-full font-mono ${
                     key === 'overdue'
                       ? 'bg-rose-500/20 text-rose-300'
-                      : 'bg-white/5 text-zinc-400'
+                      : 'bg-slate-100/50 text-slate-500'
                   }`}
                 >
                   {groupedTasks[key].length}
@@ -589,7 +589,7 @@ export const TaskModule: React.FC = () => {
                           : undefined
                       )
                     }
-                    className="w-full py-3 border border-dashed border-white/10 hover:border-violet-500/30 rounded-xl text-zinc-400 hover:text-white hover:bg-white/5 text-xs font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+                    className="w-full py-3 border border-dashed border-slate-200 hover:border-violet-500/30 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100/50 text-xs font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
                   >
                     <Plus size={14} /> Add Task
                   </button>
@@ -618,7 +618,7 @@ export const TaskModule: React.FC = () => {
                   <button
                     onClick={() => toggleGroup(key)}
                     className={`flex items-center gap-2 w-full mb-3 group ${
-                      isOverdueGroup && count > 0 ? 'text-rose-400' : 'text-white'
+                      isOverdueGroup && count > 0 ? 'text-rose-400' : 'text-slate-900'
                     }`}
                   >
                     <div
@@ -626,8 +626,8 @@ export const TaskModule: React.FC = () => {
                         isExpanded
                           ? isOverdueGroup && count > 0
                             ? 'bg-rose-500/10 text-rose-400'
-                            : 'bg-white/10 text-white'
-                          : 'bg-white/5 text-zinc-500 group-hover:bg-white/10'
+                            : 'bg-slate-100 text-slate-900'
+                          : 'bg-slate-100/50 text-slate-400 group-hover:bg-slate-100'
                       }`}
                     >
                       {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
@@ -637,14 +637,14 @@ export const TaskModule: React.FC = () => {
                     </h3>
                     <div
                       className={`h-px flex-1 ml-2 ${
-                        isOverdueGroup && count > 0 ? 'bg-rose-500/10' : 'bg-white/5'
+                        isOverdueGroup && count > 0 ? 'bg-rose-500/10' : 'bg-slate-100/50'
                       }`}
                     />
                     <span
                       className={`text-xs font-mono font-bold ${
                         isOverdueGroup && count > 0
                           ? 'text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded-full'
-                          : 'text-zinc-500'
+                          : 'text-slate-400'
                       }`}
                     >
                       {count}
@@ -654,7 +654,7 @@ export const TaskModule: React.FC = () => {
                   {isExpanded && (
                     <div
                       className={`space-y-3 pl-2 md:pl-4 border-l ${
-                        isOverdueGroup && count > 0 ? 'border-rose-500/10' : 'border-white/5'
+                        isOverdueGroup && count > 0 ? 'border-rose-500/10' : 'border-slate-200/60'
                       }`}
                     >
                       {groupedTasks[key].map((task) => (
@@ -662,7 +662,7 @@ export const TaskModule: React.FC = () => {
                       ))}
 
                       {groupedTasks[key].length === 0 && (
-                        <div className="py-2 text-xs text-zinc-500 italic pl-2">
+                        <div className="py-2 text-xs text-slate-400 italic pl-2">
                           No tasks in this section.
                         </div>
                       )}
@@ -679,7 +679,7 @@ export const TaskModule: React.FC = () => {
                                 : undefined
                             )
                           }
-                          className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-white px-3 py-2 hover:bg-white/5 rounded-lg transition-colors"
+                          className="flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-slate-900 px-3 py-2 hover:bg-slate-100/50 rounded-lg transition-colors"
                         >
                           <Plus size={14} /> Add Task to {getGroupTitle(key)}
                         </button>
@@ -691,7 +691,7 @@ export const TaskModule: React.FC = () => {
             })}
 
             {activeKeys.length === 0 && (
-              <div className="text-center py-20 text-zinc-500 flex flex-col items-center">
+              <div className="text-center py-20 text-slate-400 flex flex-col items-center">
                 <ListTodo size={48} className="mb-4 opacity-10" />
                 <p>
                   {showCompleted
@@ -701,7 +701,7 @@ export const TaskModule: React.FC = () => {
                 {!showCompleted && !showArchived && (
                   <button
                     onClick={() => openModal()}
-                    className="mt-4 text-white font-bold border-b border-white hover:text-violet-400 hover:border-violet-400 transition-colors"
+                    className="mt-4 text-slate-900 font-bold border-b border-white hover:text-violet-400 hover:border-violet-400 transition-colors"
                   >
                     Create one
                   </button>
@@ -715,16 +715,16 @@ export const TaskModule: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#0a0a0f] relative overflow-hidden">
+    <div className="flex flex-col h-full bg-[#F5F7FA] relative overflow-hidden">
       {/* Header Container */}
-      <div className="flex flex-col gap-4 px-4 py-4 md:px-8 md:py-6 border-b border-white/5 bg-[#12121a]/85 backdrop-blur-md z-20 shrink-0 shadow-lg">
+      <div className="flex flex-col gap-4 px-4 py-4 md:px-8 md:py-6 border-b border-slate-200/60 bg-white/85 backdrop-blur-md z-20 shrink-0 shadow-lg">
         <div className="flex flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-tr from-violet-600 to-pink-600 rounded-xl flex items-center justify-center text-white shadow-lg">
+            <div className="w-10 h-10 bg-gradient-to-tr from-violet-600 to-pink-600 rounded-xl flex items-center justify-center text-slate-900 shadow-lg">
               <ListTodo size={20} />
             </div>
             <div>
-              <h2 className="text-2xl font-black text-white tracking-tight leading-none">
+              <h2 className="text-2xl font-black text-slate-900 tracking-tight leading-none">
                 Tasks
               </h2>
               <p className="text-xs text-[var(--text-secondary)] font-medium mt-1">
@@ -752,26 +752,26 @@ export const TaskModule: React.FC = () => {
           <div className="relative flex-1">
             <Search
               size={16}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
             />
             <input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search tasks..."
-              className="w-full bg-[#1e1a26]/30 border border-white/5 focus:border-violet-500/50 pl-9 pr-4 py-2.5 rounded-xl text-sm focus:outline-none focus:bg-[#1e1a26]/60 text-white transition-all placeholder:text-zinc-600"
+              className="w-full bg-[#1e1a26]/30 border border-slate-200/60 focus:border-violet-500/50 pl-9 pr-4 py-2.5 rounded-xl text-sm focus:outline-none focus:bg-[#1e1a26]/60 text-slate-900 transition-all placeholder:text-slate-500"
             />
           </div>
 
           {/* Controls */}
           <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1 md:pb-0">
             {/* View Mode */}
-            <div className="flex bg-[#12121a] p-1 rounded-xl border border-white/5 shrink-0">
+            <div className="flex bg-white p-1 rounded-xl border border-slate-200/60 shrink-0">
               <button
                 onClick={() => setViewMode('list')}
                 className={`p-2 rounded-lg transition-all ${
                   viewMode === 'list'
-                    ? 'bg-white/5 text-white'
-                    : 'text-zinc-500 hover:text-zinc-300'
+                    ? 'bg-slate-100/50 text-slate-900'
+                    : 'text-slate-400 hover:text-slate-700'
                 }`}
                 title="List View"
               >
@@ -781,8 +781,8 @@ export const TaskModule: React.FC = () => {
                 onClick={() => setViewMode('board')}
                 className={`p-2 rounded-lg transition-all ${
                   viewMode === 'board'
-                    ? 'bg-white/5 text-white'
-                    : 'text-zinc-500 hover:text-zinc-300'
+                    ? 'bg-slate-100/50 text-slate-900'
+                    : 'text-slate-400 hover:text-slate-700'
                 }`}
                 title="Board View"
               >
@@ -790,11 +790,11 @@ export const TaskModule: React.FC = () => {
               </button>
             </div>
 
-            <div className="w-px h-6 bg-white/5 mx-1 shrink-0" />
+            <div className="w-px h-6 bg-slate-100/50 mx-1 shrink-0" />
 
             {/* Grouping */}
-            <div className="flex items-center gap-1 bg-[#12121a] border border-white/5 rounded-xl p-1 shrink-0">
-              <span className="text-[10px] font-bold text-zinc-500 uppercase px-2 hidden md:inline font-mono">
+            <div className="flex items-center gap-1 bg-white border border-slate-200/60 rounded-xl p-1 shrink-0">
+              <span className="text-[10px] font-bold text-slate-400 uppercase px-2 hidden md:inline font-mono">
                 Group
               </span>
               {(['date', 'priority', 'project'] as GroupingMode[]).map((g) => (
@@ -803,8 +803,8 @@ export const TaskModule: React.FC = () => {
                   onClick={() => setGrouping(g)}
                   className={`px-3 py-1 text-xs font-bold capitalize transition-colors rounded-lg ${
                     grouping === g
-                      ? 'bg-white/5 text-white'
-                      : 'text-zinc-500 hover:text-zinc-300'
+                      ? 'bg-slate-100/50 text-slate-900'
+                      : 'text-slate-400 hover:text-slate-700'
                   }`}
                 >
                   {g}
@@ -813,14 +813,14 @@ export const TaskModule: React.FC = () => {
             </div>
 
             {/* Sorting */}
-            <div className="flex items-center gap-1 bg-[#12121a] border border-white/5 rounded-xl p-1 shrink-0">
-              <span className="text-[10px] font-bold text-zinc-500 uppercase px-2 hidden md:inline font-mono">
+            <div className="flex items-center gap-1 bg-white border border-slate-200/60 rounded-xl p-1 shrink-0">
+              <span className="text-[10px] font-bold text-slate-400 uppercase px-2 hidden md:inline font-mono">
                 Sort
               </span>
               <button
                 onClick={() => setSortBy('time')}
                 className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors ${
-                  sortBy === 'time' ? 'bg-white/5 text-white' : 'text-zinc-500 hover:text-zinc-300'
+                  sortBy === 'time' ? 'bg-slate-100/50 text-slate-900' : 'text-slate-400 hover:text-slate-700'
                 }`}
                 title="Time"
               >
@@ -829,7 +829,7 @@ export const TaskModule: React.FC = () => {
               <button
                 onClick={() => setSortBy('priority')}
                 className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors ${
-                  sortBy === 'priority' ? 'bg-white/5 text-white' : 'text-zinc-500 hover:text-zinc-300'
+                  sortBy === 'priority' ? 'bg-slate-100/50 text-slate-900' : 'text-slate-400 hover:text-slate-700'
                 }`}
                 title="Priority"
               >
@@ -838,7 +838,7 @@ export const TaskModule: React.FC = () => {
               <button
                 onClick={() => setSortBy('alpha')}
                 className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors ${
-                  sortBy === 'alpha' ? 'bg-white/5 text-white' : 'text-zinc-500 hover:text-zinc-300'
+                  sortBy === 'alpha' ? 'bg-slate-100/50 text-slate-900' : 'text-slate-400 hover:text-slate-700'
                 }`}
                 title="A-Z"
               >
@@ -855,7 +855,7 @@ export const TaskModule: React.FC = () => {
               className={`p-2 rounded-xl border transition-all shrink-0 ml-auto ${
                 showCompleted
                   ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 shadow-lg shadow-emerald-500/5'
-                  : 'border-white/5 text-zinc-500 hover:text-white hover:border-white/10 bg-[#12121a]'
+                  : 'border-slate-200/60 text-slate-400 hover:text-slate-900 hover:border-slate-200 bg-white'
               }`}
               title={showCompleted ? 'Hide Completed' : 'Show Completed'}
             >
@@ -870,7 +870,7 @@ export const TaskModule: React.FC = () => {
               className={`p-2 rounded-xl border transition-all shrink-0 ${
                 showArchived
                   ? 'bg-amber-500/10 border-amber-500/20 text-amber-400 shadow-lg shadow-amber-500/5'
-                  : 'border-white/5 text-zinc-500 hover:text-white hover:border-white/10 bg-[#12121a]'
+                  : 'border-slate-200/60 text-slate-400 hover:text-slate-900 hover:border-slate-200 bg-white'
               }`}
               title={showArchived ? 'Hide Archived' : 'Show Archived'}
             >
@@ -896,7 +896,7 @@ export const TaskModule: React.FC = () => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Task Title"
-              className="w-full bg-transparent text-xl font-bold text-white placeholder-zinc-700 border-none p-0 focus:ring-0 focus:outline-none"
+              className="w-full bg-transparent text-xl font-bold text-slate-900 placeholder-zinc-700 border-none p-0 focus:ring-0 focus:outline-none"
               autoFocus
             />
             <Textarea
@@ -909,18 +909,18 @@ export const TaskModule: React.FC = () => {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block mb-2 font-mono">
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2 font-mono">
                 Priority
               </label>
-              <div className="flex bg-[#12121a] p-1 rounded-xl border border-white/5">
+              <div className="flex bg-white p-1 rounded-xl border border-slate-200/60">
                 {(['High', 'Medium', 'Low'] as Priority[]).map((p) => (
                   <button
                     key={p}
                     onClick={() => setPriority(p)}
                     className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${
                       priority === p
-                        ? 'bg-white/5 text-white shadow-sm'
-                        : 'text-zinc-500 hover:text-white'
+                        ? 'bg-slate-100/50 text-slate-900 shadow-sm'
+                        : 'text-slate-400 hover:text-slate-900'
                     }`}
                   >
                     {p}
@@ -929,7 +929,7 @@ export const TaskModule: React.FC = () => {
               </div>
             </div>
             <div>
-              <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block mb-2 font-mono">
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2 font-mono">
                 Duration (min)
               </label>
               <Input
@@ -942,7 +942,7 @@ export const TaskModule: React.FC = () => {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block mb-2 font-mono">
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2 font-mono">
                 Project
               </label>
               <select
@@ -950,16 +950,16 @@ export const TaskModule: React.FC = () => {
                 onChange={(e) => setProjectId(e.target.value)}
                 className="w-full bg-[var(--bg-elevated)] border border-[var(--border)] rounded-xl px-4 py-3 text-sm text-[var(--text-primary)] focus:border-[var(--purple)] focus:ring-1 focus:ring-violet-500/30 outline-none"
               >
-                <option value="" className="bg-[#12121a]">No Project</option>
+                <option value="" className="bg-white">No Project</option>
                 {availableProjects.map((p) => (
-                  <option key={p.id} value={p.id} className="bg-[#12121a]">
+                  <option key={p.id} value={p.id} className="bg-white">
                     {p.title}
                   </option>
                 ))}
               </select>
             </div>
             <div>
-              <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block mb-2 font-mono">
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2 font-mono">
                 Category
               </label>
               <Input
@@ -971,8 +971,8 @@ export const TaskModule: React.FC = () => {
           </div>
 
           {/* Schedule Wrapper */}
-          <div className="bg-[#12121a] p-4 rounded-2xl border border-white/5 space-y-3">
-            <div className="flex items-center gap-2 text-white font-bold text-sm">
+          <div className="bg-white p-4 rounded-2xl border border-slate-200/60 space-y-3">
+            <div className="flex items-center gap-2 text-slate-900 font-bold text-sm">
               <CalendarClock size={16} className="text-violet-400" /> Schedule Task
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -994,19 +994,19 @@ export const TaskModule: React.FC = () => {
           {/* Subtasks Builder */}
           <div>
             <div className="flex justify-between items-center mb-2">
-              <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest font-mono">
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">
                 Subtasks Checklist
               </label>
-              <span className="text-xs text-zinc-500 font-mono">
+              <span className="text-xs text-slate-400 font-mono">
                 {subtasks.filter((s) => s.isCompleted).length}/{subtasks.length}
               </span>
             </div>
             <div className="space-y-2">
               {subtasks.map((sub) => (
-                <div key={sub.id} className="flex items-center gap-2 group p-2 hover:bg-white/5 rounded-xl transition-all">
+                <div key={sub.id} className="flex items-center gap-2 group p-2 hover:bg-slate-100/50 rounded-xl transition-all">
                   <button
                     onClick={() => toggleSubtask(sub.id)}
-                    className={sub.isCompleted ? 'text-emerald-500' : 'text-zinc-500 hover:text-white'}
+                    className={sub.isCompleted ? 'text-emerald-500' : 'text-slate-400 hover:text-slate-900'}
                   >
                     {sub.isCompleted ? (
                       <CheckSquare size={16} />
@@ -1016,44 +1016,44 @@ export const TaskModule: React.FC = () => {
                   </button>
                   <span
                     className={`flex-1 text-sm ${
-                      sub.isCompleted ? 'line-through text-zinc-500' : 'text-zinc-300'
+                      sub.isCompleted ? 'line-through text-slate-400' : 'text-slate-700'
                     }`}
                   >
                     {sub.title}
                   </span>
                   <button
                     onClick={() => removeSubtask(sub.id)}
-                    className="text-zinc-500 hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="text-slate-400 hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-opacity"
                   >
                     <X size={14} />
                   </button>
                 </div>
               ))}
-              <div className="flex items-center gap-2 border border-white/5 bg-[#12121a] rounded-xl px-3 py-2 focus-within:border-violet-500/50 transition-colors">
-                <Plus size={16} className="text-zinc-500" />
+              <div className="flex items-center gap-2 border border-slate-200/60 bg-white rounded-xl px-3 py-2 focus-within:border-violet-500/50 transition-colors">
+                <Plus size={16} className="text-slate-400" />
                 <input
                   value={subtaskInput}
                   onChange={(e) => setSubtaskInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && addSubtask()}
                   placeholder="Add a step..."
-                  className="flex-1 bg-transparent text-sm focus:outline-none text-white placeholder-zinc-600"
+                  className="flex-1 bg-transparent text-sm focus:outline-none text-slate-900 placeholder-zinc-600"
                 />
               </div>
             </div>
           </div>
 
           {/* Footer controls inside Modal */}
-          <div className="border-t border-white/5 pt-5 flex items-center justify-between">
+          <div className="border-t border-slate-200/60 pt-5 flex items-center justify-between">
             <div className="flex gap-2 relative">
               <button
                 onClick={() => setShowColorPicker(!showColorPicker)}
-                className="p-2.5 bg-[#12121a] border border-white/5 rounded-xl hover:bg-white/5 transition-colors text-zinc-400 hover:text-white"
+                className="p-2.5 bg-white border border-slate-200/60 rounded-xl hover:bg-slate-100/50 transition-colors text-slate-500 hover:text-slate-900"
                 title="Choose Color Accent"
               >
                 <Palette size={18} />
               </button>
               {showColorPicker && (
-                <div className="absolute bottom-full left-0 mb-3 bg-[#12121a] border border-white/10 shadow-2xl rounded-2xl p-2.5 flex gap-1.5 z-50 animate-[scaleUp_0.15s_ease-out] w-max">
+                <div className="absolute bottom-full left-0 mb-3 bg-white border border-slate-200 shadow-2xl rounded-2xl p-2.5 flex gap-1.5 z-50 animate-[scaleUp_0.15s_ease-out] w-max">
                   {TASK_COLORS.map((c) => (
                     <button
                       key={c}
@@ -1061,7 +1061,7 @@ export const TaskModule: React.FC = () => {
                         setSelectedColor(c);
                         setShowColorPicker(false);
                       }}
-                      className={`w-6 h-6 rounded-full border border-white/10 hover:scale-110 transition-transform ${
+                      className={`w-6 h-6 rounded-full border border-slate-200 hover:scale-110 transition-transform ${
                         selectedColor === c ? 'ring-2 ring-offset-2 ring-violet-500 scale-110' : ''
                       }`}
                       style={{ backgroundColor: c }}
@@ -1070,7 +1070,7 @@ export const TaskModule: React.FC = () => {
                 </div>
               )}
               <div
-                className="w-8 h-8 rounded-full border border-white/10 shadow-inner self-center ml-1"
+                className="w-8 h-8 rounded-full border border-slate-200 shadow-inner self-center ml-1"
                 style={{ backgroundColor: selectedColor }}
               />
             </div>

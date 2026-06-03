@@ -159,19 +159,19 @@ export const ActivityModule: React.FC = () => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col bg-[#0a0a0f] animate-fade-in">
+    <div className="w-full h-full flex flex-col bg-[#F5F7FA] animate-fade-in">
       {/* Top sticky navbar */}
-      <div className="px-6 py-5 border-b border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-4 shrink-0 bg-[#0a0a0f] z-20">
+      <div className="px-6 py-5 border-b border-slate-200/60 flex flex-col md:flex-row md:items-center justify-between gap-4 shrink-0 bg-[#F5F7FA] z-20">
         <div className="flex items-center gap-3">
           <button
             onClick={() => router.push('/dashboard')}
-            className="p-2.5 hover:bg-white/5 rounded-2xl text-zinc-400 hover:text-white transition-all border border-transparent hover:border-white/5 active:scale-95"
+            className="p-2.5 hover:bg-slate-100/50 rounded-2xl text-slate-500 hover:text-slate-900 transition-all border border-transparent hover:border-slate-200/60 active:scale-95"
             title="Go back to Dashboard"
           >
             <ArrowLeft size={20} />
           </button>
           <div>
-            <h2 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
+            <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight flex items-center gap-3">
               <Activity className="text-emerald-400" size={28} /> Activity History
             </h2>
             <p className="text-[var(--text-secondary)] text-xs font-medium mt-0.5 hidden md:block">
@@ -182,7 +182,7 @@ export const ActivityModule: React.FC = () => {
 
         {/* Filters and Ranges */}
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex bg-[#12121a] border border-white/5 p-1 rounded-2xl">
+          <div className="flex bg-white border border-slate-200/60 p-1 rounded-2xl">
             {(['all', 'task', 'session', 'journal'] as FilterType[]).map((f) => (
               <button
                 key={f}
@@ -190,8 +190,8 @@ export const ActivityModule: React.FC = () => {
                 className={`px-3 py-1.5 text-xs font-extrabold capitalize rounded-xl transition-all whitespace-nowrap
                   ${
                     filter === f
-                      ? 'bg-gradient-to-r from-violet-600 to-pink-600 text-white shadow-md'
-                      : 'text-[var(--text-secondary)] hover:text-white hover:bg-white/5'
+                      ? 'bg-gradient-to-r from-violet-600 to-pink-600 text-slate-900 shadow-md'
+                      : 'text-[var(--text-secondary)] hover:text-slate-900 hover:bg-slate-100/50'
                   }`}
               >
                 {f === 'all' ? 'All' : f === 'session' ? 'Focus' : f === 'journal' ? 'Logs' : 'Tasks'}
@@ -199,9 +199,9 @@ export const ActivityModule: React.FC = () => {
             ))}
           </div>
 
-          <div className="hidden md:block w-px h-6 bg-white/10" />
+          <div className="hidden md:block w-px h-6 bg-slate-100" />
 
-          <div className="flex bg-[#12121a] border border-white/5 p-1 rounded-2xl">
+          <div className="flex bg-white border border-slate-200/60 p-1 rounded-2xl">
             {(['day', 'week', 'month', 'all'] as TimeRange[]).map((r) => (
               <button
                 key={r}
@@ -209,8 +209,8 @@ export const ActivityModule: React.FC = () => {
                 className={`px-3 py-1.5 text-xs font-extrabold capitalize rounded-xl transition-all whitespace-nowrap
                   ${
                     range === r
-                      ? 'bg-gradient-to-r from-violet-600 to-pink-600 text-white shadow-md'
-                      : 'text-[var(--text-secondary)] hover:text-white hover:bg-white/5'
+                      ? 'bg-gradient-to-r from-violet-600 to-pink-600 text-slate-900 shadow-md'
+                      : 'text-[var(--text-secondary)] hover:text-slate-900 hover:bg-slate-100/50'
                   }`}
               >
                 {r}
@@ -234,7 +234,7 @@ export const ActivityModule: React.FC = () => {
                   item: item.item,
                 })
               }
-              className="p-4 flex items-center justify-between gap-4 border border-white/5 hover:border-violet-500/30 transition-all duration-300 group cursor-pointer"
+              className="p-4 flex items-center justify-between gap-4 border border-slate-200/60 hover:border-violet-500/30 transition-all duration-300 group cursor-pointer"
             >
               <div className="flex items-center gap-4 min-w-0">
                 <div
@@ -244,17 +244,17 @@ export const ActivityModule: React.FC = () => {
                 </div>
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    <span className="text-[9px] font-bold text-[var(--text-secondary)] font-mono uppercase bg-white/5 px-2 py-0.5 rounded-md border border-white/5">
+                    <span className="text-[9px] font-bold text-[var(--text-secondary)] font-mono uppercase bg-slate-100/50 px-2 py-0.5 rounded-md border border-slate-200/60">
                       {new Date(item.timestamp).toLocaleDateString()}
                     </span>
-                    <span className="text-[9px] font-bold text-zinc-500 font-mono">
+                    <span className="text-[9px] font-bold text-slate-400 font-mono">
                       {new Date(item.timestamp).toLocaleTimeString([], {
                         hour: 'numeric',
                         minute: '2-digit',
                       })}
                     </span>
                   </div>
-                  <h4 className="text-base font-extrabold text-white truncate max-w-sm sm:max-w-md md:max-w-lg">
+                  <h4 className="text-base font-extrabold text-slate-900 truncate max-w-sm sm:max-w-md md:max-w-lg">
                     {item.title}
                   </h4>
                   {item.subtitle && (
@@ -270,7 +270,7 @@ export const ActivityModule: React.FC = () => {
                   e.stopPropagation();
                   handleDeleteActivity(item.id, item.type);
                 }}
-                className="p-2 text-zinc-600 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-all border border-transparent hover:border-rose-500/20 opacity-0 group-hover:opacity-100"
+                className="p-2 text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-all border border-transparent hover:border-rose-500/20 opacity-0 group-hover:opacity-100"
                 title="Delete Record"
               >
                 <Trash2 size={16} />
@@ -279,12 +279,12 @@ export const ActivityModule: React.FC = () => {
           ))}
 
           {filteredItems.length === 0 && (
-            <div className="py-24 flex flex-col items-center justify-center text-center border border-dashed border-white/10 rounded-3xl bg-[#12121a]/10 text-zinc-500">
-              <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center shadow-lg border border-white/5 mb-6 text-zinc-400">
+            <div className="py-24 flex flex-col items-center justify-center text-center border border-dashed border-slate-200 rounded-3xl bg-slate-100 text-slate-400">
+              <div className="w-16 h-16 bg-slate-100/50 rounded-full flex items-center justify-center shadow-lg border border-slate-200/60 mb-6 text-slate-500">
                 <Filter size={28} />
               </div>
-              <h3 className="text-lg font-bold text-white mb-2">No activity found</h3>
-              <p className="text-zinc-500 text-xs max-w-sm px-4 leading-relaxed">
+              <h3 className="text-lg font-bold text-slate-900 mb-2">No activity found</h3>
+              <p className="text-slate-400 text-xs max-w-sm px-4 leading-relaxed">
                 There are no actions logged within the selected range or filters. Keep completing tasks and tracking routines!
               </p>
             </div>
@@ -307,7 +307,7 @@ export const ActivityModule: React.FC = () => {
                   <CheckCircle2 size={28} />
                 </div>
                 <div>
-                  <h3 className="text-xl font-extrabold text-center text-white leading-tight">
+                  <h3 className="text-xl font-extrabold text-center text-slate-900 leading-tight">
                     {selectedActivity.item.title}
                   </h3>
                   <p className="text-center text-xs text-[var(--text-secondary)] font-mono mt-1 flex items-center justify-center gap-1.5">
@@ -316,16 +316,16 @@ export const ActivityModule: React.FC = () => {
                   </p>
                 </div>
 
-                <div className="bg-[#12121a] border border-white/5 rounded-2xl p-4 space-y-3 text-sm">
+                <div className="bg-white border border-slate-200/60 rounded-2xl p-4 space-y-3 text-sm">
                   <div className="flex justify-between">
                     <span className="text-[var(--text-secondary)] font-medium">Category</span>
-                    <span className="font-bold text-white bg-white/5 px-2 py-0.5 rounded-lg text-xs border border-white/5">
+                    <span className="font-bold text-slate-900 bg-slate-100/50 px-2 py-0.5 rounded-lg text-xs border border-slate-200/60">
                       {selectedActivity.item.category}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[var(--text-secondary)] font-medium">Duration Estimate</span>
-                    <span className="font-bold text-white font-mono">{selectedActivity.item.duration}m</span>
+                    <span className="font-bold text-slate-900 font-mono">{selectedActivity.item.duration}m</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[var(--text-secondary)] font-medium">Priority</span>
@@ -344,10 +344,10 @@ export const ActivityModule: React.FC = () => {
 
                 {selectedActivity.item.description && (
                   <div>
-                    <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block mb-1.5 font-mono">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1.5 font-mono">
                       Description
                     </span>
-                    <p className="text-xs text-zinc-300 bg-[#12121a] border border-white/5 p-3 rounded-2xl whitespace-pre-wrap leading-relaxed">
+                    <p className="text-xs text-slate-700 bg-white border border-slate-200/60 p-3 rounded-2xl whitespace-pre-wrap leading-relaxed">
                       {selectedActivity.item.description}
                     </p>
                   </div>
@@ -361,7 +361,7 @@ export const ActivityModule: React.FC = () => {
                   <Zap size={28} fill="currentColor" className="opacity-20" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-extrabold text-center text-white leading-tight">
+                  <h3 className="text-xl font-extrabold text-center text-slate-900 leading-tight">
                     {selectedActivity.item.routineTitle}
                   </h3>
                   <p className="text-center text-xs text-[var(--text-secondary)] font-mono mt-1 flex items-center justify-center gap-1.5">
@@ -371,19 +371,19 @@ export const ActivityModule: React.FC = () => {
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-[#12121a] p-3 rounded-2xl text-center border border-white/5">
+                  <div className="bg-white p-3 rounded-2xl text-center border border-slate-200/60">
                     <div className="text-[9px] text-[var(--text-secondary)] font-bold uppercase tracking-wider font-mono mb-0.5">
                       Focus Duration
                     </div>
-                    <div className="text-lg font-black text-white font-mono">
+                    <div className="text-lg font-black text-slate-900 font-mono">
                       {Math.round(selectedActivity.item.durationSeconds / 60)}m
                     </div>
                   </div>
-                  <div className="bg-[#12121a] p-3 rounded-2xl text-center border border-white/5">
+                  <div className="bg-white p-3 rounded-2xl text-center border border-slate-200/60">
                     <div className="text-[9px] text-[var(--text-secondary)] font-bold uppercase tracking-wider font-mono mb-0.5">
                       Steps Completed
                     </div>
-                    <div className="text-lg font-black text-white font-mono">
+                    <div className="text-lg font-black text-slate-900 font-mono">
                       {selectedActivity.item.completedSteps} / {selectedActivity.item.totalSteps}
                     </div>
                   </div>
@@ -391,16 +391,16 @@ export const ActivityModule: React.FC = () => {
 
                 {selectedActivity.item.logs && selectedActivity.item.logs.length > 0 && (
                   <div className="space-y-2">
-                    <h4 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest font-mono">
+                    <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">
                       Step breakdown
                     </h4>
-                    <div className="space-y-2 max-h-[160px] overflow-y-auto no-scrollbar border border-white/5 rounded-2xl p-2 bg-[#12121a]/50">
+                    <div className="space-y-2 max-h-[160px] overflow-y-auto no-scrollbar border border-slate-200/60 rounded-2xl p-2 bg-slate-100/500">
                       {selectedActivity.item.logs.map((log: any, i: number) => (
                         <div
                           key={i}
-                          className="flex justify-between items-center text-xs bg-[#12121a] p-2.5 rounded-xl border border-white/5"
+                          className="flex justify-between items-center text-xs bg-white p-2.5 rounded-xl border border-slate-200/60"
                         >
-                          <span className="text-zinc-200 font-bold truncate pr-2">
+                          <span className="text-slate-800 font-bold truncate pr-2">
                             {log.title}
                           </span>
                           <span className="text-[var(--text-secondary)] font-mono whitespace-nowrap font-bold shrink-0">
@@ -420,7 +420,7 @@ export const ActivityModule: React.FC = () => {
                   <Smile size={28} />
                 </div>
                 <div>
-                  <h3 className="text-xl font-extrabold text-center text-white leading-tight">
+                  <h3 className="text-xl font-extrabold text-center text-slate-900 leading-tight">
                     {selectedActivity.item.title || 'Untitled Journal Entry'}
                   </h3>
                   <p className="text-center text-xs text-[var(--text-secondary)] font-mono mt-1 flex items-center justify-center gap-1.5">
@@ -429,7 +429,7 @@ export const ActivityModule: React.FC = () => {
                   </p>
                 </div>
 
-                <div className="bg-[#12121a] border border-white/5 rounded-2xl p-4 space-y-3 text-sm">
+                <div className="bg-white border border-slate-200/60 rounded-2xl p-4 space-y-3 text-sm">
                   <div className="flex justify-between items-center">
                     <span className="text-[var(--text-secondary)] font-medium">Logged Mood</span>
                     <span
@@ -445,8 +445,8 @@ export const ActivityModule: React.FC = () => {
                   </div>
 
                   {selectedActivity.item.tags && selectedActivity.item.tags.length > 0 && (
-                    <div className="pt-2 border-t border-white/5">
-                      <span className="block text-[10px] text-zinc-500 font-bold uppercase tracking-widest mb-1.5 font-mono">
+                    <div className="pt-2 border-t border-slate-200/60">
+                      <span className="block text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1.5 font-mono">
                         Tags
                       </span>
                       <div className="flex flex-wrap gap-1">
@@ -465,10 +465,10 @@ export const ActivityModule: React.FC = () => {
 
                 {selectedActivity.item.content && (
                   <div>
-                    <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block mb-1.5 font-mono">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1.5 font-mono">
                       Reflections
                     </span>
-                    <div className="text-xs text-zinc-300 bg-[#12121a] border border-white/5 p-4 rounded-2xl whitespace-pre-wrap leading-relaxed max-h-[160px] overflow-y-auto no-scrollbar">
+                    <div className="text-xs text-slate-700 bg-white border border-slate-200/60 p-4 rounded-2xl whitespace-pre-wrap leading-relaxed max-h-[160px] overflow-y-auto no-scrollbar">
                       {selectedActivity.item.content}
                     </div>
                   </div>
@@ -476,7 +476,7 @@ export const ActivityModule: React.FC = () => {
               </div>
             )}
 
-            <div className="pt-4 border-t border-white/5 flex justify-end gap-2">
+            <div className="pt-4 border-t border-slate-200/60 flex justify-end gap-2">
               <Button
                 variant="danger"
                 size="sm"
