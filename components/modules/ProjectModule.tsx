@@ -288,7 +288,7 @@ export const ProjectModule: React.FC = () => {
                 <div>
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      <h3 className="text-lg font-bold text-slate-900 leading-tight mb-2 flex items-center gap-2 group-hover:text-violet-300 transition-colors">
+                      <h3 className="text-lg font-bold text-slate-900 leading-tight mb-2 flex items-center gap-2 group-hover:text-[#8979FF] transition-colors">
                         {project.title}
                         <div
                           className={`w-2 h-2 rounded-full ${getPriorityColor(
@@ -302,10 +302,10 @@ export const ProjectModule: React.FC = () => {
                         className={`text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border flex items-center gap-1 transition-all hover:opacity-80 active:scale-95 font-mono
                           ${
                             project.status === 'completed'
-                              ? 'bg-green-500/10 text-green-400 border-green-500/20'
+                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200/60'
                               : project.status === 'on-hold'
-                              ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
-                              : 'bg-slate-100/50 text-slate-500 border-slate-200/60'
+                              ? 'bg-amber-50 text-amber-850 text-amber-800 border-amber-200/60'
+                              : 'bg-slate-100 text-slate-700 border-slate-200/60'
                           }
                         `}
                         title="Click to cycle status"

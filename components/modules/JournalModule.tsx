@@ -257,7 +257,7 @@ export const JournalModule: React.FC = () => {
           groupedEntries.map((group) => (
             <div key={group.date} className="space-y-4">
               <div className="flex items-center gap-4">
-                <span className="bg-slate-100/50 border border-slate-200/60 text-violet-400 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest font-mono">
+                <span className="bg-slate-100/50 border border-slate-200/60 text-violet-600 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest font-mono">
                   {group.date}
                 </span>
                 <div className="h-px bg-slate-100/50 flex-1" />
@@ -311,7 +311,7 @@ export const JournalModule: React.FC = () => {
                               </div>
                             </div>
 
-                            <h4 className="text-base font-extrabold text-slate-900 leading-snug mb-2 truncate group-hover:text-violet-300 transition-colors">
+                            <h4 className="text-base font-extrabold text-slate-900 leading-snug mb-2 truncate group-hover:text-[#8979FF] transition-colors">
                               {entry.title}
                             </h4>
                             <p className="text-xs text-slate-500 line-clamp-3 leading-relaxed whitespace-pre-wrap">

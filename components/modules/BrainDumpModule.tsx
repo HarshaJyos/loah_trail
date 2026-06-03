@@ -117,7 +117,7 @@ export const BrainDumpModule: React.FC = () => {
             <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-yellow-500/10 to-transparent rounded-bl-full -mr-8 -mt-8 opacity-40 group-hover:opacity-100 transition-opacity" />
 
             <div className="flex items-start justify-between mb-4 relative z-10">
-              <div className="bg-yellow-500/10 p-2 rounded-lg text-yellow-400 border border-yellow-500/20 group-hover:scale-110 transition-transform">
+              <div className="bg-yellow-500/10 p-2 rounded-lg text-amber-600 border border-amber-200/60 group-hover:scale-110 transition-transform">
                 <Lightbulb size={18} fill="currentColor" className="opacity-20" />
               </div>
               <span className="text-[9px] font-bold font-mono text-slate-400">
@@ -125,7 +125,7 @@ export const BrainDumpModule: React.FC = () => {
               </span>
             </div>
 
-            <h3 className="text-base font-extrabold text-slate-900 mb-2 leading-tight group-hover:text-violet-300 transition-colors">
+            <h3 className="text-base font-extrabold text-slate-900 mb-2 leading-tight group-hover:text-[#8979FF] transition-colors">
               {dump.title}
             </h3>
 
@@ -136,7 +136,7 @@ export const BrainDumpModule: React.FC = () => {
             <div className="pt-4 border-t border-slate-200/60 mt-auto">
               <div className="flex items-center justify-between mb-3.5">
                 <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1 font-mono">
-                  <CornerDownRight size={12} className="text-violet-400" /> Convert Idea
+                  <CornerDownRight size={12} className="text-[#8979FF]" /> Convert Idea
                 </span>
 
                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">

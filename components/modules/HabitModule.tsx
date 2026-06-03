@@ -684,12 +684,12 @@ export const HabitModule: React.FC = () => {
                           )}
                         </div>
                         <div>
-                          <h3 className="font-bold text-slate-900 truncate max-w-[140px] text-base leading-tight group-hover:text-violet-300 transition-colors">
+                          <h3 className="font-bold text-slate-900 truncate max-w-[140px] text-base leading-tight group-hover:text-[#8979FF] transition-colors">
                             {habit.title}
                           </h3>
                           <div className="flex items-center gap-1.5 mt-1 font-mono text-[9px] font-bold uppercase tracking-wider">
                             {habit.streak > 0 && (
-                              <span className="flex items-center gap-0.5 text-orange-400 bg-orange-500/10 border border-orange-500/20 px-1.5 py-0.5 rounded-md">
+                              <span className="flex items-center gap-0.5 text-orange-600 bg-orange-50 border border-orange-200/60 px-1.5 py-0.5 rounded-md">
                                 <Flame size={10} fill="currentColor" /> {habit.streak}
                               </span>
                             )}

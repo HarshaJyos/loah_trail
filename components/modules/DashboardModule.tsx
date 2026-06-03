@@ -357,7 +357,7 @@ export const DashboardModule: React.FC = () => {
           <Card className="p-6 md:p-8 flex flex-col h-full bg-slate-50/30">
             <div className="flex justify-between items-center mb-6 shrink-0">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-emerald-500/10 rounded-xl text-emerald-400">
+                <div className="p-2 bg-emerald-500/10 rounded-xl text-emerald-600">
                   <Activity size={20} />
                 </div>
                 <h3 className="text-lg font-bold text-[var(--text-primary)]">
@@ -368,7 +368,7 @@ export const DashboardModule: React.FC = () => {
                 size="sm"
                 variant="glass"
                 onClick={() => setCurrentView('activity')}
-                className="text-xs font-bold text-emerald-400 hover:text-emerald-300"
+                className="text-xs font-bold text-emerald-600 hover:text-emerald-700"
               >
                 View All
               </Button>

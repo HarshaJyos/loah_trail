@@ -62,7 +62,7 @@ export const MiniPlayer: React.FC = () => {
   return (
     <div
       onClick={handleExpand}
-      className="bg-[#1a1a26]/90 border border-white/5 p-3 rounded-2xl shadow-xl flex items-center gap-3 w-full max-w-sm mx-auto backdrop-blur-md hover:border-violet-500/30 transition-all cursor-pointer"
+      className="bg-white/90 border border-slate-200/60 p-3 rounded-2xl shadow-xl flex items-center gap-3 w-full max-w-sm mx-auto backdrop-blur-md hover:border-violet-500/30 transition-all cursor-pointer"
     >
       {/* Circular Timer Progress */}
       <div className="relative w-10 h-10 shrink-0" onClick={handleTogglePlay}>
@@ -71,7 +71,7 @@ export const MiniPlayer: React.FC = () => {
             cx="50%"
             cy="50%"
             r="18"
-            stroke="rgba(255,255,255,0.05)"
+            stroke="rgba(0,0,0,0.05)"
             strokeWidth="3"
             fill="transparent"
           />
@@ -91,7 +91,7 @@ export const MiniPlayer: React.FC = () => {
             className="transition-all duration-300 ease-linear"
           />
         </svg>
-        <div className="absolute inset-0 flex items-center justify-center text-white">
+        <div className="absolute inset-0 flex items-center justify-center text-slate-800">
           {isPlaying ? (
             <Pause size={14} fill="currentColor" />
           ) : (
@@ -102,34 +102,34 @@ export const MiniPlayer: React.FC = () => {
 
       <div className="flex-1 min-w-0 flex flex-col justify-center">
         <div className="flex items-center justify-between gap-2">
-          <h4 className="text-sm font-bold truncate text-[#f1f0ff]">
+          <h4 className="text-sm font-bold truncate text-slate-900">
             {currentStep.title}
           </h4>
           <span
             className={`text-xs font-mono font-medium ${
-              isOvertime ? 'text-rose-400 animate-pulse' : 'text-zinc-400'
+              isOvertime ? 'text-rose-600 animate-pulse' : 'text-slate-500'
             }`}
           >
             {formatTime(timeLeft)}
           </span>
         </div>
-        <div className="flex items-center gap-1.5 text-[10px] text-zinc-500 truncate">
+        <div className="flex items-center gap-1.5 text-[10px] text-slate-500 truncate">
           <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
           {activeRoutine.title}
         </div>
       </div>
 
-      <div className="flex items-center gap-1 shrink-0 border-l border-white/5 pl-2 ml-1">
+      <div className="flex items-center gap-1 shrink-0 border-l border-slate-200/60 pl-2 ml-1">
         <button
           onClick={handleNext}
-          className="p-2 text-[var(--text-secondary)] hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+          className="p-2 text-[var(--text-secondary)] hover:text-slate-950 hover:bg-slate-100 rounded-lg transition-colors"
           title="Next Step"
         >
           <SkipForward size={16} />
         </button>
         <button
           onClick={handleExpand}
-          className="p-2 text-[var(--text-secondary)] hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+          className="p-2 text-[var(--text-secondary)] hover:text-slate-950 hover:bg-slate-100 rounded-lg transition-colors"
           title="Maximize"
         >
           <Maximize2 size={16} />

@@ -81,7 +81,7 @@ export const MoodChart: React.FC<MoodChartProps> = ({
       );
 
       let avgMood = 0;
-      let color = 'rgba(255,255,255,0.05)';
+      let color = '#E2E8F0';
 
       if (entries.length > 0) {
         const sum = entries.reduce(
@@ -120,7 +120,7 @@ export const MoodChart: React.FC<MoodChartProps> = ({
           {[5, 4, 3, 2, 1].map((lvl) => (
             <div
               key={lvl}
-              className="w-full h-px border-t border-dashed border-white/5 relative"
+              className="w-full h-px border-t border-dashed border-slate-200/60 relative"
             >
               <span className="absolute -left-6 -top-2 text-[9px] text-zinc-600 font-bold font-mono">
                 {lvl}
@@ -144,7 +144,7 @@ export const MoodChart: React.FC<MoodChartProps> = ({
                 }}
               >
                 {d.value > 0 && (
-                  <div className="opacity-0 group-hover:opacity-100 absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-[#12121a] border border-white/10 text-white text-[10px] font-bold px-2 py-1 rounded-lg whitespace-nowrap z-10 pointer-events-none transition-opacity shadow-xl backdrop-blur-md">
+                  <div className="opacity-0 group-hover:opacity-100 absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-white border border-slate-200 text-slate-800 text-[10px] font-bold px-2 py-1 rounded-lg whitespace-nowrap z-10 pointer-events-none transition-opacity shadow-lg">
                     Score: {d.value.toFixed(1)}
                   </div>
                 )}
@@ -155,7 +155,7 @@ export const MoodChart: React.FC<MoodChartProps> = ({
       </div>
 
       {/* X Axis Labels */}
-      <div className="pl-6 flex justify-between mt-2 pt-2 border-t border-white/5 text-[9px] font-bold text-[var(--text-secondary)] uppercase tracking-wider font-mono">
+      <div className="pl-6 flex justify-between mt-2 pt-2 border-t border-slate-200/60 text-[9px] font-bold text-[var(--text-secondary)] uppercase tracking-wider font-mono">
         {chartData
           .filter((_, i) => i % Math.ceil(chartData.length / 6) === 0)
           .map((d, i) => (

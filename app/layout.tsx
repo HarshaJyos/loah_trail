@@ -27,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full w-full select-none">
       <body
-        className={`${inter.variable} ${geistMono.variable} font-sans antialiased bg-[#0a0a0f] text-[#f1f0ff] fixed inset-0 overflow-hidden h-[100dvh] w-full`}
+        className={`${inter.variable} ${geistMono.variable} font-sans antialiased bg-[#F5F7FA] text-[#1E1E1E] fixed inset-0 overflow-hidden h-[100dvh] w-full`}
       >
         {children}
       </body>

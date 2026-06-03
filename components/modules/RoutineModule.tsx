@@ -451,7 +451,7 @@ export const RoutineModule: React.FC = () => {
                         </span>
                       )}
                       {scheduledTime && (
-                        <span className="flex items-center gap-1 text-violet-300 bg-violet-500/10 px-1.5 py-0.5 rounded border border-violet-500/20">
+                        <span className="flex items-center gap-1 text-violet-600 bg-violet-50 px-1.5 py-0.5 rounded border border-violet-200/60">
                           <CalendarClock size={12} />
                           {scheduledTime.toLocaleDateString(undefined, {
                             month: 'short',
@@ -461,7 +461,7 @@ export const RoutineModule: React.FC = () => {
                             {scheduledTime.toLocaleTimeString([], {
                               hour: 'numeric',
                               minute: '2-digit',
-                            })}
+                             })}
                           </span>
                         </span>
                       )}
@@ -474,7 +474,7 @@ export const RoutineModule: React.FC = () => {
                       <div key={step.id} className="flex items-center gap-3">
                         <div
                           className={`w-1.5 h-1.5 rounded-full ${
-                            i === 0 ? 'bg-violet-500 shadow-[0_0_8px_rgba(124,58,237,0.8)]' : 'bg-[#22223a]'
+                            i === 0 ? 'bg-violet-500 shadow-[0_0_8px_rgba(124,58,237,0.3)]' : 'bg-slate-300'
                           }`}
                         />
                         <span className="text-xs text-slate-500 font-medium truncate flex-1 leading-normal">
@@ -486,8 +486,8 @@ export const RoutineModule: React.FC = () => {
                       </div>
                     ))}
                     {routine.steps.length > 3 && (
-                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#12121a] via-[#12121a]/95 to-transparent h-12 flex items-end">
-                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider pl-5 pb-0.5">
+                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white via-white/95 to-transparent h-12 flex items-end">
+                        <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider pl-5 pb-0.5">
                           +{routine.steps.length - 3} more steps
                         </span>
                       </div>

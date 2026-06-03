@@ -552,7 +552,7 @@ export const CalendarModule: React.FC = () => {
                       draggable={!routine.completedAt}
                       onDragStart={(e) => handleDragStart(e, routine.id, 'routine', 'grid')}
                       onClick={(e) => handleBlockClick(e, routine, 'routine')}
-                      className={`text-[9px] px-1.5 py-0.5 rounded-lg border truncate cursor-pointer bg-slate-50 border-violet-500/20 text-violet-300 font-bold ${
+                      className={`text-[9px] px-1.5 py-0.5 rounded-lg border truncate cursor-pointer bg-slate-50 border-violet-200 text-[#8979FF] font-bold ${
                         selectedBlock?.id === routine.id ? 'ring-2 ring-violet-500' : ''
                       }`}
                       style={{

@@ -74,10 +74,25 @@ export const QuillEditor: React.FC<QuillEditorProps> = ({
       <style jsx global>{`
         /* Custom styles to match the premium light layout */
         .quill-editor-container .ql-toolbar.ql-snow {
-          border: none !important;
-          border-bottom: 1px solid #e2e8f0 !important;
-          background: #f8fafc;
-          padding: 8px 12px !important;
+          position: fixed !important;
+          bottom: 24px !important;
+          left: 50% !important;
+          transform: translateX(-50%) !important;
+          z-index: 100 !important;
+          width: 90% !important;
+          max-width: 600px !important;
+          background: rgba(255, 255, 255, 0.9) !important;
+          backdrop-filter: blur(20px) !important;
+          -webkit-backdrop-filter: blur(20px) !important;
+          border: 1px solid rgba(226, 232, 240, 0.8) !important;
+          border-radius: 24px !important;
+          box-shadow: 0 10px 25px -5px rgba(137, 121, 255, 0.25) !important;
+          display: flex !important;
+          flex-wrap: wrap !important;
+          justify-content: center !important;
+          align-items: center !important;
+          gap: 6px !important;
+          padding: 10px 20px !important;
         }
         .quill-editor-container .ql-container.ql-snow {
           border: none !important;
@@ -86,13 +101,14 @@ export const QuillEditor: React.FC<QuillEditorProps> = ({
           line-height: 1.6 !important;
           flex: 1;
           display: flex;
-          flex-col: column;
-          min-h: 200px;
+          flex-direction: column;
+          min-height: 200px;
         }
         .quill-editor-container .ql-editor {
           flex: 1;
-          min-h: 200px;
+          min-height: 200px;
           padding: 16px !important;
+          padding-bottom: 96px !important;
           color: #1e1e1e !important;
         }
         .quill-editor-container .ql-editor.ql-blank::before {

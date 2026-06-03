@@ -71,7 +71,7 @@ export const FocusBreakdown: React.FC<FocusBreakdownProps> = ({
         ) : (
           <>
             {/* Donut Circle SVG or Gradient */}
-            <div className="w-32 h-32 rounded-full border-[12px] border-white/5 relative">
+            <div className="w-32 h-32 rounded-full border-[12px] border-slate-100 relative">
               <div
                 className="absolute inset-0 rounded-full"
                 style={{
@@ -85,7 +85,7 @@ export const FocusBreakdown: React.FC<FocusBreakdownProps> = ({
                     .join(', ')})`,
                 }}
               />
-              <div className="absolute inset-1 bg-[#1a1a26] rounded-full flex items-center justify-center border border-white/5">
+              <div className="absolute inset-1 bg-white rounded-full flex items-center justify-center border border-slate-200/60">
                 <span className="text-[10px] font-bold text-[var(--text-secondary)] tracking-wider">
                   DIST
                 </span>
@@ -100,7 +100,7 @@ export const FocusBreakdown: React.FC<FocusBreakdownProps> = ({
                     <span className="truncate max-w-[120px]">{d.label}</span>
                     <span className="font-mono">{Math.round(d.percent)}%</span>
                   </div>
-                  <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+                  <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
                     <div
                       className="h-full rounded-full transition-all duration-500"
                       style={{

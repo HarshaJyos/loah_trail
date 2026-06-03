@@ -272,7 +272,7 @@ export const NoteEditorModal: React.FC<{
                       setShowColorPicker(false);
                     }}
                     className={`w-6 h-6 rounded-full border border-slate-200 hover:scale-110 transition-transform relative ${
-                      selectedColor === c ? 'ring-2 ring-violet-500 ring-offset-2 ring-offset-[#12121a]' : ''
+                      selectedColor === c ? 'ring-2 ring-violet-500 ring-offset-2 ring-offset-white' : ''
                     }`}
                     style={{ backgroundColor: c === 'transparent' ? '#222' : c }}
                     title={COLOR_LABELS[c]}
@@ -349,7 +349,7 @@ export const NoteCard: React.FC<{
     >
       <div className="p-5 flex flex-col h-full">
         <div className="flex justify-between items-start mb-3">
-          <h3 className="font-extrabold text-slate-900 text-base leading-tight line-clamp-2 pr-6 group-hover:text-violet-300 transition-colors">
+          <h3 className="font-extrabold text-slate-900 text-base leading-tight line-clamp-2 pr-6 group-hover:text-[#8979FF] transition-colors">
             {note.title || 'Untitled note'}
           </h3>
           <button

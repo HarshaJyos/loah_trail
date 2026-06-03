@@ -16,13 +16,13 @@ export const Badge: React.FC<BadgeProps> = ({
     'inline-flex items-center justify-center font-semibold rounded-full border select-none';
 
   const variants = {
-    purple: 'bg-violet-500/15 text-violet-300 border-violet-500/20 shadow-[0_0_15px_rgba(124,58,237,0.05)]',
-    pink: 'bg-pink-500/15 text-pink-300 border-pink-500/20 shadow-[0_0_15px_rgba(236,72,153,0.05)]',
-    cyan: 'bg-cyan-500/15 text-cyan-300 border-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.05)]',
-    emerald: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.05)]',
-    amber: 'bg-amber-500/15 text-amber-300 border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.05)]',
-    rose: 'bg-rose-500/15 text-rose-300 border-rose-500/20 shadow-[0_0_15px_rgba(244,63,94,0.05)]',
-    neutral: 'bg-white/5 text-[var(--text-secondary)] border-white/10',
+    purple: 'bg-violet-50 text-violet-600 border-violet-200/60 shadow-sm',
+    pink: 'bg-pink-50 text-pink-600 border-pink-200/60 shadow-sm',
+    cyan: 'bg-sky-50 text-sky-600 border-sky-200/60 shadow-sm',
+    emerald: 'bg-emerald-50 text-emerald-700 border-emerald-200/60 shadow-sm',
+    amber: 'bg-amber-50 text-amber-850 text-amber-800 border-amber-200/60 shadow-sm',
+    rose: 'bg-rose-50 text-rose-600 border-rose-200/60 shadow-sm',
+    neutral: 'bg-slate-100 text-slate-700 border-slate-200/60',
   };
 
   const sizes = {

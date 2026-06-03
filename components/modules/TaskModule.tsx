@@ -758,7 +758,7 @@ export const TaskModule: React.FC = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search tasks..."
-              className="w-full bg-[#1e1a26]/30 border border-slate-200/60 focus:border-violet-500/50 pl-9 pr-4 py-2.5 rounded-xl text-sm focus:outline-none focus:bg-[#1e1a26]/60 text-slate-900 transition-all placeholder:text-slate-500"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl focus:border-[#8979FF] focus:bg-white focus:shadow-[0_0_15px_rgba(137,121,255,0.1)] pl-9 pr-4 py-2.5 text-sm focus:outline-none text-slate-900 transition-all placeholder:text-slate-400"
             />
           </div>
 

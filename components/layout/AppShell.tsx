@@ -250,7 +250,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
       )}
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col h-full overflow-hidden relative pt-16">
+      <main className={`flex-1 flex flex-col h-full overflow-hidden relative ${activeRoutine ? 'pt-16' : 'pt-6'}`}>
         <div
           className={`flex-1 flex flex-col h-full ${
             isFullWidthView

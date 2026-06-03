@@ -120,9 +120,9 @@ export const ActivityChart: React.FC<ActivityChartProps> = ({
       <div className="flex-1 w-full relative min-h-[160px]">
         {/* Horizontal scale line segments */}
         <div className="absolute inset-0 flex flex-col justify-between pointer-events-none pb-8 pt-6">
-          <div className="w-full h-px border-t border-dashed border-white/5" />
-          <div className="w-full h-px border-t border-dashed border-white/5" />
-          <div className="w-full h-px border-t border-dashed border-white/5" />
+          <div className="w-full h-px border-t border-dashed border-slate-200/60" />
+          <div className="w-full h-px border-t border-dashed border-slate-200/60" />
+          <div className="w-full h-px border-t border-dashed border-slate-200/60" />
         </div>
 
         {/* Bars Container */}
@@ -142,7 +142,7 @@ export const ActivityChart: React.FC<ActivityChartProps> = ({
                   }}
                 >
                   {d.value > 0 && (
-                    <div className="opacity-0 group-hover:opacity-100 absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-[#12121a] border border-white/10 text-white text-[10px] font-bold px-2 py-1 rounded-lg whitespace-nowrap z-10 pointer-events-none transition-opacity shadow-xl backdrop-blur-md">
+                    <div className="opacity-0 group-hover:opacity-100 absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-white border border-slate-200 text-slate-800 text-[10px] font-bold px-2 py-1 rounded-lg whitespace-nowrap z-10 pointer-events-none transition-opacity shadow-lg">
                       {d.value} Activities
                     </div>
                   )}
@@ -154,7 +154,7 @@ export const ActivityChart: React.FC<ActivityChartProps> = ({
       </div>
 
       {/* X Axis Labels */}
-      <div className="flex justify-between mt-2 pt-2 border-t border-white/5 text-[9px] font-bold text-[var(--text-secondary)] uppercase tracking-wider font-mono">
+      <div className="flex justify-between mt-2 pt-2 border-t border-slate-200/60 text-[9px] font-bold text-[var(--text-secondary)] uppercase tracking-wider font-mono">
         {chartData
           .filter((_, i) => i % Math.ceil(chartData.length / 6) === 0)
           .map((d, i) => (

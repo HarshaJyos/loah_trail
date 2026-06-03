@@ -25,13 +25,13 @@ export const ModuleHeader: React.FC<ModuleHeaderProps> = ({
   }, []);
 
   return (
-    <div className="w-full flex justify-between items-start pt-4 pb-6 px-1 md:px-2 border-b border-slate-200/60 shrink-0 gap-4 mb-6">
+    <div className="w-full flex justify-between items-start pt-[15px] pb-[12px] px-2 md:px-4 border-b border-slate-200/60 shrink-0 gap-4 mb-6">
       <div className="flex flex-col items-start select-none">
-        <h1 className="text-slate-900 text-3xl md:text-4xl font-extrabold tracking-tight font-sans">
+        <h1 className="text-slate-950 text-3xl md:text-[32px] font-black tracking-tight font-sans leading-none">
           {title}
         </h1>
         {showDate && dateStr && (
-          <span className="text-slate-500 text-xs font-semibold mt-1 font-sans">
+          <span className="text-slate-900/80 text-[12px] font-semibold mt-1.5 font-sans tracking-tight">
             {dateStr}
           </span>
         )}

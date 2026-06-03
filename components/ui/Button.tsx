@@ -24,11 +24,11 @@ export const Button: React.FC<ButtonProps> = ({
     secondary:
       'bg-[var(--bg-elevated)] border border-[var(--border)] hover:border-[var(--border-active)] text-[var(--text-primary)] active:scale-[0.98]',
     ghost:
-      'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/5 active:scale-[0.98]',
+      'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-slate-100/50 active:scale-[0.98]',
     danger:
       'bg-rose-600 hover:bg-rose-500 text-white shadow-lg shadow-rose-600/20 active:scale-[0.98]',
     glass:
-      'bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white/10 text-white hover:border-white/20 active:scale-[0.98]',
+      'bg-white/40 backdrop-blur-md border border-slate-200/50 text-slate-800 hover:bg-white/65 hover:border-slate-300 active:scale-[0.98]',
   };
 
   const sizes = {
