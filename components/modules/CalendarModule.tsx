@@ -39,19 +39,19 @@ const FOCUS_COLORS = [
 // ─────────────────────────────────────────────────────────────────────────────
 // Draggable Wrappers
 // ─────────────────────────────────────────────────────────────────────────────
-function DraggableSidebarItem({ id, type, children, className }: { id: string, type: string, children: React.ReactNode, className?: string }) {
+function DraggableSidebarItem({ id, type, children, className, style }: any) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: `sidebar-${type}-${id}`,
     data: { id, type, origin: 'sidebar' }
   });
   return (
-    <div ref={setNodeRef} {...listeners} {...attributes} className={`${className} ${isDragging ? 'opacity-50' : ''}`}>
+    <div ref={setNodeRef} {...listeners} {...attributes} className={`${className} ${isDragging ? 'opacity-50' : ''}`} style={{ ...style, touchAction: 'none' }}>
       {children}
     </div>
   );
 }
 
-function DraggableGridBlock({ id, type, isResizing, children, className, style }: { id: string, type: string, isResizing: boolean, children: React.ReactNode, className?: string, style?: React.CSSProperties }) {
+function DraggableGridBlock({ id, type, isResizing, children, className, style }: any) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: `grid-${type}-${id}`,
     data: { id, type, origin: 'grid' },
@@ -63,7 +63,7 @@ function DraggableGridBlock({ id, type, isResizing, children, className, style }
       {...listeners} 
       {...attributes} 
       className={`${className} ${isDragging ? 'opacity-40' : ''}`}
-      style={style}
+      style={{ ...style, touchAction: 'none' }}
     >
       {children}
     </div>
@@ -585,10 +585,10 @@ export const CalendarModule: React.FC = () => {
         <div style={{ padding: '16px 20px 12px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', gap: 16, flexShrink: 0, background: 'var(--bg-app)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <div style={{ display: 'flex', background: '#FFFFFF', border: '1px solid var(--border-subtle)', borderRadius: 8, padding: 2, alignItems: 'center' }}>
-                <button onClick={() => navigate('prev')} className="p-1 hover:bg-[var(--bg-surface-elevated)] rounded-md text-[#64748B]"><ChevronLeft size={16} /></button>
-                <button onClick={() => setCurrentDate(new Date())} className="px-2 text-[10px] font-bold uppercase hover:bg-[var(--bg-surface-elevated)] rounded-md">Today</button>
-                <button onClick={() => navigate('next')} className="p-1 hover:bg-[var(--bg-surface-elevated)] rounded-md text-[#64748B]"><ChevronRight size={16} /></button>
+              <div style={{ display: 'flex', background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 8, padding: 2, alignItems: 'center' }}>
+                <button onClick={() => navigate('prev')} className="p-1 hover:bg-[var(--bg-surface-elevated)] rounded-md text-[var(--text-secondary)]"><ChevronLeft size={16} /></button>
+                <button onClick={() => setCurrentDate(new Date())} className="px-2 text-[10px] text-[var(--text-primary)] font-bold uppercase hover:bg-[var(--bg-surface-elevated)] rounded-md">Today</button>
+                <button onClick={() => navigate('next')} className="p-1 hover:bg-[var(--bg-surface-elevated)] rounded-md text-[var(--text-secondary)]"><ChevronRight size={16} /></button>
               </div>
               <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.03em' }}>
                 {currentDate.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}
@@ -598,12 +598,12 @@ export const CalendarModule: React.FC = () => {
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               <button
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className="loah-icon-btn"
                 style={{
-                  background: isSidebarOpen ? 'rgba(137,121,255,0.1)' : '#FFFFFF',
-                  borderColor: isSidebarOpen ? '#8979FF' : 'var(--border-subtle)',
-                  color: isSidebarOpen ? '#8979FF' : '#64748B',
-                  padding: '6px 12px', gap: 6, display: 'flex', alignItems: 'center'
+                  background: isSidebarOpen ? 'rgba(137,121,255,0.1)' : 'var(--bg-surface)',
+                  border: `1px solid ${isSidebarOpen ? '#8979FF' : 'var(--border-subtle)'}`,
+                  color: isSidebarOpen ? '#8979FF' : 'var(--text-secondary)',
+                  padding: '8px 16px', gap: 8, display: 'flex', alignItems: 'center', borderRadius: 8,
+                  cursor: 'pointer'
                 }}
               >
                 <PanelLeft size={16} />
@@ -613,14 +613,15 @@ export const CalendarModule: React.FC = () => {
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
-            <div style={{ display: 'flex', background: '#FFFFFF', border: '1px solid var(--border-subtle)', borderRadius: 8, padding: 3, alignItems: 'center', gap: 4 }}>
+            <div style={{ display: 'flex', background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: 8, padding: 3, alignItems: 'center', gap: 4 }}>
               {(['day', 'week', 'month'] as CalendarView[]).map((v) => (
                 <button
                   key={v} onClick={() => setView(v)}
                   style={{
                     padding: '4px 12px', borderRadius: 6, fontSize: 11, fontWeight: 700, textTransform: 'uppercase',
-                    background: view === v ? '#F1F5F9' : 'transparent',
-                    color: view === v ? 'var(--text-primary)' : '#64748B',
+                    background: view === v ? 'var(--bg-surface-elevated)' : 'transparent',
+                    color: view === v ? 'var(--text-primary)' : 'var(--text-secondary)',
+                    border: 'none', cursor: 'pointer'
                   }}
                 >
                   {v}
