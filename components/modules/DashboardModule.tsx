@@ -18,6 +18,7 @@ import MoodChart from '../charts/MoodChart';
 import FocusBreakdown from '../charts/FocusBreakdown';
 import { Mood } from '../../types';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 type TimeRange = 'Day' | 'Week' | 'Month' | 'Year';
 
@@ -39,6 +40,7 @@ export const DashboardModule: React.FC = () => {
   const setCurrentView = useAppStore((s) => s.setCurrentView);
   const handleExport = useAppStore((s) => s.handleExport);
   const importStoreData = useAppStore((s) => s.importStoreData);
+  const habits = useAppStore((s) => s.habits);
 
   const [range, setRange] = React.useState<TimeRange>('Week');
   const [now, setNow] = React.useState(new Date());
@@ -180,7 +182,7 @@ export const DashboardModule: React.FC = () => {
       {/* ── Header ─────────────────────────────────────────────── */}
       <div
         className="loah-module-header"
-        style={{ paddingBottom: 12, borderBottom: '1px solid #E2E8F0', marginBottom: 16 }}
+        style={{ paddingBottom: 12, borderBottom: '1px solid var(--border-subtle)', marginBottom: 16 }}
       >
         <div>
           <div className="loah-module-title">Dashboard</div>
@@ -189,13 +191,16 @@ export const DashboardModule: React.FC = () => {
           </div>
         </div>
         <div className="flex items-center gap-2 pt-1">
-          {/* Range selector */}
-          <div className="loah-filter-tabs">
+          <div className="flex bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] p-1 rounded-xl">
             {(['Day', 'Week', 'Month', 'Year'] as TimeRange[]).map((r) => (
               <button
                 key={r}
                 onClick={() => setRange(r)}
-                className={`loah-filter-tab ${range === r ? 'active' : ''}`}
+                className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all ${
+                  range === r 
+                    ? 'bg-[var(--bg-surface-hover)] text-[var(--text-primary)] shadow-sm border border-[var(--border-default)]' 
+                    : 'text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]'
+                }`}
               >
                 {r}
               </button>
@@ -207,85 +212,85 @@ export const DashboardModule: React.FC = () => {
       <div className="px-4 md:px-6 space-y-6">
         {/* ── Quick Action 2×2 Grid ───────────────────────────── */}
         <div className="grid grid-cols-2 gap-3">
-          <button
-            onClick={() => handleQuickAction('dump')}
+          <Link
+            href="/dump/new"
             className="loah-quick-btn"
-            style={{ background: '#FFFAC3', borderColor: '#FED7AA' }}
+            style={{ background: 'var(--bg-surface-elevated)', borderColor: 'var(--border-subtle)' }}
           >
             <div
               style={{
                 width: 38, height: 38, borderRadius: 10,
-                background: 'rgba(253, 230, 138, 0.5)',
+                background: 'rgba(77, 169, 255, 0.15)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}
             >
-              <Brain size={20} color="#D97706" />
+              <Brain size={20} color="var(--cat-hydration)" />
             </div>
             <div className="text-left">
-              <div style={{ fontSize: 14, fontWeight: 700, color: '#1E1E1E' }}>Brain Dump</div>
-              <div style={{ fontSize: 11, color: '#64748B', marginTop: 1 }}>Unload your mind</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>Brain Dump</div>
+              <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 1 }}>Unload your mind</div>
             </div>
-          </button>
+          </Link>
 
-          <button
-            onClick={() => handleQuickAction('task')}
+          <Link
+            href="/tasks/new"
             className="loah-quick-btn"
-            style={{ background: '#EFF6FF', borderColor: '#BFDBFE' }}
+            style={{ background: 'var(--bg-surface-elevated)', borderColor: 'var(--border-subtle)' }}
           >
             <div
               style={{
                 width: 38, height: 38, borderRadius: 10,
-                background: 'rgba(191, 219, 254, 0.5)',
+                background: 'rgba(167, 200, 27, 0.15)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}
             >
-              <Plus size={20} color="#3366CC" />
+              <Plus size={20} color="var(--brand-primary)" />
             </div>
             <div className="text-left">
-              <div style={{ fontSize: 14, fontWeight: 700, color: '#1E1E1E' }}>Quick Task</div>
-              <div style={{ fontSize: 11, color: '#64748B', marginTop: 1 }}>Add to-do</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>Quick Task</div>
+              <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 1 }}>Add to-do</div>
             </div>
-          </button>
+          </Link>
 
-          <button
-            onClick={() => handleQuickAction('focus')}
+          <Link
+            href="/routines/new"
             className="loah-quick-btn"
-            style={{ background: '#F5F0FF', borderColor: '#DDD6FE' }}
+            style={{ background: 'var(--bg-surface-elevated)', borderColor: 'var(--border-subtle)' }}
           >
             <div
               style={{
                 width: 38, height: 38, borderRadius: 10,
-                background: 'rgba(221, 214, 254, 0.5)',
+                background: 'rgba(168, 112, 255, 0.15)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}
             >
-              <Route size={20} color="#8979FF" />
+              <Route size={20} color="var(--cat-meditation)" />
             </div>
             <div className="text-left">
-              <div style={{ fontSize: 14, fontWeight: 700, color: '#1E1E1E' }}>Focus Now</div>
-              <div style={{ fontSize: 11, color: '#64748B', marginTop: 1 }}>Go to Routines</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>New Routine</div>
+              <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 1 }}>Habit flows</div>
             </div>
-          </button>
+          </Link>
 
-          <button
-            onClick={() => handleQuickAction('journal')}
+          <Link
+            href="/journal/new"
             className="loah-quick-btn"
-            style={{ background: '#F0FDF4', borderColor: '#BBF7D0' }}
+            style={{ background: 'var(--bg-surface-elevated)', borderColor: 'var(--border-subtle)' }}
           >
             <div
               style={{
                 width: 38, height: 38, borderRadius: 10,
-                background: 'rgba(187, 247, 208, 0.5)',
+                background: 'rgba(255, 127, 176, 0.15)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}
             >
-              <SmilePlus size={20} color="#059669" />
+              <SmilePlus size={20} color="var(--cat-journaling)" />
             </div>
             <div className="text-left">
-              <div style={{ fontSize: 14, fontWeight: 700, color: '#1E1E1E' }}>Log Mood</div>
-              <div style={{ fontSize: 11, color: '#64748B', marginTop: 1 }}>Check in</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>Log Mood</div>
+              <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 1 }}>Track feelings</div>
             </div>
-          </button>
+          </Link>
         </div>
 
         {/* ── Charts Grid ─────────────────────────────────────── */}
@@ -296,6 +301,7 @@ export const DashboardModule: React.FC = () => {
               <ActivityChart
                 tasks={activeTasks}
                 focusSessions={focusSessions}
+                habits={habits}
                 range={range}
                 rangeStart={rangeStart}
               />
@@ -304,7 +310,13 @@ export const DashboardModule: React.FC = () => {
 
           {/* Focus Breakdown - 1/3 */}
           <div className="loah-card p-5">
-            <FocusBreakdown focusSessions={focusSessions} rangeStart={rangeStart} />
+            <FocusBreakdown
+              focusSessions={focusSessions}
+              tasks={activeTasks}
+              journalEntries={journalEntries}
+              habits={habits}
+              rangeStart={rangeStart}
+            />
           </div>
 
           {/* Mood Trends - 2/3 */}

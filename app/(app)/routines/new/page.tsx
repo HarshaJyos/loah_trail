@@ -4,7 +4,7 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'New Routine | LOAH',
-  description: 'Create a new sequence focus routine.',
+  description: 'Create a new routine in your ADHD life organizer.',
 };
 
 const RoutineEditor = dynamic(
@@ -15,5 +15,5 @@ const RoutineEditor = dynamic(
 );
 
 export default function NewRoutinePage() {
-  return <RoutineEditor mode="new" />;
+  return <RoutineEditor />;
 }

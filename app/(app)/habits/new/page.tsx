@@ -4,7 +4,7 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'New Habit | LOAH',
-  description: 'Track consistency and elastic goals.',
+  description: 'Create a new habit in your ADHD life organizer.',
 };
 
 const HabitEditor = dynamic(
@@ -15,5 +15,5 @@ const HabitEditor = dynamic(
 );
 
 export default function NewHabitPage() {
-  return <HabitEditor mode="new" />;
+  return <HabitEditor />;
 }

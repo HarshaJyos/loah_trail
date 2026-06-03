@@ -4,7 +4,7 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'New Project | LOAH',
-  description: 'Create a new project dashboard in your life organizer.',
+  description: 'Create a new project in your ADHD life organizer.',
 };
 
 const ProjectEditor = dynamic(
@@ -15,5 +15,5 @@ const ProjectEditor = dynamic(
 );
 
 export default function NewProjectPage() {
-  return <ProjectEditor mode="new" />;
+  return <ProjectEditor />;
 }

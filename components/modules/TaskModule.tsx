@@ -401,10 +401,10 @@ export const TaskModule: React.FC = () => {
         onClick={() => openModal(task)}
         className="loah-card group relative cursor-pointer"
         style={{
-          borderLeft: `3px solid ${task.color || '#8979FF'}`,
+          borderLeft: `3px solid ${task.color || 'var(--brand-primary)'}`,
           opacity: isCompleted ? 0.6 : 1,
-          background: isOverdue && !isCompleted ? 'rgba(254,202,202,0.15)' : '#FFFFFF',
-          borderColor: isOverdue && !isCompleted ? '#FECACA' : undefined,
+          background: isOverdue && !isCompleted ? 'var(--danger-surface)' : 'var(--bg-surface)',
+          borderColor: isOverdue && !isCompleted ? 'var(--danger-default)' : 'var(--border-default)',
         }}
       >
         <div style={{ padding: '12px 14px' }}>
@@ -415,12 +415,12 @@ export const TaskModule: React.FC = () => {
               style={{
                 marginTop: 2, flexShrink: 0,
                 width: 18, height: 18, borderRadius: 5,
-                border: `1.5px solid ${isCompleted ? '#8979FF' : '#D4D4D4'}`,
-                background: isCompleted ? '#8979FF' : 'transparent',
+                border: `1.5px solid ${isCompleted ? 'var(--brand-primary)' : 'var(--border-strong)'}`,
+                background: isCompleted ? 'var(--brand-primary)' : 'transparent',
                 cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}
             >
-              {isCompleted && <span style={{ color: '#fff', fontSize: 10, fontWeight: 900 }}>✓</span>}
+              {isCompleted && <span style={{ color: 'var(--bg-app)', fontSize: 10, fontWeight: 900 }}>✓</span>}
             </button>
 
             <div style={{ flex: 1, minWidth: 0 }}>
@@ -428,8 +428,8 @@ export const TaskModule: React.FC = () => {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <h4
                   style={{
-                    fontSize: 13, fontWeight: 700,
-                    color: isCompleted ? '#9CA3AF' : '#1E1E1E',
+                    fontSize: 14, fontWeight: 700,
+                    color: isCompleted ? 'var(--text-tertiary)' : 'var(--text-primary)',
                     textDecoration: isCompleted ? 'line-through' : 'none',
                     lineHeight: 1.3, flex: 1, marginRight: 8,
                   }}
@@ -441,29 +441,32 @@ export const TaskModule: React.FC = () => {
                   {!isCompleted && (
                     <button
                       onClick={(e) => { e.stopPropagation(); onStartTask(task); }}
-                      style={{ width: 26, height: 26, borderRadius: 6, border: 'none', background: '#8979FF', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}
+                      style={{ width: 28, height: 28, borderRadius: 6, border: 'none', background: 'var(--brand-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--bg-app)' }}
                       title="Focus"
+                      className="hover:scale-105 transition-transform"
                     >
-                      <Play size={11} fill="currentColor" />
+                      <Play size={14} fill="currentColor" />
                     </button>
                   )}
                   <button
                     onClick={(e) => { e.stopPropagation(); isCompleted ? onUnarchiveTask(task.id) : onArchiveTask(task.id); }}
-                    style={{ width: 26, height: 26, borderRadius: 6, border: 'none', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9CA3AF' }}
+                    style={{ width: 28, height: 28, borderRadius: 6, border: 'none', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-tertiary)' }}
+                    className="hover:bg-[var(--bg-surface-elevated)] hover:text-[var(--text-primary)]"
                   >
-                    <Archive size={12} />
+                    <Archive size={14} />
                   </button>
                   <button
                     onClick={(e) => { e.stopPropagation(); onDeleteTask(task.id); }}
-                    style={{ width: 26, height: 26, borderRadius: 6, border: 'none', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9CA3AF' }}
+                    style={{ width: 28, height: 28, borderRadius: 6, border: 'none', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-tertiary)' }}
+                    className="hover:bg-[var(--danger-surface)] hover:text-[var(--danger-default)] transition-colors"
                   >
-                    <Trash2 size={12} />
+                    <Trash2 size={14} />
                   </button>
                 </div>
               </div>
 
               {task.description && (
-                <p style={{ fontSize: 11, color: '#64748B', marginTop: 3, lineHeight: 1.5 }} className="line-clamp-2">
+                <p style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 4, lineHeight: 1.5 }} className="line-clamp-2">
                   {task.description}
                 </p>
               )}
@@ -686,22 +689,18 @@ export const TaskModule: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#F5F7FA] relative overflow-hidden">
-      {/* ── Header matching Frame132 header-notes ──────────── */}
+    <div className="flex flex-col h-full relative overflow-hidden" style={{ background: 'var(--bg-app)' }}>
+      {/* ── Header ──────────── */}
       <div
-        style={{
-          padding: '16px 20px 12px',
-          borderBottom: '1px solid #E2E8F0',
-          display: 'flex', flexDirection: 'column', gap: 10,
-          flexShrink: 0, background: '#F5F7FA',
-        }}
+        className="loah-module-header"
+        style={{ paddingBottom: 12, borderBottom: '1px solid var(--border-subtle)', marginBottom: 16 }}
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', width: '100%' }}>
           <div>
-            <div style={{ fontSize: 26, fontWeight: 700, color: '#1E1E1E', letterSpacing: '-0.03em' }}>
+            <div className="loah-module-title">
               {showArchived ? 'Archive' : showCompleted ? 'Completed' : 'Tasks'}
             </div>
-            <div style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>
+            <div className="loah-module-date">
               {showCompleted
                 ? 'Showing completed tasks'
                 : showArchived
@@ -711,14 +710,15 @@ export const TaskModule: React.FC = () => {
           </div>
           <button
             onClick={() => openModal()}
-            className="loah-icon-btn"
-            style={{ background: '#8979FF', borderColor: '#8979FF', color: '#fff' }}
+            className="loah-btn-primary"
+            style={{ padding: '0 16px', borderRadius: '12px', height: '40px' }}
           >
             <Plus size={17} />
+            <span>New</span>
           </button>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-3">
+        <div className="flex flex-col md:flex-row gap-3 mt-4 w-full">
           {/* Search Bar */}
           <div className="relative flex-1">
             <Search

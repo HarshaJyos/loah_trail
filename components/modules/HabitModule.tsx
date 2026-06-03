@@ -602,39 +602,41 @@ export const HabitModule: React.FC = () => {
       ) : (
         // DASHBOARD / LIST VIEW
         <div className="space-y-8 animate-fade-in">
-          {/* Header */}
-          <div className="flex justify-between items-center border-b border-slate-200/60 pb-4">
+          {/* ── Header ──────── */}
+          <div
+            className="loah-module-header"
+            style={{ paddingBottom: 12, borderBottom: '1px solid var(--border-subtle)', marginBottom: 16 }}
+          >
             <div>
-              <h2 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
-                Habits
-              </h2>
-              {showArchived && (
-                <span className="text-xs font-bold text-orange-400 bg-orange-500/10 px-2.5 py-0.5 rounded-full uppercase tracking-wider mt-2 border border-orange-500/20 inline-block font-mono">
-                  Archived View
-                </span>
-              )}
+              <div className="loah-module-title">
+                {showArchived ? 'Archive' : 'Habits'}
+              </div>
+              <div className="loah-module-date">
+                {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+              </div>
             </div>
-
-            <div className="flex items-center gap-2">
+            <div style={{ display: 'flex', gap: 8, paddingTop: 4 }}>
               <button
                 onClick={() => setShowArchived(!showArchived)}
-                className={`p-2.5 rounded-xl border transition-all ${
-                  showArchived
-                    ? 'bg-amber-500/15 border-amber-500/20 text-amber-400'
-                    : 'border-slate-200/60 text-slate-400 hover:text-slate-900 hover:bg-slate-100/50'
-                }`}
+                className="loah-icon-btn"
                 title={showArchived ? 'View Active' : 'View Archive'}
+                style={{
+                  background: showArchived ? 'var(--brand-primary-muted)' : 'var(--bg-surface)',
+                  borderColor: showArchived ? 'var(--brand-primary)' : 'var(--border-default)',
+                  color: showArchived ? 'var(--brand-primary)' : 'var(--text-secondary)',
+                }}
               >
-                <Archive size={20} />
+                <Archive size={17} />
               </button>
-              <Button
+              <button
                 onClick={() => router.push('/habits/new' as any)}
-                variant="primary"
-                className="flex items-center gap-2 active:scale-95"
+                className="loah-btn-primary"
+                style={{ padding: '0 16px', borderRadius: '12px', height: '40px' }}
+                title="New Habit"
               >
-                <Plus size={18} />
-                <span>New Habit</span>
-              </Button>
+                <Plus size={17} />
+                <span>New</span>
+              </button>
             </div>
           </div>
 
@@ -662,9 +664,11 @@ export const HabitModule: React.FC = () => {
                   onDragOver={handleDragOver}
                   onDrop={(e) => handleDrop(e, habit.id)}
                   onClick={() => setViewingHabitId(habit.id)}
-                  className={`bg-white border rounded-2xl p-6 hover:shadow-2xl hover:border-violet-500/30 transition-all duration-300 group cursor-pointer relative flex flex-col justify-between h-[300px]
-                    ${habit.isPinned ? 'border-violet-500/50 shadow-lg shadow-violet-500/5' : 'border-slate-200/60'}
-                  `}
+                  className="loah-card group cursor-pointer relative flex flex-col justify-between h-[300px]"
+                  style={{
+                    border: habit.isPinned ? '1px solid var(--brand-primary)' : '1px solid var(--border-default)',
+                    boxShadow: habit.isPinned ? '0 8px 30px rgba(137,121,255,0.1)' : undefined,
+                  }}
                 >
                   <div className="space-y-4">
                     {/* Top row */}
@@ -705,14 +709,15 @@ export const HabitModule: React.FC = () => {
                       <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
                           onClick={(e) => handleTogglePin(e, habit)}
-                          className={`p-1.5 rounded-lg transition-all ${
+                          style={{ width: 28, height: 28, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                          className={`transition-all ${
                             habit.isPinned
-                              ? 'text-slate-900 bg-slate-100'
-                              : 'text-slate-400 hover:text-slate-900 hover:bg-slate-100/50'
+                              ? 'text-[var(--brand-primary)] bg-[var(--brand-primary-muted)]'
+                              : 'text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)]'
                           }`}
                           title={habit.isPinned ? 'Unpin' : 'Pin'}
                         >
-                          <Pin size={12} fill={habit.isPinned ? 'currentColor' : 'none'} />
+                          <Pin size={14} fill={habit.isPinned ? 'currentColor' : 'none'} />
                         </button>
                         {isDurationHabit && (
                           <button
@@ -720,18 +725,20 @@ export const HabitModule: React.FC = () => {
                               e.stopPropagation();
                               onStartFocus(habit);
                             }}
-                            className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100/50 rounded-lg transition-all"
+                            style={{ width: 28, height: 28, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                            className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)] transition-all"
                             title="Start Timer"
                           >
-                            <Play size={12} fill="currentColor" />
+                            <Play size={14} fill="currentColor" />
                           </button>
                         )}
                         <button
                           onClick={(e) => handleEditHabit(e, habit)}
-                          className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100/50 rounded-lg transition-all"
+                          style={{ width: 28, height: 28, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                          className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)] transition-all"
                           title="Edit"
                         >
-                          <Edit2 size={12} />
+                          <Edit2 size={14} />
                         </button>
                       </div>
                     </div>

@@ -141,19 +141,20 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
 
   return (
     <div
-      className="fixed inset-0 bg-[#F5F7FA] text-[#1E1E1E] font-sans overflow-hidden flex flex-col"
+      className="fixed inset-0 text-[var(--text-primary)] font-sans overflow-hidden flex flex-col"
       style={{
+        background: 'var(--bg-app)',
         zoom: uiScale,
         height: `calc(100dvh / ${uiScale})`,
         width: `calc(100vw / ${uiScale})`,
-        colorScheme: 'light',
+        colorScheme: 'dark',
       }}
     >
       {/* ── Routine Player Dynamic Island (top center) ──────── */}
       {!isRoutinePlayer && activeRoutine && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[200] transition-all duration-500">
           <div
-            className={`bg-[#1E1E1E] text-white rounded-[28px] border border-white/10 transition-all duration-500 overflow-hidden flex flex-col justify-center
+            className={`bg-[var(--bg-surface-elevated)] text-[var(--text-primary)] rounded-[28px] border border-[var(--border-subtle)] transition-all duration-500 overflow-hidden flex flex-col justify-center
               ${isIslandExpanded ? 'w-[300px] p-5 shadow-2xl' : 'w-[220px] px-4 py-2.5 h-[44px] shadow-lg'}`}
           >
             <div className="flex items-center justify-between w-full">
@@ -240,25 +241,23 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
       </main>
 
       {/* ── Floating Bottom Navigation Bar ───────────────────── */}
-      {/* Frame132 style: frame-98 inside nav-bar, exactly 5 icon slots */}
       {!isRoutinePlayer && !isEditorPage && (
         <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-[100]">
           <nav
             style={{
-              background: 'rgba(0, 0, 0, 0)',
               borderRadius: '27.5px',
-              border: '1px solid rgba(31, 31, 31, 0.12)',
+              border: '1px solid var(--border-subtle)',
               padding: '5px 10px',
               display: 'flex',
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'space-between',
-              boxShadow: '2px 2px 4px 0px rgba(31, 31, 31, 0.12)',
+              boxShadow: 'var(--shadow-nav)',
               width: '320px',
               maxWidth: '92vw',
               backdropFilter: 'blur(20px)',
               WebkitBackdropFilter: 'blur(20px)',
-              backgroundColor: 'rgba(255,255,255,0.88)',
+              backgroundColor: 'rgba(16, 21, 18, 0.88)', /* matches --bg-canvas */
             }}
           >
             {NAV_ITEMS.map((item) => {
@@ -277,14 +276,14 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
                     border: 'none',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
-                    background: isActive ? '#8979FF' : 'transparent',
-                    boxShadow: isActive ? '2px 2px 10px 0px rgba(147, 51, 234, 0.40)' : 'none',
+                    background: isActive ? 'var(--brand-primary)' : 'transparent',
+                    boxShadow: isActive ? 'var(--shadow-primary)' : 'none',
                     flexShrink: 0,
                   }}
                 >
                   <item.icon
                     size={19}
-                    color={isActive ? '#FFFFFF' : '#808DA9'}
+                    color={isActive ? 'var(--bg-app)' : 'var(--text-tertiary)'}
                     strokeWidth={isActive ? 2.5 : 2}
                   />
                 </button>

@@ -3,587 +3,153 @@
 import * as React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAppStore } from '../../store/useAppStore';
-import { Task, Priority, Subtask, Reminder, RecurrenceConfig } from '../../types';
-import {
-  ArrowLeft,
-  Plus,
-  Trash2,
-  Calendar,
-  Clock,
-  CheckSquare,
-  AlertCircle,
-  Briefcase,
-  CalendarClock,
-  ListTodo,
-  Sparkles,
-  X,
-} from 'lucide-react';
-import Card from '../ui/Card';
-import Button from '../ui/Button';
+import { Task } from '../../types';
+import { ArrowLeft, ListTodo, Plus, Calendar, Flag } from 'lucide-react';
 
-const TASK_COLORS = [
-  '#8979FF', // Violet Brand Accent
-  '#f43f5e', // Rose
-  '#3b82f6', // Blue
-  '#02C98B', // Emerald
-  '#D97706', // Amber
-  '#10b981', // Green
-  '#a78bfa', // Purple Light
-  '#64748b', // Slate
-  '#06b6d4', // Cyan
-  '#ec4899', // Pink
-];
-
-interface TaskEditorProps {
-  mode: 'new' | 'edit';
-}
-
-export const TaskEditor: React.FC<TaskEditorProps> = ({ mode }) => {
+export const TaskEditor: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const id = searchParams.get('id');
+  const onAddTask = useAppStore((s) => s.handleAddTask);
+  const onDeleteDump = useAppStore((s) => s.handleDeleteDump);
 
-  // Zustand Actions & Store
-  const tasks = useAppStore((state) => state.tasks);
-  const projects = useAppStore((state) => state.projects);
-  const onAddTask = useAppStore((state) => state.handleAddTask);
-  const onUpdateTask = useAppStore((state) => state.handleUpdateTask);
-  const convertingDump = useAppStore((state) => state.convertingDump);
-  const onConvertComplete = useAppStore((state) => state.handleConvertComplete);
-  const onClearConvertingDump = () => useAppStore.getState().setConvertingDump(null);
+  const [title, setTitle] = React.useState(searchParams?.get('title') || '');
+  const [description, setDescription] = React.useState(searchParams?.get('desc') || '');
+  const [priority, setPriority] = React.useState<'low' | 'medium' | 'high'>('medium');
+  const [projectId, setProjectId] = React.useState<string | undefined>();
+  const deleteDumpId = searchParams?.get('deleteDumpId');
 
-  // Form State
-  const [title, setTitle] = React.useState('');
-  const [description, setDescription] = React.useState('');
-  const [priority, setPriority] = React.useState<Priority>('Medium');
-  const [category, setCategory] = React.useState('Personal');
-  const [duration, setDuration] = React.useState('30');
-  const [projectId, setProjectId] = React.useState('');
-  const [subtasks, setSubtasks] = React.useState<Subtask[]>([]);
-  const [subtaskInput, setSubtaskInput] = React.useState('');
-  const [selectedColor, setSelectedColor] = React.useState(TASK_COLORS[0]);
-  const [scheduledDate, setScheduledDate] = React.useState('');
-  const [scheduledTime, setScheduledTime] = React.useState('');
-
-  // Recurrence State
-  const [isRecurring, setIsRecurring] = React.useState(false);
-  const [recurrenceType, setRecurrenceType] = React.useState<'daily' | 'weekly' | 'monthly' | 'specific_days'>('daily');
-  const [recurrenceInterval, setRecurrenceInterval] = React.useState(1);
-  const [recurrenceInstances, setRecurrenceInstances] = React.useState(5);
-  const [recurrenceDays, setRecurrenceDays] = React.useState<number[]>([]);
-
-  // Reminder State
-  const [reminders, setReminders] = React.useState<Reminder[]>([]);
-  const [newReminderOffset, setNewReminderOffset] = React.useState(15);
-
-  const availableProjects = React.useMemo(() => {
-    return projects.filter((p) => !p.deletedAt && !p.archivedAt);
-  }, [projects]);
-
-  // Load Task details if in edit mode
-  React.useEffect(() => {
-    if (mode === 'edit' && id) {
-      const task = tasks.find((t) => t.id === id);
-      if (task) {
-        setTitle(task.title);
-        setDescription(task.description || '');
-        setPriority(task.priority);
-        setCategory(task.category);
-        setDuration(task.duration?.toString() || '30');
-        setProjectId(task.projectId || '');
-        setSubtasks(task.subtasks || []);
-        setSelectedColor(task.color || TASK_COLORS[0]);
-        if (task.startTime) {
-          const d = new Date(task.startTime);
-          setScheduledDate(d.toISOString().split('T')[0]);
-          setScheduledTime(
-            d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
-          );
-        } else {
-          setScheduledDate('');
-          setScheduledTime('');
-        }
-        if (task.recurrence) {
-          setIsRecurring(true);
-          setRecurrenceType(task.recurrence.type);
-          setRecurrenceInterval(task.recurrence.interval);
-          setRecurrenceInstances(task.recurrence.instancesToGenerate || 5);
-          setRecurrenceDays(task.recurrence.daysOfWeek || []);
-        } else {
-          setIsRecurring(false);
-        }
-        setReminders(task.reminders || []);
-      }
-    } else if (mode === 'new' && convertingDump) {
-      setTitle(convertingDump.title);
-      setDescription(convertingDump.description);
-      setPriority('Medium');
-      setCategory('Personal');
-      setDuration('30');
-      setProjectId('');
-      setSubtasks([]);
-      setSelectedColor(TASK_COLORS[0]);
-      setScheduledDate('');
-      setScheduledTime('');
-      setIsRecurring(false);
-      setReminders([]);
-    }
-  }, [mode, id, tasks, convertingDump]);
+  const projects = useAppStore((s) => s.projects);
+  const activeProjects = React.useMemo(() => projects.filter((p) => !p.deletedAt && !p.archivedAt), [projects]);
 
   const handleSave = () => {
-    if (!title.trim()) return;
-
-    let startTime: number | undefined = undefined;
-    if (scheduledDate) {
-      const d = new Date(scheduledDate);
-      if (scheduledTime) {
-        const [h, m] = scheduledTime.split(':').map(Number);
-        d.setHours(h, m, 0, 0);
-      } else {
-        d.setHours(9, 0, 0, 0);
-      }
-      startTime = d.getTime();
+    if (!title.trim()) {
+      router.push('/tasks' as any);
+      return;
     }
-
-    const recurrence: RecurrenceConfig | undefined = isRecurring
-      ? {
-          type: recurrenceType,
-          interval: recurrenceInterval,
-          daysOfWeek: recurrenceType === 'specific_days' ? recurrenceDays : undefined,
-          instancesToGenerate: recurrenceInstances,
-        }
-      : undefined;
-
-    const taskData: Partial<Task> = {
-      title,
+    const newTask: Task = {
+      id: Date.now().toString(),
+      title: title.trim(),
       description,
       priority,
-      category,
-      duration: parseInt(duration) || 30,
-      projectId: projectId || undefined,
-      subtasks,
-      color: selectedColor,
-      startTime,
-      recurrence,
-      reminders,
+      projectId,
+      isCompleted: false,
+      createdAt: Date.now(),
     };
-
-    if (mode === 'edit' && id) {
-      const existing = tasks.find((t) => t.id === id);
-      if (existing) onUpdateTask({ ...existing, ...taskData });
-    } else {
-      const newTask: Task = {
-        id: Date.now().toString(),
-        isCompleted: false,
-        createdAt: Date.now(),
-        color: selectedColor,
-        title,
-        priority,
-        category,
-        description,
-        duration: parseInt(duration) || 30,
-        subtasks,
-        projectId: projectId || undefined,
-        startTime,
-        recurrence,
-        reminders,
-      };
-      onAddTask(newTask);
+    onAddTask(newTask);
+    if (deleteDumpId) {
+      onDeleteDump(deleteDumpId);
     }
-
-    if (convertingDump) {
-      onConvertComplete();
-    } else {
-      onClearConvertingDump();
-    }
-
     router.push('/tasks' as any);
-  };
-
-  const handleDiscard = () => {
-    onClearConvertingDump();
-    router.push('/tasks' as any);
-  };
-
-  const addSubtask = () => {
-    if (!subtaskInput.trim()) return;
-    setSubtasks([
-      ...subtasks,
-      {
-        id: Date.now().toString() + Math.random(),
-        title: subtaskInput.trim(),
-        isCompleted: false,
-      },
-    ]);
-    setSubtaskInput('');
-  };
-
-  const toggleSubtask = (sid: string) =>
-    setSubtasks(
-      subtasks.map((s) => (s.id === sid ? { ...s, isCompleted: !s.isCompleted } : s))
-    );
-
-  const removeSubtask = (sid: string) => setSubtasks(subtasks.filter((s) => s.id !== sid));
-
-  const addReminder = () => {
-    setReminders([
-      ...reminders,
-      {
-        id: Date.now().toString(),
-        timeOffset: newReminderOffset,
-        type: 'notification',
-      },
-    ]);
-  };
-
-  const removeReminder = (rid: string) => setReminders(reminders.filter((r) => r.id !== rid));
-
-  const toggleRecurrenceDay = (day: number) => {
-    if (recurrenceDays.includes(day)) {
-      setRecurrenceDays(recurrenceDays.filter((d) => d !== day));
-    } else {
-      setRecurrenceDays([...recurrenceDays, day].sort());
-    }
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#F5F7FA] text-[#1E1E1E] p-4 md:p-8 pb-32 max-w-3xl mx-auto flex flex-col space-y-6 animate-fade-in">
-      {/* Header Actions */}
-      <div className="flex items-center justify-between border-b border-slate-200/80 pb-4">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={handleDiscard}
-            className="p-2.5 hover:bg-slate-100 rounded-2xl text-slate-500 hover:text-slate-900 transition-all border border-transparent hover:border-slate-200/60 active:scale-95"
-            title="Go Back"
-          >
-            <ArrowLeft size={20} />
-          </button>
-          <div>
-            <h2 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">
-              {mode === 'edit' ? 'Edit Task' : 'New Task'}
-            </h2>
-            <p className="text-xs text-slate-500 font-medium mt-0.5">
-              Fill in the specifics for your to-do item.
-            </p>
-          </div>
+    <div className="w-full h-full flex flex-col overflow-hidden animate-fade-in" style={{ background: 'var(--bg-app)' }}>
+      {/* ── Header ───────────────────────────────────────────── */}
+      <div
+        style={{
+          padding: '16px 24px',
+          borderBottom: '1px solid var(--border-subtle)',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          flexShrink: 0, background: 'var(--bg-canvas)',
+          position: 'sticky', top: 0, zIndex: 50,
+        }}
+      >
+        <button
+          onClick={() => router.back()}
+          className="loah-icon-btn"
+        >
+          <ArrowLeft size={18} />
+        </button>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <ListTodo size={18} color="var(--brand-primary)" />
+          <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>New Task</span>
         </div>
 
-        <div className="flex gap-2">
-          <Button onClick={handleDiscard} variant="ghost" className="text-slate-500">
-            Cancel
-          </Button>
-          <Button onClick={handleSave} variant="primary">
-            Save
-          </Button>
+        <div style={{ display: 'flex', gap: 12 }}>
+          <button onClick={() => router.back()} className="loah-btn-ghost">
+            Discard
+          </button>
+          <button onClick={handleSave} className="loah-btn-primary">
+            Save Task
+          </button>
         </div>
       </div>
 
-      {/* Editor Content Forms */}
-      <Card variant="glass" className="p-6 md:p-8 space-y-6 border border-slate-200/60 shadow-xl bg-white">
-        {/* Title Input */}
-        <div>
-          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 font-mono">
-            Task Name
-          </label>
-          <input
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="What needs to be done?"
-            className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3.5 text-slate-900 placeholder-slate-400 focus:border-[#8979FF] focus:bg-white focus:shadow-[var(--glow-purple)] outline-none transition-all text-sm font-bold"
-            autoFocus
-          />
-        </div>
+      {/* ── Form content ─────────────────────────────────────── */}
+      <div className="flex-1 overflow-y-auto no-scrollbar" style={{ padding: '32px 24px 100px', maxWidth: '800px', margin: '0 auto', width: '100%' }}>
+        <input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="What needs to be done?"
+          className="loah-title-input"
+          style={{ marginBottom: 32, fontSize: '40px' }}
+          autoFocus
+        />
 
-        {/* Description Input */}
-        <div>
-          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 font-mono">
-            Description
-          </label>
+        <div className="loah-card" style={{ padding: '24px', marginBottom: '24px' }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 16 }}>
+            Details
+          </div>
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Add context or notes..."
-            className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3.5 text-slate-900 placeholder-slate-400 focus:border-[#8979FF] focus:bg-white focus:shadow-[var(--glow-purple)] outline-none transition-all text-sm font-bold min-h-[100px] resize-none"
+            placeholder="Add notes, subtasks, or context..."
+            className="loah-input"
+            style={{ minHeight: 120 }}
           />
         </div>
 
-        {/* Row 1: Priority, Category, Duration */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 font-mono">
-              Priority
-            </label>
-            <select
-              value={priority}
-              onChange={(e) => setPriority(e.target.value as Priority)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm font-bold text-slate-900 focus:border-[#8979FF] outline-none transition-all"
-            >
-              <option value="High">High Priority</option>
-              <option value="Medium">Medium Priority</option>
-              <option value="Low">Low Priority</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 font-mono">
-              Category
-            </label>
-            <input
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              placeholder="e.g. Work, Health"
-              className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm font-bold text-slate-900 focus:border-[#8979FF] focus:bg-white outline-none transition-all"
-            />
-          </div>
-
-          <div>
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 font-mono">
-              Duration Est. (Mins)
-            </label>
-            <input
-              type="number"
-              value={duration}
-              onChange={(e) => setDuration(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm font-bold text-slate-900 focus:border-[#8979FF] focus:bg-white outline-none transition-all font-mono"
-            />
-          </div>
-        </div>
-
-        {/* Color picker & Project Select */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-          <div>
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 font-mono">
-              Project Link
-            </label>
-            <select
-              value={projectId}
-              onChange={(e) => setProjectId(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm font-bold text-slate-900 focus:border-[#8979FF] outline-none transition-all"
-            >
-              <option value="">No Project Link</option>
-              {availableProjects.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.title}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2.5 font-mono">
-              Card Glow Accent
-            </label>
-            <div className="flex flex-wrap gap-2.5">
-              {TASK_COLORS.map((c) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Priority */}
+          <div className="loah-card" style={{ padding: '20px' }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 12 }}>
+              Priority Level
+            </div>
+            <div className="flex gap-2">
+              {(['low', 'medium', 'high'] as const).map((p) => (
                 <button
-                  key={c}
-                  type="button"
-                  onClick={() => setSelectedColor(c)}
-                  className={`w-7 h-7 rounded-full transition-transform active:scale-90 border-2
-                    ${selectedColor === c ? 'scale-110 border-slate-900' : 'border-transparent'}`}
-                  style={{ backgroundColor: c }}
-                  title={c}
-                />
+                  key={p}
+                  onClick={() => setPriority(p)}
+                  style={{
+                    flex: 1, padding: '10px', borderRadius: '12px',
+                    border: `1px solid ${priority === p ? 'var(--brand-primary)' : 'var(--border-subtle)'}`,
+                    background: priority === p ? 'var(--brand-primary-muted)' : 'var(--bg-surface-elevated)',
+                    color: priority === p ? 'var(--brand-primary)' : 'var(--text-secondary)',
+                    fontWeight: 600, fontSize: '13px', textTransform: 'capitalize',
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  {p}
+                </button>
               ))}
             </div>
           </div>
-        </div>
 
-        {/* Date and Time Scheduling */}
-        <div className="pt-2">
-          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 font-mono">
-            Schedule Date & Time
-          </label>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="relative">
-              <Calendar size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-              <input
-                type="date"
-                value={scheduledDate}
-                onChange={(e) => setScheduledDate(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-10 pr-4 py-3 text-sm font-bold text-slate-900 focus:border-[#8979FF] focus:bg-white outline-none transition-all font-mono"
-              />
-            </div>
-            <div className="relative">
-              <Clock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-              <input
-                type="time"
-                value={scheduledTime}
-                onChange={(e) => setScheduledTime(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-10 pr-4 py-3 text-sm font-bold text-slate-900 focus:border-[#8979FF] focus:bg-white outline-none transition-all font-mono"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Checklist Subtasks */}
-        <div className="pt-2">
-          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 font-mono">
-            Nested Subtasks Checklist
-          </label>
-          <div className="flex gap-2 mb-3">
-            <input
-              value={subtaskInput}
-              onChange={(e) => setSubtaskInput(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addSubtask())}
-              placeholder="Add a step to complete..."
-              className="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-sm font-bold text-slate-900 placeholder-slate-400 focus:border-[#8979FF] focus:bg-white outline-none"
-            />
-            <Button type="button" onClick={addSubtask} variant="secondary" className="rounded-2xl">
-              <Plus size={18} />
-            </Button>
-          </div>
-          {subtasks.length > 0 && (
-            <div className="space-y-2 border border-slate-200/60 rounded-2xl p-3 bg-slate-50/50">
-              {subtasks.map((st) => (
-                <div key={st.id} className="flex items-center justify-between bg-white border border-slate-200/60 p-2.5 rounded-xl">
-                  <div className="flex items-center gap-2.5 cursor-pointer" onClick={() => toggleSubtask(st.id)}>
-                    <button type="button" className={`text-slate-500 ${st.isCompleted ? 'text-emerald-500' : 'text-slate-300'}`}>
-                      {st.isCompleted ? <CheckSquare size={16} /> : <div className="w-4 h-4 border border-current rounded" />}
-                    </button>
-                    <span className={`text-xs font-bold text-slate-800 ${st.isCompleted ? 'line-through opacity-50' : ''}`}>
-                      {st.title}
-                    </span>
-                  </div>
-                  <button type="button" onClick={() => removeSubtask(st.id)} className="text-slate-400 hover:text-rose-500 transition-colors p-1">
-                    <Trash2 size={14} />
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Reminders section */}
-        <div className="pt-2">
-          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 font-mono">
-            Reminders Notifications
-          </label>
-          <div className="flex gap-2 mb-3">
-            <select
-              value={newReminderOffset}
-              onChange={(e) => setNewReminderOffset(Number(e.target.value))}
-              className="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-sm font-bold text-slate-900 focus:border-[#8979FF] outline-none"
-            >
-              <option value={0}>At start time</option>
-              <option value={5}>5 minutes before</option>
-              <option value={15}>15 minutes before</option>
-              <option value={30}>30 minutes before</option>
-              <option value={60}>1 hour before</option>
-            </select>
-            <Button type="button" onClick={addReminder} variant="secondary" className="rounded-2xl">
-              Add Reminder
-            </Button>
-          </div>
-          {reminders.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {reminders.map((r) => (
-                <div key={r.id} className="flex items-center gap-1.5 px-3 py-1 bg-violet-500/10 text-violet-600 rounded-full text-xs font-bold border border-violet-500/20">
-                  <span>
-                    {r.timeOffset === 0 ? 'At start time' : `${r.timeOffset}m before`}
-                  </span>
-                  <button type="button" onClick={() => removeReminder(r.id)} className="hover:text-rose-500 transition-colors">
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Recurrence config */}
-        <div className="pt-2 border-t border-slate-100">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <span className="text-sm font-bold text-slate-800">Recurring Task</span>
-              <p className="text-[10px] text-slate-500">Automatically generate repeated task cards</p>
-            </div>
-            <button
-              type="button"
-              onClick={() => setIsRecurring(!isRecurring)}
-              className={`w-12 h-6 rounded-full p-1 transition-colors duration-200 focus:outline-none border
-                ${isRecurring ? 'bg-[#8979FF] border-[#8979FF]' : 'bg-slate-200 border-slate-300'}`}
-            >
-              <div className={`w-4 h-4 rounded-full bg-white shadow-md transition-transform duration-200
-                ${isRecurring ? 'translate-x-6' : 'translate-x-0'}`}
-              />
-            </button>
-          </div>
-
-          {isRecurring && (
-            <div className="space-y-4 bg-slate-50 p-4 rounded-2xl border border-slate-200/60 animate-fade-in text-sm font-bold">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 font-mono">
-                    Frequency
-                  </label>
-                  <select
-                    value={recurrenceType}
-                    onChange={(e) => setRecurrenceType(e.target.value as any)}
-                    className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 focus:border-[#8979FF] outline-none"
-                  >
-                    <option value="daily">Daily</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="monthly">Monthly</option>
-                    <option value="specific_days">Specific Days</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 font-mono">
-                    Every (Interval)
-                  </label>
-                  <input
-                    type="number"
-                    min={1}
-                    value={recurrenceInterval}
-                    onChange={(e) => setRecurrenceInterval(Number(e.target.value))}
-                    className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 focus:border-[#8979FF] outline-none font-mono"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 font-mono">
-                    Generate (Instances)
-                  </label>
-                  <input
-                    type="number"
-                    min={1}
-                    value={recurrenceInstances}
-                    onChange={(e) => setRecurrenceInstances(Number(e.target.value))}
-                    className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-900 focus:border-[#8979FF] outline-none font-mono"
-                  />
-                </div>
+          {/* Project Assignment */}
+          {activeProjects.length > 0 && (
+            <div className="loah-card" style={{ padding: '20px' }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 12 }}>
+                Assign to Project
               </div>
-
-              {recurrenceType === 'specific_days' && (
-                <div>
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2 font-mono">
-                    Select Days
-                  </label>
-                  <div className="flex gap-2">
-                    {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((dayName, idx) => {
-                      const dayVal = (idx + 1) % 7; // Monday = 1, Sunday = 0
-                      const isSelected = recurrenceDays.includes(dayVal);
-                      return (
-                        <button
-                          key={idx}
-                          type="button"
-                          onClick={() => toggleRecurrenceDay(dayVal)}
-                          className={`w-8 h-8 rounded-full text-xs font-bold border transition-colors
-                            ${isSelected ? 'bg-[#8979FF] text-white border-transparent' : 'bg-white border-slate-200 text-slate-500'}`}
-                        >
-                          {dayName}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
+              <select
+                value={projectId || ''}
+                onChange={(e) => setProjectId(e.target.value || undefined)}
+                style={{
+                  width: '100%', padding: '12px 16px', borderRadius: '12px',
+                  background: 'var(--bg-surface-elevated)', border: '1px solid var(--border-subtle)',
+                  color: 'var(--text-primary)', fontSize: '14px', outline: 'none',
+                }}
+              >
+                <option value="">No Project</option>
+                {activeProjects.map((p) => (
+                  <option key={p.id} value={p.id}>{p.title}</option>
+                ))}
+              </select>
             </div>
           )}
         </div>
-      </Card>
+      </div>
     </div>
   );
 };

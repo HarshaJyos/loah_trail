@@ -121,10 +121,10 @@ export const NoteEditor: React.FC<NoteEditorProps> = ({ mode }) => {
       className="w-full h-full flex flex-col overflow-hidden animate-fade-in"
       style={{ background: selectedColor.bg }}
     >
-      {/* ── Header matching Frame132 header-new-notes ──────────── */}
+      {/* ── Header ──────────── */}
       <div
         style={{
-          padding: '14px 20px',
+          padding: '16px 24px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -139,19 +139,14 @@ export const NoteEditor: React.FC<NoteEditorProps> = ({ mode }) => {
         {/* Left: back button */}
         <button
           onClick={handleDiscard}
-          style={{
-            width: 36, height: 36, borderRadius: 10,
-            border: `1px solid ${selectedColor.border}`,
-            background: 'transparent',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            cursor: 'pointer', color: '#64748B',
-          }}
+          className="loah-icon-btn"
+          style={{ background: 'transparent', border: `1px solid ${selectedColor.border}`, color: 'var(--text-secondary)' }}
         >
           <ArrowLeft size={18} />
         </button>
 
         {/* Center: title */}
-        <span style={{ fontSize: 14, fontWeight: 700, color: '#1E1E1E' }}>
+        <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>
           {mode === 'edit' ? 'Edit Note' : 'New Note'}
         </span>
 
@@ -245,28 +240,23 @@ export const NoteEditor: React.FC<NoteEditorProps> = ({ mode }) => {
           {/* Save */}
           <button
             onClick={handleSave}
-            style={{
-              padding: '7px 16px', borderRadius: 200,
-              background: '#8979FF', border: 'none',
-              fontSize: 12, fontWeight: 700, color: '#fff',
-              cursor: 'pointer',
-              boxShadow: '0 2px 8px rgba(137,121,255,0.30)',
-            }}
+            className="loah-btn-primary"
           >
-            Save
+            Save Note
           </button>
         </div>
       </div>
 
       {/* ── Content area — full page Quill editor ───────────── */}
-      <div className="flex-1 overflow-y-auto no-scrollbar" style={{ paddingBottom: 120 }}>
+      <div className="flex-1 overflow-y-auto no-scrollbar" style={{ paddingBottom: 120, maxWidth: '800px', margin: '0 auto', width: '100%' }}>
         {/* Title */}
-        <div style={{ padding: '16px 20px 0' }}>
+        <div style={{ padding: '32px 24px 0' }}>
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="UNTITLED"
+            placeholder="UNTITLED NOTE"
             className="loah-title-input"
+            style={{ fontSize: '40px', background: 'transparent' }}
             autoFocus
           />
         </div>

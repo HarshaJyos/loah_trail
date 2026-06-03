@@ -203,26 +203,21 @@ export const ProjectModule: React.FC = () => {
   }
 
   return (
-    <div className="w-full h-full p-4 md:p-8 overflow-y-auto no-scrollbar pb-32 max-w-7xl mx-auto flex flex-col animate-fade-in">
-      {/* ── Frame132 Header ──────────── */}
-      <div className="loah-module-header mb-8">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16 }}>
+    <div className="flex flex-col h-full relative overflow-hidden" style={{ background: 'var(--bg-app)' }}>
+      {/* ── Header ──────── */}
+      <div
+        className="loah-module-header"
+        style={{ paddingBottom: 12, borderBottom: '1px solid var(--border-subtle)', marginBottom: 16 }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', width: '100%' }}>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <div style={{ fontSize: 28, fontWeight: 800, color: '#1E1E1E', letterSpacing: '-0.03em' }}>
-                Projects
-              </div>
-              {showArchived && (
-                <span style={{
-                  fontSize: 10, fontWeight: 700, color: '#F97316', background: 'rgba(249, 115, 22, 0.1)',
-                  padding: '2px 8px', borderRadius: 4, textTransform: 'uppercase', letterSpacing: '0.05em'
-                }}>
-                  Archived View
-                </span>
-              )}
+            <div className="loah-module-title">
+              {showArchived ? 'Archive' : 'Projects'}
             </div>
-            <div style={{ fontSize: 13, color: '#64748B', marginTop: 4 }}>
-              Manage your big goals, organize notes, and track task progress.
+            <div className="loah-module-date" style={{ marginTop: 4 }}>
+              {showArchived
+                ? 'Showing archived projects'
+                : `${activeProjects.length} active`}
             </div>
           </div>
           
@@ -231,9 +226,8 @@ export const ProjectModule: React.FC = () => {
               onClick={() => setShowArchived(!showArchived)}
               className="loah-icon-btn"
               style={{
-                background: showArchived ? 'rgba(249, 115, 22, 0.1)' : '#FFFFFF',
-                borderColor: showArchived ? '#F97316' : '#E2E8F0',
-                color: showArchived ? '#F97316' : '#64748B',
+                background: showArchived ? 'var(--brand-primary-muted)' : 'var(--bg-surface-elevated)',
+                color: showArchived ? 'var(--brand-primary)' : 'var(--text-secondary)',
               }}
               title={showArchived ? 'View Active' : 'View Archive'}
             >
@@ -241,32 +235,30 @@ export const ProjectModule: React.FC = () => {
             </button>
             <button
               onClick={() => openModal()}
-              style={{
-                background: '#8979FF', color: '#FFFFFF', padding: '0 16px', height: 40,
-                borderRadius: 12, fontSize: 13, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8,
-                border: 'none', cursor: 'pointer',
-              }}
-              className="hover:opacity-90 transition-opacity active:scale-95"
+              className="loah-btn-primary"
+              style={{ padding: '0 16px', borderRadius: '12px', height: '40px' }}
+              title="New Project"
             >
               <Plus size={16} />
-              New Project
+              <span>New Project</span>
             </button>
           </div>
         </div>
 
         {/* Filters */}
-        <div style={{ display: 'flex', gap: 8, overflowX: 'auto' }} className="no-scrollbar mt-4">
-          <div style={{ display: 'flex', background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 8, padding: 3, alignItems: 'center', gap: 4 }}>
+        <div style={{ display: 'flex', gap: 8, overflowX: 'auto', marginTop: 16 }} className="no-scrollbar">
+          <div style={{ display: 'flex', background: 'var(--bg-surface-elevated)', border: '1px solid var(--border-subtle)', borderRadius: 12, padding: 4, alignItems: 'center', gap: 4 }}>
             {['all', 'active', 'on-hold', 'completed'].map((f) => (
               <button
                 key={f}
                 onClick={() => setStatusFilter(f as any)}
                 style={{
-                  padding: '6px 16px', borderRadius: 6, fontSize: 11, fontWeight: 700, textTransform: 'uppercase',
-                  background: statusFilter === f ? '#F1F5F9' : 'transparent',
-                  color: statusFilter === f ? '#1E1E1E' : '#64748B',
+                  padding: '6px 16px', borderRadius: 8, fontSize: 11, fontWeight: 700, textTransform: 'uppercase',
+                  background: statusFilter === f ? 'var(--brand-primary-muted)' : 'transparent',
+                  color: statusFilter === f ? 'var(--brand-primary)' : 'var(--text-tertiary)',
                   border: 'none', cursor: 'pointer', transition: 'all 0.2s',
                 }}
+                className={statusFilter !== f ? 'hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)]' : ''}
               >
                 {f.replace('-', ' ')}
               </button>
@@ -282,21 +274,19 @@ export const ProjectModule: React.FC = () => {
           const isOverdue = Date.now() > project.dueDate && progress < 100;
 
           return (
-            <div
-              key={project.id}
-              draggable={!showArchived}
-              onDragStart={(e) => handleDragStart(e, project.id)}
-              onDragOver={handleDragOver}
-              onDrop={(e) => handleDrop(e, project.id)}
-              onClick={() => setViewingProjectId(project.id)}
-              className={`bg-white border rounded-2xl p-6 shadow-sm hover:shadow-2xl hover:border-violet-500/30 transition-all duration-300 group cursor-pointer relative overflow-hidden flex flex-col justify-between h-[320px]
-                ${
-                  project.isPinned
-                    ? 'border-violet-500/50 shadow-lg shadow-violet-500/5'
-                    : 'border-slate-200/60'
-                }
-              `}
-            >
+              <div
+                key={project.id}
+                draggable={!showArchived}
+                onDragStart={(e) => handleDragStart(e, project.id)}
+                onDragOver={handleDragOver}
+                onDrop={(e) => handleDrop(e, project.id)}
+                onClick={() => setViewingProjectId(project.id)}
+                className="loah-card group cursor-pointer relative overflow-hidden flex flex-col justify-between h-[320px]"
+                style={{
+                  border: project.isPinned ? '1px solid var(--brand-primary)' : '1px solid var(--border-default)',
+                  boxShadow: project.isPinned ? '0 8px 30px rgba(137,121,255,0.1)' : undefined,
+                }}
+              >
               <div
                 className="absolute top-0 left-0 w-1.5 h-full"
                 style={{ backgroundColor: project.color }}
@@ -337,14 +327,15 @@ export const ProjectModule: React.FC = () => {
                     <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button
                         onClick={(e) => handleTogglePin(e, project)}
-                        className={`p-1.5 rounded-lg transition-all ${
+                        style={{ width: 28, height: 28, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        className={`transition-all ${
                           project.isPinned
-                            ? 'text-slate-900 bg-slate-100'
-                            : 'text-slate-400 hover:text-slate-900 hover:bg-slate-100/50'
+                            ? 'text-[var(--brand-primary)] bg-[var(--brand-primary-muted)]'
+                            : 'text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)]'
                         }`}
                       >
                         <Pin
-                          size={12}
+                          size={14}
                           fill={project.isPinned ? 'currentColor' : 'none'}
                         />
                       </button>
@@ -354,9 +345,10 @@ export const ProjectModule: React.FC = () => {
                             e.stopPropagation();
                             onUnarchiveProject(project.id);
                           }}
-                          className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100/50 rounded-lg transition-all"
+                          style={{ width: 28, height: 28, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                          className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)] transition-colors"
                         >
-                          <RefreshCcw size={12} />
+                          <RefreshCcw size={14} />
                         </button>
                       ) : (
                         <button
@@ -364,9 +356,10 @@ export const ProjectModule: React.FC = () => {
                             e.stopPropagation();
                             onArchiveProject(project.id);
                           }}
-                          className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100/50 rounded-lg transition-all"
+                          style={{ width: 28, height: 28, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                          className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)] transition-colors"
                         >
-                          <Archive size={12} />
+                          <Archive size={14} />
                         </button>
                       )}
                       <button
@@ -374,18 +367,20 @@ export const ProjectModule: React.FC = () => {
                           e.stopPropagation();
                           openModal(project);
                         }}
-                        className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100/50 rounded-lg transition-all"
+                        style={{ width: 28, height: 28, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)] transition-colors"
                       >
-                        <Edit2 size={12} />
+                        <Edit2 size={14} />
                       </button>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           onDeleteProject(project.id);
                         }}
-                        className="p-1.5 hover:bg-rose-500/10 rounded-lg text-slate-400 hover:text-rose-400 transition-all"
+                        style={{ width: 28, height: 28, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        className="text-[var(--text-tertiary)] hover:text-[var(--danger-default)] hover:bg-[var(--danger-surface)] transition-colors"
                       >
-                        <Trash2 size={12} />
+                        <Trash2 size={14} />
                       </button>
                     </div>
                   </div>

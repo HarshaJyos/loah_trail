@@ -3,57 +3,70 @@
 @tailwind utilities;
 
 /* ═══════════════════════════════════════════════════
-   LOAH DESIGN SYSTEM — Light Mode Only
-   Color palette derived from autohtml-project / Frame132
+   LOAH DESIGN SYSTEM — Dark Theme Only
    ═══════════════════════════════════════════════════ */
 
 :root {
   /* ── Core Backgrounds ─────────────────────────── */
-  --bg-primary:    #F5F7FA;
-  --bg-secondary:  #FFFFFF;
-  --bg-surface:    #FFFFFF;
-  --bg-elevated:   #F8FAFC;
-  --bg-muted:      #EFF6FF;
-  --bg-glass:      rgba(255, 255, 255, 0.85);
+  --bg-app:              #0B0F0C;
+  --bg-canvas:           #101512;
+  --bg-surface:          #151B17;
+  --bg-surface-elevated: #1B231E;
+  --bg-surface-hover:    #222C25;
 
   /* ── Brand Palette ────────────────────────────── */
-  --purple:        #8979FF;
-  --purple-soft:   #ABA2FD;
-  --purple-glow:   rgba(137, 121, 255, 0.22);
-  --purple-shadow: rgba(147, 51, 234, 0.40);
-  --teal:          #01F7AB;
-  --teal-glow:     rgba(1, 247, 171, 0.60);
-  --blue-soft:     #C3E5FF;
-  --blue-muted:    #D7EBFD;
+  --brand-primary:       #A7C81B;
+  --brand-primary-hover: #B8D72D;
+  --brand-primary-muted: #2A3A17;
 
   /* ── Text ─────────────────────────────────────── */
-  --text-primary:   #1E1E1E;
-  --text-secondary: #64748B;
-  --text-muted:     #808DA9;
-  --text-xmuted:    #9CA3AF;
+  --text-primary:        #F5F7F5;
+  --text-secondary:      #A3AEA6;
+  --text-tertiary:       #6C756E;
+  --text-disabled:       #4D544F;
 
   /* ── Borders ──────────────────────────────────── */
-  --border:         #E2E8F0;
-  --border-soft:    rgba(31, 31, 31, 0.12);
-  --border-active:  #8979FF;
+  --border-subtle:       #232D26;
+  --border-default:      #2D3930;
+  --border-strong:       #3D4A40;
+
+  /* ── Semantic Colors ──────────────────────────── */
+  --success-default:     #3ED17F;
+  --success-surface:     #173423;
+  
+  --warning-default:     #F5B84D;
+  --warning-surface:     #342813;
+  
+  --danger-default:      #F36A6A;
+  --danger-surface:      #331919;
+  
+  --info-default:        #4DA9FF;
+  --info-surface:        #17283D;
+
+  /* ── Category Colors ──────────────────────────── */
+  --cat-hydration:       #4DA9FF;
+  --cat-meditation:      #A870FF;
+  --cat-movement:        #FF8A65;
+  --cat-learning:        #FFD166;
+  --cat-journaling:      #FF7FB0;
+  --cat-deepwork:        #A7C81B;
 
   /* ── Shadows ──────────────────────────────────── */
-  --shadow-card:    2px 2px 10px 0px rgba(15, 23, 42, 0.06);
-  --shadow-purple:  2px 2px 10px 0px rgba(147, 51, 234, 0.40);
-  --shadow-soft:    2px 2px 5px 0px rgba(31, 31, 31, 0.12);
-  --shadow-nav:     0px 4px 20px 0px rgba(31, 31, 31, 0.10);
+  --shadow-card:         2px 2px 10px 0px rgba(0, 0, 0, 0.4);
+  --shadow-primary:      0px 4px 14px 0px rgba(167, 200, 27, 0.2);
+  --shadow-nav:          0px 8px 30px 0px rgba(0, 0, 0, 0.5);
 
   /* ── Radius ───────────────────────────────────── */
   --radius-sm:  8px;
-  --radius-md:  15px;
-  --radius-lg:  20px;
-  --radius-xl:  27.5px;
-  --radius-2xl: 50px;
+  --radius-md:  12px;
+  --radius-lg:  16px;
+  --radius-xl:  24px;
+  --radius-2xl: 32px;
 }
 
-/* Force light mode — NEVER dark */
+/* Force dark mode */
 html, body {
-  color-scheme: light only !important;
+  color-scheme: dark only !important;
 }
 
 * {
@@ -66,67 +79,55 @@ html, body {
 
 ::-webkit-scrollbar { width: 3px; height: 3px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(137, 121, 255, 0.18); border-radius: 9999px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(137, 121, 255, 0.40); }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-tertiary); }
 
 /* ── Base ───────────────────────────────────────── */
 body {
   color: var(--text-primary);
-  background-color: var(--bg-primary);
-  overflow: hidden;
+  background-color: var(--bg-app);
   height: 100dvh;
   margin: 0;
   padding: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-y: hidden; /* Only allow inner content to scroll */
+  overflow-x: hidden;
 }
 
-/* ── Glassmorphism ──────────────────────────────── */
-.bg-glass {
-  background-color: var(--bg-glass);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+/* ── Utilities ──────────────────────────────────── */
+.gradient-primary {
+  background: linear-gradient(135deg, #A7C81B, #58D37D, #4DA9FF);
+}
+.gradient-premium {
+  background: linear-gradient(135deg, #A7C81B, #5A7B1D, #2F5A25);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #A7C81B, #58D37D);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* ── Animations ─────────────────────────────────── */
-@keyframes gradient {
-  0%, 100% { background-position: 0% 50%; }
-  50%       { background-position: 100% 50%; }
-}
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes pulse-soft {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.6; }
-}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-.animate-gradient { background-size: 200% auto; animation: gradient 3s ease infinite; }
 .animate-fade-in  { animation: fadeIn 0.25s ease-out both; }
 .animate-fade-in-up { animation: fadeInUp 0.3s ease-out both; }
 .animate-slide-up   { animation: slideUp 0.35s ease-out both; }
 
-/* ── Safe Areas ─────────────────────────────────── */
-.pb-safe { padding-bottom: env(safe-area-inset-bottom); }
-
 /* ═══════════════════════════════════════════════════
-   LOAH MODULE HEADER — matches Frame132 header-notes
+   MODULE HEADER 
    ═══════════════════════════════════════════════════ */
 .loah-module-header {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
   justify-content: space-between;
-  padding: 16px 24px 0 24px;
+  padding: 24px 24px 0 24px;
   width: 100%;
 }
 
@@ -134,293 +135,122 @@ body {
   font-size: 28px;
   font-weight: 700;
   color: var(--text-primary);
-  letter-spacing: -0.04em;
-  line-height: 1.1;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 
 .loah-module-date {
   font-size: 13px;
   color: var(--text-secondary);
   font-weight: 500;
-  margin-top: 2px;
-}
-
-.loah-header-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding-top: 4px;
+  margin-top: 4px;
 }
 
 .loah-icon-btn {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-default);
+  background: var(--bg-surface);
   color: var(--text-secondary);
-  transition: all 0.15s ease;
+  transition: all 0.2s ease;
   cursor: pointer;
 }
 
 .loah-icon-btn:hover {
-  background: var(--bg-muted);
-  border-color: var(--purple);
-  color: var(--purple);
+  background: var(--bg-surface-hover);
+  border-color: var(--border-strong);
+  color: var(--text-primary);
 }
 
 /* ═══════════════════════════════════════════════════
-   LOAH CARD — matches Frame132 note-card
+   CARDS 
    ═══════════════════════════════════════════════════ */
 .loah-card {
-  background: var(--bg-secondary);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-default);
   box-shadow: var(--shadow-card);
-  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  transition: all 0.2s ease;
   overflow: hidden;
 }
 
 .loah-card:hover {
-  box-shadow: 2px 2px 10px 0px rgba(137, 121, 255, 0.18);
-  border-color: rgba(137, 121, 255, 0.35);
+  border-color: var(--border-strong);
+  background: var(--bg-surface-hover);
 }
 
 /* ═══════════════════════════════════════════════════
-   LOAH FRAME-98 — The floating nav pill container
+   BUTTONS
    ═══════════════════════════════════════════════════ */
-.loah-nav-pill {
-  background: rgba(0, 0, 0, 0);
-  border-radius: 27.5px;
-  border: 1px solid rgba(31, 31, 31, 0.12);
-  padding: 5px 10px;
-  display: flex;
-  flex-direction: row;
+.loah-btn-primary {
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  box-shadow: 2px 2px 4px 0px rgba(31, 31, 31, 0.12);
-  width: 350px;
-  max-width: 95vw;
-}
-
-/* ═══════════════════════════════════════════════════
-   LOAH EDIT TOOLBAR — matches .edit-layout-nav-bar
-   ═══════════════════════════════════════════════════ */
-.loah-edit-toolbar {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 20px;
-  border: 1px solid rgba(31, 31, 31, 0.12);
-  padding: 6px 10px;
-  display: flex;
-  flex-direction: row;
-  gap: 2px;
-  align-items: center;
-  box-shadow: 2px 2px 10px 0px rgba(147, 51, 234, 0.40);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
-
-/* ═══════════════════════════════════════════════════
-   REACT QUILL — floating toolbar
-   ═══════════════════════════════════════════════════ */
-.ql-toolbar.ql-snow {
-  position: fixed !important;
-  bottom: 24px !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  z-index: 999 !important;
-  width: auto !important;
-  max-width: 600px !important;
-  background: rgba(255, 255, 255, 0.96) !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
-  border: 1px solid rgba(31, 31, 31, 0.12) !important;
-  border-radius: 20px !important;
-  box-shadow: 2px 2px 10px 0px rgba(147, 51, 234, 0.40) !important;
-  display: flex !important;
-  flex-wrap: nowrap !important;
-  justify-content: center !important;
-  align-items: center !important;
-  gap: 4px !important;
-  padding: 6px 12px !important;
-}
-
-.ql-container.ql-snow {
-  border: none !important;
-  font-family: inherit !important;
-  font-size: 15px !important;
-  color: var(--text-primary) !important;
-}
-
-.ql-editor {
-  padding: 16px 20px 120px !important;
-  min-height: calc(100vh - 200px) !important;
-  color: var(--text-primary) !important;
-}
-
-.ql-editor::before {
-  color: var(--text-muted) !important;
-  font-style: normal !important;
-  font-size: 15px !important;
-}
-
-.ql-snow .ql-stroke {
-  stroke: #475569 !important;
-  stroke-width: 1.5 !important;
-}
-.ql-snow .ql-fill { fill: #475569 !important; }
-.ql-snow .ql-picker { color: #475569 !important; font-weight: 600 !important; }
-
-.ql-snow button:hover .ql-stroke,
-.ql-snow button.ql-active .ql-stroke,
-.ql-snow .ql-picker-label:hover .ql-stroke,
-.ql-snow .ql-picker-label.ql-active .ql-stroke { stroke: #8979FF !important; }
-
-.ql-snow button:hover .ql-fill,
-.ql-snow button.ql-active .ql-fill,
-.ql-snow .ql-picker-label:hover .ql-fill,
-.ql-snow .ql-picker-label.ql-active .ql-fill { fill: #8979FF !important; }
-
-.ql-snow button:hover,
-.ql-snow button.ql-active,
-.ql-snow .ql-picker-label:hover,
-.ql-snow .ql-picker-label.ql-active { color: #8979FF !important; }
-
-/* ═══════════════════════════════════════════════════
-   LOAH QUICK ACTION BUTTONS (Dashboard hero)
-   ═══════════════════════════════════════════════════ */
-.loah-quick-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 16px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-  background: var(--bg-secondary);
-  box-shadow: var(--shadow-card);
-  transition: all 0.2s ease;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: var(--radius-xl);
+  background: var(--brand-primary);
+  color: var(--bg-app);
+  font-size: 14px;
+  font-weight: 700;
+  border: none;
   cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-primary);
 }
 
-.loah-quick-btn:hover {
-  border-color: rgba(137, 121, 255, 0.35);
-  box-shadow: 2px 2px 10px 0px rgba(137, 121, 255, 0.18);
+.loah-btn-primary:hover {
+  background: var(--brand-primary-hover);
   transform: translateY(-1px);
 }
 
-.loah-quick-btn:active {
-  transform: scale(0.97);
+.loah-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: var(--radius-xl);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 600;
+  border: 1px solid var(--border-default);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.loah-btn-ghost:hover {
+  background: var(--bg-surface-hover);
+  color: var(--text-primary);
 }
 
 /* ═══════════════════════════════════════════════════
-   LOAH BADGE / CHIP
+   BADGES & CHIPS
    ═══════════════════════════════════════════════════ */
 .loah-badge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 3px 10px;
+  gap: 6px;
+  padding: 4px 12px;
   border-radius: 200px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  border: 1px solid var(--border);
-  background: var(--bg-muted);
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid var(--border-default);
+  background: var(--bg-surface);
   color: var(--text-secondary);
 }
 
-.loah-badge-purple {
-  background: rgba(137, 121, 255, 0.12);
-  border-color: rgba(137, 121, 255, 0.30);
-  color: var(--purple);
+.loah-badge-active {
+  background: var(--brand-primary-muted);
+  border-color: var(--brand-primary);
+  color: var(--brand-primary);
 }
 
 /* ═══════════════════════════════════════════════════
-   LOAH FILTER TABS
-   ═══════════════════════════════════════════════════ */
-.loah-filter-tabs {
-  display: flex;
-  gap: 4px;
-  padding: 3px;
-  border-radius: 12px;
-  background: rgba(226, 232, 240, 0.50);
-  border: 1px solid var(--border);
-}
-
-.loah-filter-tab {
-  padding: 5px 14px;
-  border-radius: 9px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: all 0.15s ease;
-  border: none;
-  background: transparent;
-}
-
-.loah-filter-tab.active {
-  background: var(--bg-secondary);
-  color: var(--text-primary);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-}
-
-/* ═══════════════════════════════════════════════════
-   LOAH JOURNAL CARD — matches Frame132 journal cards
-   ═══════════════════════════════════════════════════ */
-.loah-journal-card {
-  background: var(--bg-secondary);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-  overflow: hidden;
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-.loah-journal-card:hover {
-  border-color: rgba(137, 121, 255, 0.30);
-  box-shadow: 2px 2px 10px 0px rgba(137, 121, 255, 0.15);
-}
-
-.loah-journal-image {
-  width: 100%;
-  height: 80px;
-  object-fit: cover;
-  display: block;
-}
-
-/* ═══════════════════════════════════════════════════
-   LOAH MOOD CIRCLE
-   ═══════════════════════════════════════════════════ */
-.loah-mood {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  background: rgba(226, 232, 240, 0.50);
-  border: 2px solid transparent;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.loah-mood:hover,
-.loah-mood.active {
-  border-color: var(--purple);
-  background: rgba(137, 121, 255, 0.12);
-  transform: scale(1.1);
-}
-
-/* ═══════════════════════════════════════════════════
-   LOAH INPUT / TEXTAREA
+   INPUTS
    ═══════════════════════════════════════════════════ */
 .loah-input {
   width: 100%;
@@ -428,7 +258,7 @@ body {
   border: none;
   outline: none;
   color: var(--text-primary);
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 500;
   resize: none;
 }
@@ -439,88 +269,66 @@ body {
   border: none;
   outline: none;
   color: var(--text-primary);
-  font-size: 22px;
+  font-size: 32px;
   font-weight: 700;
-  letter-spacing: -0.03em;
-  text-transform: uppercase;
+  letter-spacing: -0.02em;
 }
 
-.loah-title-input::placeholder { color: rgba(100, 116, 139, 0.5); }
-.loah-input::placeholder { color: var(--text-muted); }
-
-/* ═══════════════════════════════════════════════════
-   LOAH BUTTON VARIANTS
-   ═══════════════════════════════════════════════════ */
-.loah-btn-primary {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 18px;
-  border-radius: 200px;
-  background: var(--purple);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.01em;
-  border: none;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  box-shadow: 0 2px 8px rgba(137, 121, 255, 0.30);
-}
-
-.loah-btn-primary:hover {
-  background: #7060FF;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(137, 121, 255, 0.40);
-}
-
-.loah-btn-ghost {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 7px 16px;
-  border-radius: 200px;
-  background: transparent;
-  color: var(--text-secondary);
-  font-size: 13px;
-  font-weight: 600;
-  border: 1px solid var(--border);
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.loah-btn-ghost:hover {
-  background: var(--bg-muted);
-  color: var(--text-primary);
+.loah-title-input::placeholder, .loah-input::placeholder { 
+  color: var(--text-tertiary); 
 }
 
 /* ═══════════════════════════════════════════════════
-   LOAH EDITOR PAGE
+   QUILL EDITOR THEME
    ═══════════════════════════════════════════════════ */
-.loah-editor-header {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  background: var(--bg-primary);
-  padding: 14px 20px 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--border);
+.ql-toolbar.ql-snow {
+  position: fixed !important;
+  bottom: 24px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 999 !important;
+  width: auto !important;
+  max-width: 600px !important;
+  background: var(--bg-surface-elevated) !important;
+  border: 1px solid var(--border-default) !important;
+  border-radius: var(--radius-xl) !important;
+  box-shadow: var(--shadow-nav) !important;
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 4px !important;
+  padding: 8px 16px !important;
 }
 
-.loah-editor-back {
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  background: var(--bg-secondary);
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: all 0.15s ease;
+.ql-container.ql-snow {
+  border: none !important;
+  font-family: inherit !important;
+  font-size: 16px !important;
+  color: var(--text-primary) !important;
 }
 
-.loah-editor-back:hover { border-color: var(--purple); color: var(--purple); }
+.ql-editor {
+  padding: 24px 24px 120px !important;
+  min-height: calc(100vh - 200px) !important;
+  color: var(--text-primary) !important;
+}
+
+.ql-editor::before {
+  color: var(--text-tertiary) !important;
+  font-style: normal !important;
+  font-size: 16px !important;
+}
+
+.ql-snow .ql-stroke { stroke: var(--text-secondary) !important; stroke-width: 1.5 !important; }
+.ql-snow .ql-fill { fill: var(--text-secondary) !important; }
+.ql-snow .ql-picker { color: var(--text-secondary) !important; font-weight: 600 !important; }
+
+.ql-snow button:hover .ql-stroke,
+.ql-snow button.ql-active .ql-stroke { stroke: var(--brand-primary) !important; }
+
+.ql-snow button:hover .ql-fill,
+.ql-snow button.ql-active .ql-fill { fill: var(--brand-primary) !important; }
+
+.ql-snow button:hover,
+.ql-snow button.ql-active { color: var(--brand-primary) !important; }

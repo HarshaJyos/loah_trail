@@ -121,27 +121,27 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({ mode }) => {
   const activeMood = MOODS.find((m) => m.type === mood)!;
 
   return (
-    <div className="w-full h-full flex flex-col overflow-hidden animate-fade-in" style={{ background: '#F5F7FA' }}>
-      {/* ── Header matching Frame132 header-new-notes ───────────── */}
+    <div className="w-full h-full flex flex-col overflow-hidden animate-fade-in" style={{ background: 'var(--bg-app)' }}>
+      {/* ── Header ───────────── */}
       <div
         style={{
-          padding: '14px 20px',
-          borderBottom: '1px solid #E2E8F0',
+          padding: '16px 24px',
+          borderBottom: '1px solid var(--border-subtle)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           flexShrink: 0,
-          background: '#F5F7FA',
+          background: 'var(--bg-canvas)',
           position: 'sticky', top: 0, zIndex: 50,
         }}
       >
         {/* Back */}
-        <button onClick={handleDiscard} className="loah-editor-back">
+        <button onClick={handleDiscard} className="loah-icon-btn">
           <ArrowLeft size={18} />
         </button>
 
         {/* Title */}
-        <span style={{ fontSize: 14, fontWeight: 700, color: '#1E1E1E' }}>
+        <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>
           {mode === 'edit' ? 'Edit Log' : 'New Log'}
         </span>
 
@@ -166,7 +166,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({ mode }) => {
             className="loah-icon-btn"
             title="Attach Image"
           >
-            <ImageIcon size={16} />
+            <ImageIcon size={18} />
           </button>
           <input
             type="file"
@@ -180,11 +180,7 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({ mode }) => {
           {/* Discard */}
           <button
             onClick={handleDiscard}
-            style={{
-              padding: '7px 14px', borderRadius: 200,
-              border: '1px solid #E2E8F0', background: 'transparent',
-              fontSize: 12, fontWeight: 700, color: '#64748B', cursor: 'pointer',
-            }}
+            className="loah-btn-ghost"
           >
             Discard
           </button>
@@ -192,39 +188,34 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({ mode }) => {
           {/* Save */}
           <button
             onClick={handleSave}
-            style={{
-              padding: '7px 16px', borderRadius: 200,
-              background: '#8979FF', border: 'none',
-              fontSize: 12, fontWeight: 700, color: '#fff',
-              cursor: 'pointer',
-              boxShadow: '0 2px 8px rgba(137,121,255,0.30)',
-            }}
+            className="loah-btn-primary"
           >
-            Save
+            Save Log
           </button>
         </div>
       </div>
 
       {/* Scrollable content */}
-      <div className="flex-1 overflow-y-auto no-scrollbar" style={{ paddingBottom: 120 }}>
+      <div className="flex-1 overflow-y-auto no-scrollbar" style={{ paddingBottom: 120, maxWidth: '800px', margin: '0 auto', width: '100%' }}>
         {/* Title input */}
-        <div style={{ padding: '16px 20px 0' }}>
+        <div style={{ padding: '32px 24px 0' }}>
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="UNTITLED"
+            placeholder="UNTITLED LOG"
             className="loah-title-input"
+            style={{ fontSize: '40px' }}
             autoFocus
           />
         </div>
 
-        {/* Mood selector — matching Frame132 mood emojis row */}
+        {/* Mood selector */}
         <div
           style={{
-            padding: '12px 20px 8px',
-            display: 'flex', gap: 8,
-            borderBottom: '1px solid rgba(226,232,240,0.60)',
-            marginBottom: 4,
+            padding: '24px 24px 16px',
+            display: 'flex', gap: 12,
+            borderBottom: '1px solid var(--border-subtle)',
+            marginBottom: 16,
           }}
         >
           {MOODS.map((m) => (
@@ -232,10 +223,10 @@ export const JournalEditor: React.FC<JournalEditorProps> = ({ mode }) => {
               key={m.type}
               onClick={() => setMood(m.type)}
               style={{
-                width: 42, height: 42, borderRadius: '50%',
-                fontSize: 20,
+                width: 48, height: 48, borderRadius: '50%',
+                fontSize: 24,
                 border: `2px solid ${mood === m.type ? m.color : 'transparent'}`,
-                background: mood === m.type ? m.bg + '60' : 'rgba(226,232,240,0.30)',
+                background: mood === m.type ? m.bg + '20' : 'var(--bg-surface-elevated)',
                 cursor: 'pointer',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 transform: mood === m.type ? 'scale(1.15)' : 'scale(1)',

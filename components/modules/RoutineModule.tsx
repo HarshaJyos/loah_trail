@@ -257,23 +257,16 @@ export const RoutineModule: React.FC = () => {
 
   return (
     <div className="w-full h-full flex flex-col overflow-hidden">
-      {/* ── Header matching Frame132 header-notes style ──────── */}
+      {/* ── Header ──────── */}
       <div
-        style={{
-          padding: '16px 20px 12px',
-          borderBottom: '1px solid #E2E8F0',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'flex-start',
-          flexShrink: 0,
-          background: '#F5F7FA',
-        }}
+        className="loah-module-header"
+        style={{ paddingBottom: 12, borderBottom: '1px solid var(--border-subtle)', marginBottom: 16 }}
       >
         <div>
-          <div style={{ fontSize: 26, fontWeight: 700, color: '#1E1E1E', letterSpacing: '-0.03em' }}>
+          <div className="loah-module-title">
             {showArchived ? 'Archive' : 'Routines'}
           </div>
-          <div style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>
+          <div className="loah-module-date">
             {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
           </div>
         </div>
@@ -283,20 +276,21 @@ export const RoutineModule: React.FC = () => {
             className="loah-icon-btn"
             title={showArchived ? 'View Active' : 'View Archive'}
             style={{
-              background: showArchived ? 'rgba(137,121,255,0.10)' : '#FFFFFF',
-              borderColor: showArchived ? '#8979FF' : '#E2E8F0',
-              color: showArchived ? '#8979FF' : '#64748B',
+              background: showArchived ? 'var(--brand-primary-muted)' : 'var(--bg-surface)',
+              borderColor: showArchived ? 'var(--brand-primary)' : 'var(--border-default)',
+              color: showArchived ? 'var(--brand-primary)' : 'var(--text-secondary)',
             }}
           >
             <Archive size={17} />
           </button>
           <button
             onClick={() => openEditor()}
-            className="loah-icon-btn"
-            style={{ background: '#8979FF', borderColor: '#8979FF', color: '#fff' }}
+            className="loah-btn-primary"
+            style={{ padding: '0 16px', borderRadius: '12px', height: '40px' }}
             title="New Routine"
           >
             <Plus size={17} />
+            <span>New</span>
           </button>
         </div>
       </div>
@@ -378,18 +372,16 @@ export const RoutineModule: React.FC = () => {
                 onDragOver={handleDragOver}
                 onDrop={(e) => handleDrop(e, routine.id)}
                 onClick={() => onStartRoutine(routine.id)}
-                className={`bg-white border rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-300 group relative flex flex-col cursor-pointer h-[320px]
-                  ${
-                    routine.isPinned
-                      ? 'border-violet-500/50 shadow-lg shadow-violet-500/5'
-                      : 'border-slate-200/60 hover:border-violet-500/25'
-                  }
-                `}
+                className="loah-card group relative flex flex-col cursor-pointer h-[320px]"
+                style={{
+                  border: routine.isPinned ? '1px solid var(--brand-primary)' : '1px solid var(--border-default)',
+                  boxShadow: routine.isPinned ? '0 8px 30px rgba(137,121,255,0.1)' : undefined,
+                }}
               >
                 <div className="p-6 flex flex-col h-full relative z-10">
                   {/* Card top icons */}
                   <div className="flex justify-between items-start mb-4">
-                    <div className="p-2 rounded-xl bg-slate-100/50 border border-slate-200/60 text-violet-400">
+                    <div className="p-2 rounded-xl border" style={{ background: 'var(--bg-surface-elevated)', borderColor: 'var(--border-subtle)', color: 'var(--brand-primary)' }}>
                       {routine.type === 'repeatable' ? (
                         <Zap size={20} fill="currentColor" className="opacity-25" />
                       ) : (
@@ -400,10 +392,11 @@ export const RoutineModule: React.FC = () => {
                     <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button
                         onClick={(e) => handleTogglePin(e, routine)}
-                        className={`p-2 rounded-lg transition-all ${
+                        style={{ width: 28, height: 28, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        className={`transition-all ${
                           routine.isPinned
-                            ? 'text-slate-900 bg-slate-100'
-                            : 'text-slate-400 hover:text-slate-900 hover:bg-slate-100/50'
+                            ? 'text-[var(--brand-primary)] bg-[var(--brand-primary-muted)]'
+                            : 'text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)]'
                         }`}
                         title={routine.isPinned ? 'Unpin' : 'Pin'}
                       >
@@ -412,7 +405,8 @@ export const RoutineModule: React.FC = () => {
                       {showArchived ? (
                         <button
                           onClick={(e) => handleUnarchive(e, routine.id)}
-                          className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100/50 rounded-lg transition-colors"
+                          style={{ width: 28, height: 28, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                          className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)] transition-colors"
                           title="Restore"
                         >
                           <RefreshCcw size={14} />
@@ -420,7 +414,8 @@ export const RoutineModule: React.FC = () => {
                       ) : (
                         <button
                           onClick={(e) => handleArchive(e, routine.id)}
-                          className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100/50 rounded-lg transition-colors"
+                          style={{ width: 28, height: 28, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                          className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)] transition-colors"
                           title="Archive"
                         >
                           <Archive size={14} />
@@ -428,14 +423,16 @@ export const RoutineModule: React.FC = () => {
                       )}
                       <button
                         onClick={(e) => handleEdit(e, routine)}
-                        className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100/50 rounded-lg transition-colors"
+                        style={{ width: 28, height: 28, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        className="text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)] transition-colors"
                         title="Edit"
                       >
                         <Edit2 size={14} />
                       </button>
                       <button
                         onClick={(e) => handleDelete(e, routine.id)}
-                        className="p-2 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors"
+                        style={{ width: 28, height: 28, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        className="text-[var(--text-tertiary)] hover:text-[var(--danger-default)] hover:bg-[var(--danger-surface)] transition-colors"
                         title="Delete"
                       >
                         <Trash2 size={14} />

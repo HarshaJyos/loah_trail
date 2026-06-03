@@ -29,18 +29,18 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="w-full min-h-screen bg-gradient-to-b from-white via-[#F5F7FA] to-white text-[#1E1E1E] font-sans selection:bg-[#8979FF]/20 overflow-y-auto">
+    <div className="w-full h-full bg-gradient-to-b from-[var(--bg-app)] via-[var(--bg-canvas)] to-[var(--bg-app)] text-[var(--text-primary)] font-sans selection:bg-[var(--brand-primary-muted)] overflow-y-auto overflow-x-hidden relative">
       {/* Top Header Navigation */}
       <header className="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <div className="bg-[#8979FF]/10 p-2 rounded-xl text-[#8979FF]">
+          <div className="bg-[var(--brand-primary-muted)] p-2 rounded-xl text-[var(--brand-primary)]">
             <Brain size={24} />
           </div>
-          <span className="font-extrabold text-lg tracking-tight">LOAH</span>
+          <span className="font-extrabold text-lg tracking-tight text-[var(--text-primary)]">LOAH</span>
         </div>
         <Link
           href="/dashboard"
-          className="flex items-center gap-2 px-5 py-2.5 bg-[#8979FF] hover:bg-[#7665FF] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-98"
+          className="flex items-center gap-2 px-5 py-2.5 bg-[var(--brand-primary)] hover:opacity-90 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-95"
         >
           Open App <ArrowRight size={14} />
         </Link>
@@ -48,15 +48,15 @@ export default function HomePage() {
 
       {/* Hero Section */}
       <section className="max-w-4xl mx-auto px-6 pt-20 pb-16 text-center space-y-8 select-none">
-        <div className="inline-block px-4 py-1.5 rounded-full border border-[#8979FF]/20 bg-[#8979FF]/5 text-[#8979FF] text-xs font-bold uppercase tracking-wider">
+        <div className="inline-block px-4 py-1.5 rounded-full border border-[var(--brand-primary)] bg-[var(--brand-primary-muted)] text-[var(--brand-primary)] text-xs font-bold uppercase tracking-wider">
           Life Organiser & Healer
         </div>
 
-        <h1 className="text-5xl md:text-7xl font-black tracking-tight text-slate-900 leading-tight">
+        <h1 className="text-5xl md:text-7xl font-black tracking-tight text-[var(--text-primary)] leading-tight">
           Sanctuary for your{' '}
-          <span className="text-[#8979FF] underline decoration-[#8979FF]/20 underline-offset-4">focus</span>{' '}
+          <span className="text-[var(--brand-primary)] underline decoration-[var(--brand-primary-muted)] underline-offset-4">focus</span>{' '}
           and{' '}
-          <span className="text-[#f43f5e] underline decoration-[#f43f5e]/20 underline-offset-4">growth</span>.
+          <span className="text-[var(--danger-default)] underline decoration-[var(--danger-surface)] underline-offset-4">growth</span>.
         </h1>
 
         <p className="text-base md:text-lg max-w-2xl mx-auto text-slate-500 leading-relaxed font-medium">
@@ -67,7 +67,7 @@ export default function HomePage() {
         <div className="pt-4 flex flex-col sm:flex-row gap-4 justify-center items-center">
           <Link
             href="/dashboard"
-            className="w-full sm:w-auto px-8 py-4 bg-[#8979FF] hover:bg-[#7665FF] text-white font-bold text-sm uppercase tracking-wider rounded-2xl transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2"
+            className="w-full sm:w-auto px-8 py-4 bg-[var(--brand-primary)] hover:opacity-90 text-white font-bold text-sm uppercase tracking-wider rounded-2xl transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2"
           >
             Start Your Journey <Sparkles size={16} />
           </Link>
@@ -80,9 +80,9 @@ export default function HomePage() {
           {features.map((feat, idx) => (
             <div
               key={idx}
-              className="p-6 bg-white border border-slate-200/60 rounded-3xl shadow-sm hover:shadow-md hover:border-[#8979FF]/30 transition-all duration-300 flex flex-col gap-4"
+              className="p-6 bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] rounded-3xl shadow-sm hover:shadow-md hover:border-[var(--brand-primary)] transition-all duration-300 flex flex-col gap-4"
             >
-              <div className="bg-slate-50 w-fit p-3 rounded-2xl">
+              <div className="bg-[var(--bg-canvas)] w-fit p-3 rounded-2xl border border-[var(--border-default)]">
                 {feat.icon}
               </div>
               <div>
@@ -99,7 +99,7 @@ export default function HomePage() {
       </section>
 
       {/* Purpose Footer Banner */}
-      <footer className="max-w-4xl mx-auto px-6 py-16 text-center border-t border-slate-200/60 mt-16 text-xs text-slate-400 font-medium">
+      <footer className="max-w-4xl mx-auto px-6 py-16 text-center border-t border-[var(--border-subtle)] mt-16 text-xs text-[var(--text-tertiary)] font-medium pb-24">
         <p>© 2026 LOAH. Built for a clear mind, body, and soul. 💜</p>
       </footer>
     </div>

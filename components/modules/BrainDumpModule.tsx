@@ -17,6 +17,7 @@ import {
   Briefcase,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export const BrainDumpModule: React.FC = () => {
   const dumps = useAppStore((s) => s.dumps);
@@ -57,23 +58,16 @@ export const BrainDumpModule: React.FC = () => {
 
   return (
     <div className="w-full h-full flex flex-col overflow-hidden">
-      {/* ── Header matching Frame132 header-brain-dump ────────── */}
+      {/* ── Header ────────── */}
       <div
-        style={{
-          padding: '16px 20px 12px',
-          borderBottom: '1px solid #E2E8F0',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'flex-start',
-          flexShrink: 0,
-          background: '#F5F7FA',
-        }}
+        className="loah-module-header"
+        style={{ paddingBottom: 12, borderBottom: '1px solid var(--border-subtle)', marginBottom: 16 }}
       >
         <div>
-          <div style={{ fontSize: 26, fontWeight: 700, color: '#1E1E1E', letterSpacing: '-0.03em' }}>
+          <div className="loah-module-title">
             {showArchived ? 'Archive' : 'Brain Dump'}
           </div>
-          <div style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>
+          <div className="loah-module-date">
             {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
           </div>
         </div>
@@ -82,19 +76,20 @@ export const BrainDumpModule: React.FC = () => {
             onClick={() => setShowArchived(!showArchived)}
             className="loah-icon-btn"
             style={{
-              background: showArchived ? 'rgba(137,121,255,0.10)' : '#FFFFFF',
-              borderColor: showArchived ? '#8979FF' : '#E2E8F0',
-              color: showArchived ? '#8979FF' : '#64748B',
+              background: showArchived ? 'var(--brand-primary-muted)' : 'var(--bg-surface)',
+              borderColor: showArchived ? 'var(--brand-primary)' : 'var(--border-default)',
+              color: showArchived ? 'var(--brand-primary)' : 'var(--text-secondary)',
             }}
           >
             <Archive size={17} />
           </button>
           <button
             onClick={openNew}
-            className="loah-icon-btn"
-            style={{ background: '#8979FF', borderColor: '#8979FF', color: '#fff' }}
+            className="loah-btn-primary"
+            style={{ padding: '0 16px', borderRadius: '12px', height: '40px' }}
           >
             <Plus size={17} />
+            <span>New</span>
           </button>
         </div>
       </div>
@@ -106,27 +101,27 @@ export const BrainDumpModule: React.FC = () => {
             style={{
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
               padding: '60px 20px', textAlign: 'center',
-              border: '1px dashed #E2E8F0', borderRadius: 20,
-              background: '#FAFBFC', marginTop: 8,
+              border: '1px dashed var(--border-strong)', borderRadius: 20,
+              background: 'var(--bg-surface-elevated)', marginTop: 8,
             }}
           >
             <div
               style={{
                 width: 64, height: 64, borderRadius: '50%',
-                background: 'rgba(253, 230, 138, 0.25)',
-                border: '1px solid #FED7AA',
+                background: 'rgba(77, 169, 255, 0.1)',
+                border: '1px solid var(--info-default)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 marginBottom: 16,
               }}
             >
-              <Lightbulb size={28} color="#D97706" />
+              <Lightbulb size={28} color="var(--info-default)" />
             </div>
-            <p style={{ fontSize: 16, fontWeight: 700, color: '#1E1E1E', marginBottom: 6 }}>
+            <p style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>
               {showArchived ? 'Archive Empty' : 'Your mind is clear'}
             </p>
             {!showArchived && (
               <>
-                <p style={{ fontSize: 13, color: '#64748B', maxWidth: 260, lineHeight: 1.5, marginBottom: 20 }}>
+                <p style={{ fontSize: 13, color: 'var(--text-secondary)', maxWidth: 260, lineHeight: 1.5, marginBottom: 20 }}>
                   Dump everything here — messy, raw, incomplete thoughts, and sort them into tasks or projects later.
                 </p>
                 <button onClick={openNew} className="loah-btn-primary">
@@ -184,42 +179,42 @@ const DumpCard: React.FC<{
         }}
       />
 
-      <div style={{ padding: '12px 14px' }}>
+      <div style={{ padding: '16px' }}>
         {/* Header row */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <div
               style={{
                 width: 32, height: 32, borderRadius: 8,
-                background: 'rgba(253, 230, 138, 0.25)',
-                border: '1px solid #FED7AA',
+                background: 'rgba(77, 169, 255, 0.1)',
+                border: '1px solid var(--info-default)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}
             >
-              <Lightbulb size={16} color="#D97706" />
+              <Lightbulb size={16} color="var(--info-default)" />
             </div>
             <span
               style={{
-                fontSize: 9, fontWeight: 700, color: '#9CA3AF',
+                fontSize: 10, fontWeight: 700, color: 'var(--text-secondary)',
                 textTransform: 'uppercase', letterSpacing: '0.06em',
               }}
             >
               BRAIN DUMP
             </span>
           </div>
-          <span style={{ fontSize: 10, color: '#9CA3AF', fontWeight: 600, flexShrink: 0 }}>
+          <span style={{ fontSize: 11, color: 'var(--text-tertiary)', fontWeight: 600, flexShrink: 0 }}>
             {new Date(dump.createdAt).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })}
           </span>
         </div>
 
         {/* Title */}
-        <h3 style={{ fontSize: 14, fontWeight: 700, color: '#1E1E1E', marginBottom: 6, lineHeight: 1.3 }}>
+        <h3 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 8, lineHeight: 1.3 }}>
           {dump.title}
         </h3>
 
         {/* Content */}
         {dump.description && (
-          <p style={{ fontSize: 12, color: '#64748B', lineHeight: 1.5, marginBottom: 12 }} className="line-clamp-3 whitespace-pre-wrap">
+          <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: 16 }} className="line-clamp-3 whitespace-pre-wrap">
             {dump.description}
           </p>
         )}
@@ -227,79 +222,73 @@ const DumpCard: React.FC<{
         {/* Convert actions */}
         <div
           style={{
-            paddingTop: 10, borderTop: '1px solid rgba(226,232,240,0.60)',
+            paddingTop: 12, borderTop: '1px solid var(--border-subtle)',
           }}
         >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
             <span
               style={{
-                fontSize: 9, fontWeight: 700, color: '#8979FF',
+                fontSize: 10, fontWeight: 700, color: 'var(--brand-primary)',
                 textTransform: 'uppercase', letterSpacing: '0.06em',
                 display: 'flex', alignItems: 'center', gap: 4,
               }}
             >
-              <CornerDownRight size={11} />
+              <CornerDownRight size={12} />
               Convert Idea
             </span>
             <div style={{ display: 'flex', gap: 4, opacity: 0 }} className="group-hover:opacity-100 transition-opacity">
               {showArchived ? (
                 <button
                   onClick={() => onUnarchive(dump.id)}
-                  style={{ width: 26, height: 26, borderRadius: 6, border: 'none', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9CA3AF' }}
+                  style={{ width: 28, height: 28, borderRadius: 6, border: 'none', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-tertiary)' }}
+                  className="hover:bg-[var(--bg-surface-elevated)] hover:text-[var(--text-primary)]"
                 >
-                  <RefreshCcw size={13} />
+                  <RefreshCcw size={14} />
                 </button>
               ) : (
                 <button
                   onClick={() => onArchive(dump.id)}
-                  style={{ width: 26, height: 26, borderRadius: 6, border: 'none', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9CA3AF' }}
+                  style={{ width: 28, height: 28, borderRadius: 6, border: 'none', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-tertiary)' }}
+                  className="hover:bg-[var(--bg-surface-elevated)] hover:text-[var(--text-primary)]"
                 >
-                  <Archive size={13} />
+                  <Archive size={14} />
                 </button>
               )}
               <button
                 onClick={() => onDelete(dump.id)}
-                style={{ width: 26, height: 26, borderRadius: 6, border: 'none', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9CA3AF' }}
+                style={{ width: 28, height: 28, borderRadius: 6, border: 'none', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-tertiary)' }}
+                className="hover:bg-[var(--danger-surface)] hover:text-[var(--danger-default)] transition-colors"
               >
-                <Trash2 size={13} />
+                <Trash2 size={14} />
               </button>
             </div>
           </div>
 
-          {/* 4 convert buttons */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6 }}>
+          {/* 4 convert buttons using next/link */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
             {[
-              { label: 'Task', icon: ListTodo, color: '#3366CC', bg: '#EFF6FF', action: () => onConvertToTask(dump) },
-              { label: 'Note', icon: StickyNote, color: '#D97706', bg: '#FFFAC3', action: () => onConvertToNote(dump) },
-              { label: 'Log', icon: BookOpen, color: '#059669', bg: '#F0FDF4', action: () => onConvertToJournal(dump) },
-              { label: 'Proj', icon: Briefcase, color: '#8979FF', bg: '#F5F0FF', action: () => onConvertToProject(dump) },
+              { label: 'Task', icon: ListTodo, color: 'var(--cat-deepwork)', route: '/tasks/new' },
+              { label: 'Note', icon: StickyNote, color: 'var(--warning-default)', route: '/notes/new' },
+              { label: 'Log', icon: BookOpen, color: 'var(--cat-journaling)', route: '/journal/new' },
+              { label: 'Proj', icon: Briefcase, color: 'var(--cat-meditation)', route: '/projects/new' },
             ].map((btn) => (
-              <button
+              <Link
                 key={btn.label}
-                onClick={btn.action}
+                href={`${btn.route}?title=${encodeURIComponent(dump.title)}&desc=${encodeURIComponent(dump.description || '')}&deleteDumpId=${dump.id}`}
+                className="loah-quick-btn"
                 style={{
                   display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                   gap: 4, padding: '8px 4px',
                   borderRadius: 10,
-                  border: `1px solid ${btn.bg}`,
-                  background: btn.bg,
-                  cursor: 'pointer',
-                  transition: 'all 0.15s ease',
-                }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.borderColor = btn.color;
-                  (e.currentTarget as HTMLElement).style.transform = 'scale(1.04)';
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.borderColor = btn.bg;
-                  (e.currentTarget as HTMLElement).style.transform = 'scale(1)';
+                  border: `1px solid var(--border-subtle)`,
+                  background: 'var(--bg-surface-elevated)',
                 }}
               >
-                <btn.icon size={14} color={btn.color} />
-                <span style={{ fontSize: 9, fontWeight: 700, color: btn.color, letterSpacing: '0.04em' }}>
+                <btn.icon size={16} color={btn.color} />
+                <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-secondary)', letterSpacing: '0.04em' }}>
                   {btn.label}
                 </span>
-              </button>
+              </Link>
             ))}
           </div>
         </div>
