@@ -26,7 +26,7 @@ import {
 } from 'lucide-react';
 import { 
   DndContext, DragOverlay, useDraggable, useDroppable, 
-  DragStartEvent, DragEndEvent, PointerSensor, useSensor, useSensors 
+  DragStartEvent, DragEndEvent, PointerSensor, useSensor, useSensors, pointerWithin
 } from '@dnd-kit/core';
 
 type CalendarView = 'month' | 'week' | 'day';
@@ -78,6 +78,16 @@ function DroppableDayCol({ dateStr, children, className }: { dateStr: string, ch
   return (
     <div ref={setNodeRef} className={`${className} ${isOver ? 'bg-violet-500/5' : ''}`}>
       {children}
+    </div>
+  );
+}
+
+function TrashZone() {
+  const { setNodeRef, isOver } = useDroppable({ id: 'trash-zone' });
+  return (
+    <div ref={setNodeRef} className={`fixed bottom-8 left-1/2 -translate-x-1/2 p-4 px-6 rounded-2xl shadow-2xl border-2 flex items-center justify-center transition-all z-[200] ${isOver ? 'bg-rose-500/20 border-rose-500 text-rose-500 scale-110' : 'bg-[var(--bg-surface-elevated)] border-rose-500/50 text-rose-500/80 backdrop-blur-md'}`}>
+      <Trash2 size={24} />
+      <span className="ml-2 font-bold text-sm">Drop to Unschedule</span>
     </div>
   );
 }
@@ -244,6 +254,9 @@ export const CalendarModule: React.FC = () => {
   const handleDragStart = (event: DragStartEvent) => {
     setActiveDragId(event.active.id as string);
     setActiveDragData(event.active.data.current);
+    if (event.active.data.current?.origin === 'sidebar') {
+       setIsSidebarOpen(false);
+    }
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -258,30 +271,29 @@ export const CalendarModule: React.FC = () => {
     const { id, type, origin } = data;
 
     const overData = over.data.current;
+
+    if (over.id === 'trash-zone') {
+       if (origin !== 'sidebar') {
+           onUnschedule(id, type);
+       }
+       return;
+    }
+
     if (!overData) return;
 
     const targetDateStr = overData.dateStr;
     const targetDate = new Date(targetDateStr);
 
-    // Calculate time based on drop position relative to the droppable column
-    // Dndkit gives us the client coordinates of the drop
-    // We need to map that to the scroll container's offset to figure out the time
-    // A simpler way with DndKit is checking the delta if it was already on the grid, 
-    // or using the absolute pointer position. 
-    // Since we don't have easy access to the event's exact pointer coords relative to the column here,
-    // we can use the default dropping strategy: if dropped from sidebar, schedule at 9 AM or current time + 1h
-    // if moved within grid, we use the delta.y to adjust time.
-    
-    // Better precision: We use active.rect.current.translated to find the top of the dragged item relative to the column.
-    
     let newStart = new Date(targetDate);
     
     if (origin === 'sidebar') {
-       if (isSameDay(targetDate, new Date())) {
-         newStart.setHours(new Date().getHours() + 1, 0, 0, 0);
-       } else {
-         newStart.setHours(9, 0, 0, 0);
-       }
+       const dropY = event.active.rect.current.translated ? event.active.rect.current.translated.top - over.rect.top : 0;
+       const pxPerMin = hourHeight / 60;
+       let totalMins = dropY / pxPerMin;
+       if (totalMins < 0) totalMins = 0;
+       
+       const snappedMins = Math.round(totalMins / 15) * 15;
+       newStart.setHours(Math.floor(snappedMins / 60), snappedMins % 60, 0, 0);
     } else {
        // It was dragged from the grid. We can calculate the exact time from its new Y translation
        // Using the distance moved in pixels.
@@ -511,7 +523,7 @@ export const CalendarModule: React.FC = () => {
                               backgroundColor: task.color || '#3b82f6', color: '#ffffff',
                             }}
                           >
-                            <div className="flex flex-col h-full relative" onPointerDown={() => !isResizing && openBlockModal(task, 'task')}>
+                            <div className="flex flex-col h-full relative" onClick={() => !isResizing && openBlockModal(task, 'task')}>
                               <div className="flex items-center gap-1.5 min-w-0 mb-0.5">
                                 <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${getPriorityColor(task.priority)} shadow-sm`} />
                                 <div className="font-bold truncate leading-tight text-[10px] md:text-[11px] drop-shadow-md">
@@ -554,7 +566,7 @@ export const CalendarModule: React.FC = () => {
                               backgroundColor: isHabit ? routine.color : '#7c3aed', color: '#ffffff',
                             }}
                           >
-                            <div className="flex flex-col h-full relative" onPointerDown={() => openBlockModal(routine, 'routine')}>
+                            <div className="flex flex-col h-full relative" onClick={() => openBlockModal(routine, 'routine')}>
                               <div className="flex items-start justify-between mb-0.5 opacity-90 text-[10px]">
                                 <div className="font-bold truncate leading-tight text-[10px] md:text-[11px] flex-1 text-white">
                                   {routine.title}
@@ -579,7 +591,7 @@ export const CalendarModule: React.FC = () => {
   };
 
   return (
-    <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+    <DndContext sensors={sensors} collisionDetection={pointerWithin} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className="w-full h-full flex flex-col relative bg-[var(--bg-canvas)]">
         {/* Header */}
         <div style={{ padding: '16px 20px 12px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', gap: 16, flexShrink: 0, background: 'var(--bg-app)' }}>
@@ -740,6 +752,9 @@ export const CalendarModule: React.FC = () => {
           </div>
         ) : null}
       </DragOverlay>
+
+      {/* Trash Zone */}
+      {activeDragId && <TrashZone />}
     </DndContext>
   );
 };
