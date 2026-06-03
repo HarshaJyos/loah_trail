@@ -291,7 +291,7 @@ export const ProjectModule: React.FC = () => {
                 className="absolute top-0 left-0 w-1.5 h-full"
                 style={{ backgroundColor: project.color }}
               />
-              <div className="flex flex-col h-full justify-between">
+              <div className="flex flex-col h-full justify-between p-5 pl-6">
                 <div>
                   <div className="flex justify-between items-start mb-4">
                     <div>

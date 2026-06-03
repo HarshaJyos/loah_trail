@@ -3,8 +3,8 @@
 import * as React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAppStore } from '../../store/useAppStore';
-import { Routine } from '../../types';
-import { ArrowLeft, Route, Plus, Trash2 } from 'lucide-react';
+import { Routine, RoutineStep, Reminder } from '../../types';
+import { ArrowLeft, Route, Plus, Trash2, Bell, Calendar as CalendarIcon, Repeat, Link2 } from 'lucide-react';
 
 export const RoutineEditor: React.FC = () => {
   const router = useRouter();
@@ -19,18 +19,36 @@ export const RoutineEditor: React.FC = () => {
 
   const [title, setTitle] = React.useState(searchParams?.get('title') || '');
   const [color, setColor] = React.useState('var(--cat-meditation)');
-  const [steps, setSteps] = React.useState([{ id: '1', title: 'Step 1', duration: 300 }]);
+  const [type, setType] = React.useState<'repeatable' | 'once'>('repeatable');
+  const [scheduledDate, setScheduledDate] = React.useState('');
+  const [scheduledTime, setScheduledTime] = React.useState('');
+  
+  const [steps, setSteps] = React.useState<RoutineStep[]>([{ id: '1', title: 'Step 1', durationSeconds: 300 }]);
+  const [reminders, setReminders] = React.useState<Reminder[]>([]);
+
+  // Add Step State
+  const [newStepTitle, setNewStepTitle] = React.useState('');
+  const [newStepDuration, setNewStepDuration] = React.useState('5');
 
   React.useEffect(() => {
     if (existingRoutine) {
       setTitle(existingRoutine.title);
       setColor(existingRoutine.color || 'var(--cat-meditation)');
+      setType(existingRoutine.type || 'repeatable');
+      if (existingRoutine.startTime) {
+        const d = new Date(existingRoutine.startTime);
+        setScheduledDate(d.toISOString().split('T')[0]);
+        setScheduledTime(d.toTimeString().substring(0, 5));
+      }
       if (existingRoutine.steps && existingRoutine.steps.length > 0) {
         setSteps(existingRoutine.steps.map(s => ({
           id: s.id,
           title: s.title,
-          duration: s.durationSeconds
+          durationSeconds: s.durationSeconds
         })));
+      }
+      if (existingRoutine.reminders) {
+        setReminders(existingRoutine.reminders);
       }
     }
   }, [existingRoutine]);
@@ -42,12 +60,24 @@ export const RoutineEditor: React.FC = () => {
       router.push('/routines' as any);
       return;
     }
+
+    let startTime: number | undefined;
+    if (type === 'once') {
+      if (scheduledDate && scheduledTime) {
+        startTime = new Date(`${scheduledDate}T${scheduledTime}`).getTime();
+      } else if (scheduledDate) {
+        startTime = new Date(`${scheduledDate}T00:00:00`).getTime();
+      }
+    }
+
     const newRoutine: Routine = {
       id: existingRoutine ? existingRoutine.id : Date.now().toString(),
       title: title.trim(),
       color,
-      type: existingRoutine ? existingRoutine.type : 'repeatable',
-      steps: steps.map(s => ({ id: s.id, title: s.title, durationSeconds: s.duration })),
+      type,
+      startTime,
+      steps: steps.map(s => ({ id: s.id, title: s.title, durationSeconds: s.durationSeconds })),
+      reminders,
     };
     if (existingRoutine) {
       onUpdateRoutine(newRoutine);
@@ -60,14 +90,14 @@ export const RoutineEditor: React.FC = () => {
     router.push('/routines' as any);
   };
 
-  const colors = [
-    'var(--cat-meditation)', 'var(--cat-hydration)', 'var(--cat-learning)',
-    'var(--cat-movement)', 'var(--cat-journaling)', 'var(--cat-deepwork)'
-  ];
-
-  const addStep = () => {
-    setSteps([...steps, { id: Date.now().toString(), title: `Step ${steps.length + 1}`, duration: 300 }]);
+  const handleAddNewStep = () => {
+    if (!newStepTitle.trim()) return;
+    setSteps([...steps, { id: Date.now().toString(), title: newStepTitle, durationSeconds: parseInt(newStepDuration) * 60 || 300 }]);
+    setNewStepTitle('');
+    setNewStepDuration('5');
   };
+
+  const totalMinutes = steps.reduce((acc, step) => acc + (step.durationSeconds / 60), 0);
 
   return (
     <div className="w-full h-full flex flex-col overflow-hidden animate-fade-in" style={{ background: 'var(--bg-app)' }}>
@@ -85,8 +115,7 @@ export const RoutineEditor: React.FC = () => {
         </button>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Route size={18} color={color} />
-          <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>
+          <span style={{ fontSize: 18, fontWeight: 800, color: 'var(--text-primary)' }}>
             {existingRoutine ? 'Edit Routine' : 'New Routine'}
           </span>
         </div>
@@ -95,93 +124,136 @@ export const RoutineEditor: React.FC = () => {
           <button onClick={() => router.back()} className="loah-btn-ghost">
             Discard
           </button>
-          <button onClick={handleSave} className="loah-btn-primary">
-            Save Routine
+          <button onClick={handleSave} className="loah-btn-primary" style={{ padding: '6px 16px', background: '#E2E8F0', color: '#0F172A', border: 'none', borderRadius: '8px' }}>
+            Save
           </button>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto no-scrollbar" style={{ padding: '32px 24px 100px', maxWidth: '800px', margin: '0 auto', width: '100%' }}>
+      <div className="flex-1 overflow-y-auto no-scrollbar" style={{ padding: '32px 24px 100px', maxWidth: '600px', margin: '0 auto', width: '100%' }}>
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="Routine Name"
+          placeholder="Routine Name..."
           className="loah-title-input"
-          style={{ marginBottom: 32, fontSize: '40px' }}
+          style={{ marginBottom: 24, fontSize: '28px' }}
           autoFocus
         />
 
-        <div className="loah-card" style={{ padding: '24px', marginBottom: '24px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-              Routine Steps
-            </div>
-            <button onClick={addStep} className="loah-btn-ghost" style={{ padding: '6px 12px', fontSize: '12px' }}>
-              <Plus size={14} /> Add Step
+        <div className="flex flex-wrap gap-2 items-center mb-6">
+          <div style={{ display: 'flex', background: 'var(--bg-surface-elevated)', border: '1px solid var(--border-subtle)', borderRadius: '8px', overflow: 'hidden' }}>
+            <button
+              onClick={() => setType('repeatable')}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 6,
+                padding: '8px 12px', fontSize: 12, fontWeight: 600,
+                background: type === 'repeatable' ? 'var(--border-subtle)' : 'transparent',
+                color: type === 'repeatable' ? 'var(--text-primary)' : 'var(--text-secondary)',
+                borderRight: '1px solid var(--border-subtle)'
+              }}
+            >
+              <Repeat size={14} /> REPEATABLE
+            </button>
+            <button
+              onClick={() => setType('once')}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 6,
+                padding: '8px 12px', fontSize: 12, fontWeight: 600,
+                background: type === 'once' ? 'var(--border-subtle)' : 'transparent',
+                color: type === 'once' ? 'var(--text-primary)' : 'var(--text-secondary)'
+              }}
+            >
+              <CalendarIcon size={14} /> RUN ONCE
             </button>
           </div>
-          
-          <div className="flex flex-col gap-3">
-            {steps.map((step, idx) => (
-              <div key={step.id} className="flex gap-3 items-center">
-                <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'var(--bg-surface-elevated)', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>
-                  {idx + 1}
-                </div>
-                <input
-                  value={step.title}
-                  onChange={(e) => {
-                    const newSteps = [...steps];
-                    newSteps[idx].title = e.target.value;
-                    setSteps(newSteps);
-                  }}
-                  placeholder="Step title"
-                  className="loah-input flex-1"
-                  style={{ background: 'var(--bg-surface-elevated)', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}
-                />
-                <input
-                  type="number"
-                  value={step.duration / 60}
-                  onChange={(e) => {
-                    const newSteps = [...steps];
-                    newSteps[idx].duration = Math.max(1, parseInt(e.target.value) || 1) * 60;
-                    setSteps(newSteps);
-                  }}
-                  className="loah-input w-24"
-                  style={{ background: 'var(--bg-surface-elevated)', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--border-subtle)', textAlign: 'center' }}
-                />
-                <span style={{ fontSize: '12px', color: 'var(--text-tertiary)' }}>min</span>
-                <button
-                  onClick={() => setSteps(steps.filter((_, i) => i !== idx))}
-                  style={{ padding: '8px', color: 'var(--danger-default)', opacity: steps.length > 1 ? 1 : 0.3 }}
-                  disabled={steps.length <= 1}
-                >
-                  <Trash2 size={16} />
-                </button>
-              </div>
-            ))}
+          {type === 'once' && (
+            <div style={{ display: 'flex', gap: 8 }}>
+              <input
+                type="date"
+                value={scheduledDate}
+                onChange={(e) => setScheduledDate(e.target.value)}
+                style={{
+                  background: 'var(--bg-surface-elevated)', border: '1px solid var(--border-subtle)',
+                  padding: '8px 12px', borderRadius: '8px', fontSize: 12, color: 'var(--text-primary)', outline: 'none'
+                }}
+              />
+              <input
+                type="time"
+                value={scheduledTime}
+                onChange={(e) => setScheduledTime(e.target.value)}
+                style={{
+                  background: 'var(--bg-surface-elevated)', border: '1px solid var(--border-subtle)',
+                  padding: '8px 12px', borderRadius: '8px', fontSize: 12, color: 'var(--text-primary)', outline: 'none'
+                }}
+              />
+            </div>
+          )}
+        </div>
+
+        <div className="loah-card" style={{ padding: '16px', marginBottom: '24px', background: 'var(--bg-surface)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12, color: 'var(--text-secondary)', fontSize: 13, fontWeight: 600 }}>
+            <Bell size={16} /> Reminders
+          </div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <select
+              style={{ flex: 1, background: 'var(--bg-surface-elevated)', border: '1px solid var(--border-subtle)', padding: '10px 12px', borderRadius: '8px', fontSize: 13, color: 'var(--text-primary)', outline: 'none' }}
+            >
+              <option value="15">15 minutes before</option>
+              <option value="30">30 minutes before</option>
+              <option value="60">1 hour before</option>
+            </select>
+            <button style={{ background: '#DBEAFE', color: '#1E40AF', padding: '10px 16px', borderRadius: '8px', fontSize: 13, fontWeight: 600, border: 'none' }}>
+              Add
+            </button>
           </div>
         </div>
 
-        <div className="loah-card" style={{ padding: '24px' }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 16 }}>
-            Routine Color
-          </div>
-          <div className="flex gap-4">
-            {colors.map((c) => (
-              <button
-                key={c}
-                onClick={() => setColor(c)}
-                style={{
-                  width: '40px', height: '40px', borderRadius: '12px',
-                  background: c,
-                  border: color === c ? '3px solid var(--text-primary)' : '3px solid transparent',
-                  transition: 'all 0.2s ease',
-                  opacity: color === c ? 1 : 0.6,
-                }}
-              />
-            ))}
-          </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, padding: '0 4px' }}>
+          <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-secondary)', letterSpacing: '0.05em' }}>SEQUENCE ({steps.length})</span>
+          <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-secondary)' }}>TOTAL: {totalMinutes}m</span>
         </div>
+
+        <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)', borderRadius: '8px', padding: '12px', display: 'flex', gap: 12, alignItems: 'center', marginBottom: 16 }}>
+          <input
+            value={newStepTitle}
+            onChange={(e) => setNewStepTitle(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleAddNewStep()}
+            placeholder="Add New Step"
+            style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', fontSize: 14, color: 'var(--text-primary)' }}
+          />
+          <button style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '6px 12px', borderRadius: '6px', background: 'var(--bg-canvas)', border: '1px solid var(--border-subtle)', fontSize: 12, color: 'var(--text-secondary)' }}>
+            Link <Link2 size={12} />
+          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <input
+              type="number"
+              value={newStepDuration}
+              onChange={(e) => setNewStepDuration(e.target.value)}
+              style={{ width: 40, background: 'transparent', border: 'none', outline: 'none', fontSize: 14, color: 'var(--text-primary)', textAlign: 'center' }}
+            />
+            <span style={{ fontSize: 14, color: 'var(--text-secondary)' }}>m</span>
+          </div>
+          <button onClick={handleAddNewStep} style={{ width: 32, height: 32, background: '#DBEAFE', color: '#1E40AF', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none' }}>
+            <Plus size={18} />
+          </button>
+        </div>
+
+        <div className="flex flex-col gap-3">
+          {steps.map((step, idx) => (
+            <div key={step.id} style={{ background: 'var(--bg-surface-elevated)', border: '1px solid var(--border-subtle)', borderRadius: '8px', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ width: 24, height: 24, borderRadius: '50%', background: 'var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: 'var(--text-secondary)' }}>
+                {idx + 1}
+              </div>
+              <span style={{ flex: 1, fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>
+                {step.title}
+              </span>
+              <div style={{ padding: '4px 8px', borderRadius: '12px', background: 'var(--border-subtle)', fontSize: 10, fontWeight: 700, color: 'var(--text-secondary)' }}>
+                {step.durationSeconds / 60}m
+              </div>
+            </div>
+          ))}
+        </div>
+
       </div>
     </div>
   );
