@@ -15,13 +15,13 @@ import {
   Pause,
   SkipForward,
   X,
-  ChevronDown,
   Trash2,
   Activity,
   ListTodo,
   Briefcase,
   Target,
   BookOpen,
+  ChevronRight,
 } from 'lucide-react';
 import useTimerWorker from '../../hooks/useTimerWorker';
 import useReminderSystem from '../../hooks/useReminderSystem';
@@ -192,95 +192,95 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
       {!isRoutinePlayer && activeRoutine && (
         <>
           {isIslandExpanded && (
-            <div 
-              className="fixed inset-0 z-[190]" 
+            <div
+              className="fixed inset-0 z-[190]"
               onClick={() => setIsIslandExpanded(false)}
             />
           )}
           <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[200] transition-all duration-500">
-          <div
-            className={`bg-[var(--bg-surface-elevated)] text-[var(--text-primary)] rounded-[28px] border border-[var(--border-subtle)] transition-all duration-500 overflow-hidden flex flex-col justify-center
+            <div
+              className={`bg-[var(--bg-surface-elevated)] text-[var(--text-primary)] rounded-[28px] border border-[var(--border-subtle)] transition-all duration-500 overflow-hidden flex flex-col justify-center
               ${isIslandExpanded ? 'w-[300px] p-5 shadow-2xl' : 'w-[220px] px-4 py-2.5 h-[44px] shadow-lg'}`}
-          >
-            <div className="flex items-center justify-between w-full">
-              <div
-                className="flex items-center gap-2 cursor-pointer min-w-0"
-                onClick={() => setIsIslandExpanded(!isIslandExpanded)}
-              >
-                <span className="w-2 h-2 rounded-full bg-[#01F7AB] animate-pulse shrink-0" />
-                <span className="text-xs font-bold truncate max-w-[110px]">
-                  {currentStep ? currentStep.title : activeRoutine.title}
-                </span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className={`text-xs font-mono font-bold tabular-nums ${isOvertime ? 'text-rose-500 animate-pulse' : 'text-[#ABA2FD]'}`}>
-                  {timeString}
-                </span>
-                <button
-                  onClick={() => router.push('/routine-player' as any)}
-                  className="p-1 hover:bg-white/10 rounded-lg text-zinc-400 hover:text-white transition-colors"
+            >
+              <div className="flex items-center justify-between w-full">
+                <div
+                  className="flex items-center gap-2 cursor-pointer min-w-0"
+                  onClick={() => setIsIslandExpanded(!isIslandExpanded)}
                 >
-                  <ChevronDown size={12} className="rotate-180" />
-                </button>
+                  <span className="w-2 h-2 rounded-full bg-[#01F7AB] animate-pulse shrink-0" />
+                  <span className="text-xs font-bold truncate max-w-[110px]">
+                    {currentStep ? currentStep.title : activeRoutine.title}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className={`text-xs font-mono font-bold tabular-nums ${isOvertime ? 'text-rose-500 animate-pulse' : 'text-[#ABA2FD]'}`}>
+                    {timeString}
+                  </span>
+                  <button
+                    onClick={() => router.push('/routine-player' as any)}
+                    className="p-1 hover:bg-white/10 rounded-lg text-zinc-400 hover:text-white transition-colors"
+                  >
+                    <ChevronRight size={12} />
+                  </button>
+                </div>
               </div>
-            </div>
 
-            {isIslandExpanded && (
-              <div className="mt-4 space-y-3 animate-fade-in">
-                <div className="w-full bg-white/10 h-1 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-[#8979FF] rounded-full transition-all duration-1000"
-                    style={{ width: `${progressPercent}%` }}
-                  />
+              {isIslandExpanded && (
+                <div className="mt-4 space-y-3 animate-fade-in">
+                  <div className="w-full bg-white/10 h-1 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-[#8979FF] rounded-full transition-all duration-1000"
+                      style={{ width: `${progressPercent}%` }}
+                    />
+                  </div>
+                  <div className="flex items-center justify-center gap-3">
+                    <button
+                      onClick={() => handleTimeAdjustment(-60)}
+                      className="p-2 text-zinc-400 hover:text-white font-mono text-[10px] font-bold active:scale-95 transition-all"
+                    >
+                      -1m
+                    </button>
+                    <button
+                      onClick={handlePlayClick}
+                      className="p-2 bg-white text-[#1E1E1E] rounded-full hover:scale-105 active:scale-95 transition-all"
+                    >
+                      {isPlaying ? <Pause size={13} fill="currentColor" /> : <Play size={13} fill="currentColor" />}
+                    </button>
+                    <button
+                      onClick={() => handleTimeAdjustment(60)}
+                      className="p-2 text-zinc-400 hover:text-white font-mono text-[10px] font-bold active:scale-95 transition-all"
+                    >
+                      +1m
+                    </button>
+                    <button
+                      onClick={handleStepCompleteInternal}
+                      className="p-2 bg-white/10 rounded-full hover:bg-white/20 active:scale-95 transition-all ml-1"
+                      title="Skip step"
+                    >
+                      <SkipForward size={13} />
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (confirm('End this focus session?')) {
+                          exitPlayer();
+                          setIsIslandExpanded(false);
+                        }
+                      }}
+                      className="p-2 bg-rose-500/20 text-rose-400 rounded-full hover:bg-rose-500/30 active:scale-95 transition-all"
+                    >
+                      <X size={13} />
+                    </button>
+                  </div>
+                  <button
+                    onClick={() => setIsIslandExpanded(false)}
+                    className="w-full text-center text-[10px] uppercase tracking-widest text-zinc-500 hover:text-zinc-300 font-mono"
+                  >
+                    Collapse
+                  </button>
                 </div>
-                <div className="flex items-center justify-center gap-3">
-                  <button
-                    onClick={() => handleTimeAdjustment(-60)}
-                    className="p-2 text-zinc-400 hover:text-white font-mono text-[10px] font-bold active:scale-95 transition-all"
-                  >
-                    -1m
-                  </button>
-                  <button
-                    onClick={handlePlayClick}
-                    className="p-2 bg-white text-[#1E1E1E] rounded-full hover:scale-105 active:scale-95 transition-all"
-                  >
-                    {isPlaying ? <Pause size={13} fill="currentColor" /> : <Play size={13} fill="currentColor" />}
-                  </button>
-                  <button
-                    onClick={() => handleTimeAdjustment(60)}
-                    className="p-2 text-zinc-400 hover:text-white font-mono text-[10px] font-bold active:scale-95 transition-all"
-                  >
-                    +1m
-                  </button>
-                  <button
-                    onClick={handleStepCompleteInternal}
-                    className="p-2 bg-white/10 rounded-full hover:bg-white/20 active:scale-95 transition-all ml-1"
-                    title="Skip step"
-                  >
-                    <SkipForward size={13} />
-                  </button>
-                  <button
-                    onClick={() => {
-                      if (confirm('End this focus session?')) {
-                        exitPlayer();
-                        setIsIslandExpanded(false);
-                      }
-                    }}
-                    className="p-2 bg-rose-500/20 text-rose-400 rounded-full hover:bg-rose-500/30 active:scale-95 transition-all"
-                  >
-                    <X size={13} />
-                  </button>
-                </div>
-                <button
-                  onClick={() => setIsIslandExpanded(false)}
-                  className="w-full text-center text-[10px] uppercase tracking-widest text-zinc-500 hover:text-zinc-300 font-mono"
-                >
-                  Collapse
-                </button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
         </>
       )}
 
