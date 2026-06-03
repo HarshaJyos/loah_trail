@@ -306,9 +306,9 @@ export const NotesModule: React.FC = () => {
             className="loah-icon-btn"
             title={showArchived ? 'View Active' : 'View Archive'}
             style={{
-              background: showArchived ? 'rgba(137,121,255,0.10)' : '#FFFFFF',
+              background: showArchived ? 'rgba(137,121,255,0.10)' : 'var(--bg-surface)',
               borderColor: showArchived ? '#8979FF' : 'var(--border-subtle)',
-              color: showArchived ? '#8979FF' : '#64748B',
+              color: showArchived ? '#8979FF' : 'var(--text-secondary)',
             }}
           >
             <Archive size={17} />

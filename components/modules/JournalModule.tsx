@@ -225,9 +225,9 @@ export const JournalModule: React.FC = () => {
             onClick={() => setShowArchived(!showArchived)}
             className="loah-icon-btn"
             style={{
-              background: showArchived ? 'rgba(137,121,255,0.10)' : '#FFFFFF',
+              background: showArchived ? 'rgba(137,121,255,0.10)' : 'var(--bg-surface)',
               borderColor: showArchived ? '#8979FF' : 'var(--border-subtle)',
-              color: showArchived ? '#8979FF' : '#64748B',
+              color: showArchived ? '#8979FF' : 'var(--text-secondary)',
             }}
           >
             <Archive size={17} />
@@ -259,8 +259,8 @@ export const JournalModule: React.FC = () => {
             borderRadius: 200,
             fontSize: 11, fontWeight: 700,
             border: `1px solid ${moodFilter === 'all' ? '#8979FF' : 'var(--border-subtle)'}`,
-            background: moodFilter === 'all' ? 'rgba(137,121,255,0.10)' : '#FFFFFF',
-            color: moodFilter === 'all' ? '#8979FF' : '#64748B',
+            background: moodFilter === 'all' ? 'rgba(137,121,255,0.10)' : 'var(--bg-surface)',
+            color: moodFilter === 'all' ? '#8979FF' : 'var(--text-secondary)',
             cursor: 'pointer', whiteSpace: 'nowrap',
           }}
         >
@@ -275,8 +275,8 @@ export const JournalModule: React.FC = () => {
               borderRadius: 200,
               fontSize: 11, fontWeight: 700,
               border: `1px solid ${moodFilter === m.id ? m.color : 'var(--border-subtle)'}`,
-              background: moodFilter === m.id ? m.bg + '50' : '#FFFFFF',
-              color: moodFilter === m.id ? m.color : '#64748B',
+              background: moodFilter === m.id ? m.bg + '50' : 'var(--bg-surface)',
+              color: moodFilter === m.id ? m.color : 'var(--text-secondary)',
               cursor: 'pointer', whiteSpace: 'nowrap',
               display: 'flex', alignItems: 'center', gap: 4,
             }}
