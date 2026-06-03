@@ -202,9 +202,9 @@ export const DashboardModule: React.FC = () => {
             {range}
             <ChevronDown size={14} color="var(--text-secondary)" className={`transition-transform duration-200 ${isRangeOpen ? 'rotate-180' : ''}`} />
           </button>
-          
+
           {isRangeOpen && (
-            <div 
+            <div
               className="absolute top-full right-0 mt-2 w-32 bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] rounded-xl shadow-lg overflow-hidden z-50 py-1"
               style={{ boxShadow: 'var(--shadow-nav)' }}
             >
@@ -339,6 +339,7 @@ export const DashboardModule: React.FC = () => {
               journalEntries={journalEntries}
               range={range}
               rangeStart={rangeStart}
+              className='p-2'
             />
           </div>
 

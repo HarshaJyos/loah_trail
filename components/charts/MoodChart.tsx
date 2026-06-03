@@ -39,10 +39,10 @@ export const MoodChart: React.FC<MoodChartProps> = ({
       range === 'Day'
         ? 24
         : range === 'Week'
-        ? 7
-        : range === 'Month'
-        ? new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()
-        : 12;
+          ? 7
+          : range === 'Month'
+            ? new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()
+            : 12;
 
     for (let i = 0; i < steps; i++) {
       let date = new Date(rangeStart);
@@ -116,7 +116,7 @@ export const MoodChart: React.FC<MoodChartProps> = ({
 
       <div className="flex-1 w-full relative min-h-[160px] pl-6">
         {/* Horizontal scale line segments (scores 1 to 5) */}
-        <div className="absolute inset-0 flex flex-col justify-between pointer-events-none pb-8 pt-6">
+        <div className="absolute inset-0 flex flex-col justify-between pointer-events-none pb-8 pt-6 pl-3">
           {[5, 4, 3, 2, 1].map((lvl) => (
             <div
               key={lvl}
