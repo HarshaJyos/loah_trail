@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { AITaskPreviewModal } from '../ui/AITaskPreviewModal';
 
 export const BrainDumpModule: React.FC = () => {
   const dumps = useAppStore((s) => s.dumps);
@@ -55,6 +56,54 @@ export const BrainDumpModule: React.FC = () => {
   }, [autoTrigger]);
 
   const openNew = () => router.push('/dump/new' as any);
+
+  // AI organize into tasks state
+  const [aiModalOpen, setAiModalOpen] = React.useState(false);
+  const [aiLoading, setAiLoading] = React.useState(false);
+  const [selectedDump, setSelectedDump] = React.useState<Dump | null>(null);
+  const [generatedTasks, setGeneratedTasks] = React.useState<any[]>([]);
+
+  const handleOrganizeDump = async (dump: Dump) => {
+    setSelectedDump(dump);
+    setAiLoading(true);
+    try {
+      const res = await fetch('/api/ai/organize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: dump.title, description: dump.description }),
+      });
+      const data = await res.json();
+      setGeneratedTasks(data.tasks || []);
+      setAiModalOpen(true);
+    } catch (err) {
+      console.error(err);
+      alert('AI organization failed');
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
+  const handleCreateTasksFromAI = (editedTasks: any[]) => {
+    if (!editedTasks.length || !selectedDump) return;
+    const addTask = useAppStore.getState().handleAddTask;
+    editedTasks.forEach((t: any, i: number) => {
+      const task = {
+        id: Date.now().toString() + '-' + i,
+        title: t.title || 'Untitled Task',
+        isCompleted: false,
+        priority: (t.priority as any) || 'Medium',
+        category: '',
+        createdAt: Date.now(),
+        description: t.description || '',
+        subtasks: t.subtasks || [],
+      };
+      addTask(task as any);
+    });
+    useAppStore.getState().handleSoftDelete(selectedDump.id, 'dump');
+    setAiModalOpen(false);
+    setSelectedDump(null);
+    setGeneratedTasks([]);
+  };
 
   return (
     <div className="w-full h-full flex flex-col overflow-hidden">
@@ -145,12 +194,25 @@ export const BrainDumpModule: React.FC = () => {
                   onConvertToNote={onConvertToNote}
                   onConvertToJournal={onConvertToJournal}
                   onConvertToProject={onConvertToProject}
+                  onOrganizeDump={handleOrganizeDump}
                 />
               </div>
             ))}
           </div>
         )}
       </div>
+
+      <AITaskPreviewModal
+        isOpen={aiModalOpen}
+        onClose={() => {
+          setAiModalOpen(false);
+          setSelectedDump(null);
+          setGeneratedTasks([]);
+        }}
+        tasks={generatedTasks}
+        onConfirm={handleCreateTasksFromAI}
+        isLoading={aiLoading}
+      />
     </div>
   );
 };
@@ -166,7 +228,8 @@ const DumpCard: React.FC<{
   onConvertToNote: (d: Dump) => void;
   onConvertToJournal: (d: Dump) => void;
   onConvertToProject: (d: Dump) => void;
-}> = ({ dump, showArchived, onArchive, onUnarchive, onDelete, onConvertToTask, onConvertToNote, onConvertToJournal, onConvertToProject }) => {
+  onOrganizeDump?: (d: Dump) => void;
+}> = ({ dump, showArchived, onArchive, onUnarchive, onDelete, onConvertToTask, onConvertToNote, onConvertToJournal, onConvertToProject, onOrganizeDump }) => {
   return (
     <div className="loah-card group" style={{ overflow: 'hidden', position: 'relative' }}>
       {/* Ambient glow dot */}
@@ -264,8 +327,8 @@ const DumpCard: React.FC<{
             </div>
           </div>
 
-          {/* 4 convert buttons using next/link */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
+          {/* convert buttons including AI organize */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8 }}>
             {[
               { label: 'Task', icon: ListTodo, color: 'var(--cat-deepwork)', route: '/tasks/new' },
               { label: 'Note', icon: StickyNote, color: 'var(--warning-default)', route: '/notes/new' },
@@ -290,6 +353,23 @@ const DumpCard: React.FC<{
                 </span>
               </Link>
             ))}
+
+            <button
+              onClick={() => onOrganizeDump && onOrganizeDump(dump)}
+              className="loah-quick-btn"
+              style={{
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                gap: 4, padding: '8px 4px',
+                borderRadius: 10,
+                border: `1px solid var(--border-subtle)`,
+                background: 'var(--bg-surface-elevated)',
+              }}
+            >
+              <Lightbulb size={16} color={'var(--cat-deepwork)'} />
+              <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-secondary)', letterSpacing: '0.04em' }}>
+                Organize
+              </span>
+            </button>
           </div>
         </div>
       </div>
